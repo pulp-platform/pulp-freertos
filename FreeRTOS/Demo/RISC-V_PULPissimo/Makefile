@@ -75,7 +75,9 @@ CC_INCLUDES = $(addprefix -I, "$(RTOS_ROOT)/Source/include" \
 
 AS_INCLUDES = -I"$(RTOS_ROOT)/Source/portable/GCC/RISC-V/chip_specific_extensions/PULPissimo"
 
-all: $(PROG) misc-info
+PLPSTIM = scripts/pulpstim
+
+all: $(PROG) $(PROG).stim misc-info
 
 # %.d: %.c
 #	@set -e; rm -f $@; \
@@ -117,6 +119,12 @@ $(PROG): $(OBJS)
 
 # objdump, listing and size of binary
 misc-info: $(PROG).hex $(PROG).lst $(PROG).siz
+
+$(PROG).stim: $(PROG)
+	@echo 'Invoking: plpstim script'
+	$(PLPSTIM) -o $@ $<
+	@echo 'Finished'
+	@echo ' '
 
 $(PROG).hex: $(PROG)
 	@echo 'Invoking: GNU RISC-V Cross Create Flash Image'
