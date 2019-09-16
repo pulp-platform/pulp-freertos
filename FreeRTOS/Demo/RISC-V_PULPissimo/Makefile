@@ -31,7 +31,7 @@ SIZE			= $(RISCV_PREFIX)size
 CFLAGS			+= -std=gnu11 \
 			-Wall -Wextra \
 			-march=rv32im -msmall-data-limit=8 -mno-save-restore -O0 \
-			-fsigned-char -ffunction-sections -fdata-sections  -g3
+			-fsigned-char -ffunction-sections -fdata-sections
 
 CPPFLAGS		= -DNOT_MSCC_STDIO_THRU_CORE_UART_APB -DSYS_CLK_FREQ=66000000 \
 			-DmainCREATE_SIMPLE_BLINKY_DEMO_ONLY=1
@@ -148,4 +148,4 @@ $(PROG).siz: $(PROG)
 
 .PHONY: clean
 clean:
-	rm -f $(OBJS) $(PROG) $(DEPS) $(PROG).hex $(PROG).lst $(PROG).siz
+	rm -f $(OBJS) $(PROG) $(DEPS) $(PROG).hex $(PROG).lst $(PROG).siz $(PROG).stim

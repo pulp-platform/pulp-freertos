@@ -1,5 +1,5 @@
 OUTPUT_ARCH(riscv)
-ENTRY( _start )
+ENTRY(_start)
 MEMORY
 {
   L2           : ORIGIN = 0x1c000004, LENGTH = 0x0007fffc
@@ -21,6 +21,7 @@ MEMORY
 SECTIONS
 {
 
+  PROVIDE(__boot_address = 0x1c008080);
   /* stack and heap related settings */
   __stack_size = DEFINED(__stack_size) ? __stack_size : 0x800;
   PROVIDE(__stack_size = __stack_size);
@@ -36,6 +37,7 @@ SECTIONS
   /* This section is for tiny FC data which benefits
    * from the alias at 0
    */
+   /* TODO: what do we really want to put here when we have the gp */
   .data_tiny_fc : ALIGN(4)
   {
     *(.data_tiny_fc)
@@ -100,26 +102,11 @@ SECTIONS
   } > L2
 
 
-  .rodata : ALIGN(4)
-  {
-    *(.rodata);
-    *(.rodata.*)
-    *(.srodata);
-    *(.srodata.*)
-    *(.eh_frame*)
-  } > L2
 
-
-  .got : ALIGN(4)
-  {
-    *(.got.plt) * (.igot.plt) *(.got) *(.igot)
-  } > L2
-
-
-  .shbss : ALIGN(4)
-  {
-    *(.shbss)
-  } > L2
+  /* .got : ALIGN(4) */
+  /* { */
+  /*   *(.got.plt) * (.igot.plt) *(.got) *(.igot) */
+  /* } > L2 */
 
 
   .talias :
@@ -127,6 +114,99 @@ SECTIONS
   } > L2
 
 
+  __l2_priv0_end = ALIGN(4);
+
+
+  /*
+   * L2 PRIVATE BANK1
+   *
+   * Contains FC code
+   */
+
+  .vectors MAX(0x1c008000, ALIGN(256)) :
+  {
+    __irq_vector_base = .;
+    __vector_start = .;
+    KEEP(*(.vectors))
+  } > L2
+
+
+  .text __boot_address :
+  {
+    _stext = .;
+    *(.text.start)
+    *(.text)
+    *(.text.*)
+    _etext = .; /* man 3 end: first addr after text */
+    *(.lit)
+    *(.shdata)
+    _endtext = .;
+    . = ALIGN(4);
+  } > L2
+
+
+  /* read-only sections */
+  .rodata         :
+  {
+    *(.rodata .rodata.* .gnu.linkonce.r.*)
+  } > L2
+  .rodata1        :
+  {
+    *(.rodata1)
+  } > L2
+
+
+  /* gcc language agnostic exception related sections (try-catch-finally) */
+  .eh_frame_hdr :
+  {
+    *(.eh_frame_hdr) *(.eh_frame_entry .eh_frame_entry.*)
+  } > L2
+  .eh_frame       : ONLY_IF_RO
+  {
+    KEEP (*(.eh_frame)) *(.eh_frame.*)
+  } > L2
+  .gcc_except_table   : ONLY_IF_RO
+  {
+    *(.gcc_except_table .gcc_except_table.*)
+  } > L2
+  .gnu_extab   : ONLY_IF_RO
+  {
+    *(.gnu_extab*)
+  } > L2
+
+
+  /* Exception handling  */
+  .eh_frame       : ONLY_IF_RW
+  {
+    KEEP (*(.eh_frame)) *(.eh_frame.*)
+  } > L2
+  .gnu_extab      : ONLY_IF_RW
+  {
+    *(.gnu_extab)
+  } > L2
+  .gcc_except_table   : ONLY_IF_RW
+  {
+    *(.gcc_except_table .gcc_except_table.*)
+  } > L2
+  .exception_ranges   : ONLY_IF_RW
+  {
+    *(.exception_ranges .exception_ranges*)
+  } > L2
+
+
+  /* Thread Local Storage sections  */
+  .tdata	  :
+  {
+    PROVIDE_HIDDEN (__tdata_start = .);
+    *(.tdata .tdata.* .gnu.linkonce.td.*)
+  } > L2
+  .tbss		  :
+  {
+    *(.tbss .tbss.* .gnu.linkonce.tb.*) *(.tcommon)
+  } > L2
+
+
+  /* Open MP */
   .gnu.offload_funcs : ALIGN(4)
   {
     KEEP(*(.gnu.offload_funcs))
@@ -151,6 +231,7 @@ SECTIONS
     __sdata_begin = .;
     *(.sdata);
     *(.sdata.*)
+    *(.sdata2.*) /* FreeRTOS xISRStackTop, __global_impure_ptr */
     *(.heapl2ram)
     *(.fcTcdm)
     *(.fcTcdm.*)
@@ -166,6 +247,7 @@ SECTIONS
   {
     _bss_start = .;
     __bss_start = .;
+    *(.shbss) /* don't even know where this is from */
     *(.bss)
     *(.bss.*)
     *(.sbss)
@@ -205,36 +287,6 @@ SECTIONS
     stack = .;
   } > L2
 
-
-  __l2_priv0_end = ALIGN(4);
-
-
-
-
-  /*
-   * L2 PRIVATE BANK1
-   *
-   * Contains FC code
-   */
-
-  .vectors MAX(0x1c008000, ALIGN(256)) :
-  {
-    __irq_vector_base = .;
-    __vector_start = .;
-    KEEP(*(.vectors))
-  } > L2
-
-  .text : ALIGN(4)
-  {
-    _stext = .;
-    *(.text)
-    *(.text.*)
-    _etext = .; /* man 3 end: first addr after text */
-    *(.lit)
-    *(.shdata)
-    _endtext = .;
-    . = ALIGN(4);
-  } > L2
 
   __l2_priv1_end = ALIGN(4);
 
