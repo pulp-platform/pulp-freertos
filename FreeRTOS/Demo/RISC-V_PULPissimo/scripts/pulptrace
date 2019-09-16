@@ -67,6 +67,18 @@ regs_map = [("x0", "zero"), ("x1", "ra"), ("x2", "sp"),
             ("x24", "s8"), ("x25", "s9"), ("x26", "s10"),
             ("x27", "s11"), ("x28", "t3"), ("x29", "t4"),
             ("x30", "t5"), ("x31", "t6")]
+# augment regs_map with prefixes/postfixes to prevent false positives
+# ugly, but works
+tmp_regs_map = []
+for item in regs_map:
+    k, v = item
+    tmp_regs_map.append([' ' + k, ' ' + v])
+    tmp_regs_map.append(['(' + k, '(' + v])
+    tmp_regs_map.append([k + ':', v + ':'])
+    tmp_regs_map.append([k + '=', v + '='])
+
+regs_map = tmp_regs_map
+
 # we want to replace the higher numbered register first with their alias,
 # otherwise x31 could be replaced to gp1
 regs_alias = OrderedDict(reversed(regs_map))
