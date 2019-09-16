@@ -71,8 +71,10 @@
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
-#include "system_pulpissimo_ri5cy.h"
 /* #include "clock_config.h" */ /* TODO: figure out our FLL/clock setup */
+
+
+#define DEFAULT_SYSTEM_CLOCK           50000000u /* Default System clock value */
 
 /*-----------------------------------------------------------
  * Application specific definitions.
@@ -92,27 +94,28 @@
     #include <stdint.h>
 #endif
 
-#define configCLINT_BASE_ADDRESS		0 /* There is no CLINT so the base address must be set to 0. */
-#define configUSE_PREEMPTION			1
-#define configUSE_IDLE_HOOK				1
-#define configUSE_TICK_HOOK				1
-#define configCPU_CLOCK_HZ				DEFAULT_SYSTEM_CLOCK
-#define configTICK_RATE_HZ				( ( TickType_t ) 1000 )
-#define configMAX_PRIORITIES			( 5 )
-#define configMINIMAL_STACK_SIZE		( ( unsigned short ) 200 ) /* Can be as low as 60 but some of the demo tasks that use this constant require it to be higher. */
-#define configTOTAL_HEAP_SIZE			( ( size_t ) ( 100 * 1024 ) )
-#define configMAX_TASK_NAME_LEN			( 16 )
-#define configUSE_TRACE_FACILITY		1 /* TODO: 0 */
-#define configUSE_16_BIT_TICKS			0
-#define configIDLE_SHOULD_YIELD			0
-#define configUSE_MUTEXES				1
-#define configQUEUE_REGISTRY_SIZE		8
-#define configCHECK_FOR_STACK_OVERFLOW	2
-#define configUSE_RECURSIVE_MUTEXES		1
-#define configUSE_MALLOC_FAILED_HOOK	1
-#define configUSE_APPLICATION_TASK_TAG	0
-#define configUSE_COUNTING_SEMAPHORES	1
-#define configGENERATE_RUN_TIME_STATS	0
+#define configCLINT_BASE_ADDRESS		 0 /* There is no CLINT so the base address must be set to 0. */
+#define configUSE_PREEMPTION			 1
+#define configUSE_IDLE_HOOK				 1
+#define configUSE_TICK_HOOK				 1
+#define configCPU_CLOCK_HZ				 DEFAULT_SYSTEM_CLOCK
+#define configTICK_RATE_HZ				 ( ( TickType_t ) 1000 )
+#define configMAX_PRIORITIES			 ( 5 )
+#define configMINIMAL_STACK_SIZE		 ( ( unsigned short ) 200 ) /* Can be as low as 60 but some of the demo tasks that use this constant require it to be higher. */
+#define configAPPLICATION_ALLOCATED_HEAP 1 /* we want to put the heap into special section */
+#define configTOTAL_HEAP_SIZE			 ( ( size_t ) ( 64 * 1024 ) )
+#define configMAX_TASK_NAME_LEN			 ( 16 )
+#define configUSE_TRACE_FACILITY		 1 /* TODO: 0 */
+#define configUSE_16_BIT_TICKS			 0
+#define configIDLE_SHOULD_YIELD			 0
+#define configUSE_MUTEXES				 1
+#define configQUEUE_REGISTRY_SIZE		 8
+#define configCHECK_FOR_STACK_OVERFLOW	 2
+#define configUSE_RECURSIVE_MUTEXES		 1
+#define configUSE_MALLOC_FAILED_HOOK	 1
+#define configUSE_APPLICATION_TASK_TAG	 0
+#define configUSE_COUNTING_SEMAPHORES	 1
+#define configGENERATE_RUN_TIME_STATS	 0
 
 // TODO: investigate (gw)
 //#define configOVERRIDE_DEFAULT_TICK_CONFIGURATION    1

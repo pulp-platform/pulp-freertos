@@ -42,7 +42,7 @@
 #include <task.h>
 
 /* PULPissimo includes. */
-/* TODO */
+#include "system_pulpissimo_ri5cy.h"
 
 /******************************************************************************
  * This project provides two demo applications.  A simple blinky style project,

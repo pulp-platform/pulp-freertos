@@ -55,7 +55,7 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
 
-
+#include "FreeRTOSConfig.h"
 /* Define clock source values */
 // TODO: check
 //#define CPU_XTAL_CLK_HZ                 8000000u            /* Value of the external crystal or oscillator clock frequency in Hz */
@@ -66,9 +66,11 @@ extern "C" {
 // #define SYSTEM_SMC_PMPROT_VALUE        0xABu               /* SMC_PMPROT */
 // #define SYSTEM_SMC_PMCTRL_VALUE        0x0u                /* SMC_PMCTRL */
 
-#define DEFAULT_SYSTEM_CLOCK           50000000u           /* Default System clock value */
 
-
+/**
+ * Allocate heap to special section
+ */
+ __attribute__ ((section(".heap"))) uint8_t ucHeap[ configTOTAL_HEAP_SIZE ];
 
 /**
  * @brief System clock frequency (core clock)

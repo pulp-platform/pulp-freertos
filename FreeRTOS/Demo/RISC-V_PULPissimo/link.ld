@@ -25,6 +25,7 @@ SECTIONS
   __stack_size = DEFINED(__stack_size) ? __stack_size : 0x800;
   PROVIDE(__stack_size = __stack_size);
   __heap_size = DEFINED(__heap_size) ? __heap_size : 0x400;
+  PROVIDE(__heap_size = __heap_size);
 
   /*
    * L2 PRIVATE BANK0
@@ -185,10 +186,12 @@ SECTIONS
   .heap : ALIGN(16)
   {
     __heap_start = .;
-    . += __heap_size;
+    /* . += __heap_size; */
+    /* __heap_end = .; */
+    /* . = ALIGN(16); */
+    *(.heap)
     __heap_end = .;
-    . = ALIGN(16);
-    _heap_end = __heap_end;
+    ASSERT((__heap_start + __heap_size < __heap_end), "Error: Heap is too large");
   } > L2
 
 
