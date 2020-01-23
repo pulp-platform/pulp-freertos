@@ -88,10 +88,12 @@
  * See http://www.freertos.org/a00110.html.
  *----------------------------------------------------------*/
 
+#include <stddef.h>
+
 /* Ensure stdint is only used by the compiler, and not the assembler. */
 #if defined( __ICCARM__ ) || defined( __CC_ARM ) || defined( __GNUC__ )
-	extern uint32_t SystemCoreClock;
     #include <stdint.h>
+	extern uint32_t SystemCoreClock;
 #endif
 
 #define configCLINT_BASE_ADDRESS		 0 /* There is no CLINT so the base address must be set to 0. */
