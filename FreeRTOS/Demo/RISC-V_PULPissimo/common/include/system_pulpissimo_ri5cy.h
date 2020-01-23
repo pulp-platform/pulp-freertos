@@ -56,6 +56,38 @@ extern "C" {
 #include <stdbool.h>
 
 #include "FreeRTOSConfig.h"
+
+/* PULPissimo defs */
+#define PULPISSIMO
+
+#define ARCHI_FPGA_FREQUENCY 5000000
+
+#define ARCHI_REF_CLOCK_LOG2 15
+#define ARCHI_REF_CLOCK	     (1 << ARCHI_REF_CLOCK_LOG2)
+
+/* hardware modules */
+#define ARCHI_NUM_TIMER 1
+#define ARCHI_NUM_FLL 2
+
+/* TODO: clean up those macros */
+#define ARCHI_FPGA_FREQUENCY 5000000
+
+#define ARCHI_REF_CLOCK_LOG2 15
+#define ARCHI_REF_CLOCK	     (1 << ARCHI_REF_CLOCK_LOG2)
+
+#define ARCHI_NB_FLL	  2
+#define RT_FREQ_NB_DOMAIN 2
+
+#define __RT_FLL_CL	2
+#define __RT_FLL_PERIPH 1
+#define __RT_FLL_FC	0
+
+#define __RT_FREQ_DOMAIN_FC	0
+#define __RT_FREQ_DOMAIN_CL	2
+#define __RT_FREQ_DOMAIN_PERIPH 1
+#define RT_FREQ_NB_DOMAIN	2
+
+
 /* Define clock source values */
 // TODO: check
 //#define CPU_XTAL_CLK_HZ                 8000000u            /* Value of the external crystal or oscillator clock frequency in Hz */

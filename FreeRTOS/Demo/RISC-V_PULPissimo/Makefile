@@ -55,15 +55,19 @@ RTOS_SRCS += $(addprefix $(RTOS_ROOT)/Source/portable/GCC/RISC-V/,\
 RTOS_SRCS += $(addprefix $(RTOS_ROOT)/Source/portable/MemMang/,\
 		heap_4.c)
 
-# c runtime and initi
+# c runtime and init
 BOOT_SRCS = crt0.S vectors.S
+
+# drivers and runtime
+DRIVER_SRCS += common/system_pulpissimo_ri5cy.c common/fll.c common/timer_irq.c
+DRIVER_SRCS += common/irq.c
 
 # application/user specific code
 #USER_SRCS = main.c full_demo/main_full.c full_demo/RegTest.S blinky_demo/main_blinky.c
 USER_SRCS = main.c blinky_demo/main_blinky.c
 
 # derived variables for compiling
-SRCS = $(RTOS_SRCS) $(BOOT_SRCS) $(USER_SRCS)
+SRCS = $(RTOS_SRCS) $(BOOT_SRCS) $(DRIVER_SRCS) $(USER_SRCS)
 OBJS = $(addsuffix .o, $(basename $(SRCS))) # .S and .c replaced
 DEPS = $(addsuffix .d, $(basename $(SRCS)))
 
