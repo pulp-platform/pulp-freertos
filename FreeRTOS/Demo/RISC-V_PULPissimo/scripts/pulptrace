@@ -9,8 +9,8 @@
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
 #
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -20,9 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# Author: Robert Balas (balasr@iis.ee.ethz.ch)
+
 import argparse
 import sys
 import re
+import os
 import subprocess
 from functools import reduce
 from collections import OrderedDict
@@ -57,7 +60,7 @@ elf_filename = args.elf_file
 
 
 regs_map = [("x0", "zero"), ("x1", "ra"), ("x2", "sp"),
-            ("x3", "gp"), ("x4", "tp"), ("x5" , "t0"),
+            ("x3", "gp"), ("x4", "tp"), ("x5", "t0"),
             ("x6", "t1"), ("x7", "t2"), ("x8", "s0"),
             ("x9", "s1"), ("x10", "a0"), ("x11", "a1"),
             ("x12", "a2"), ("x13", "a3"), ("x14", "a4"),
@@ -85,10 +88,16 @@ regs_alias = OrderedDict(reversed(regs_map))
 objdump_insns = dict()
 # parse objdump output and generate hashmap of address and insn string
 
-with subprocess.Popen(["riscv32-unknown-elf-objdump", "--prefix-addresses"]
-                       + (['-Mnumeric'] if args.numeric else [])
-                       + (['-Mno-aliases'] if args.no_aliases else [])
-                       + ["-d", elf_filename],
+objdump_bin = ''
+if os.getenv('RISCV'):
+    objdump_bin = os.getenv('RISCV') + '/bin/' + 'riscv32-unknown-elf-objdump'
+else:
+    objdump_bin = 'riscv32-unknown-elf-objdump'
+
+with subprocess.Popen([objdump_bin, "--prefix-addresses"]
+                      + (['-Mnumeric'] if args.numeric else [])
+                      + (['-Mno-aliases'] if args.no_aliases else [])
+                      + ["-d", elf_filename],
                       stdout=subprocess.PIPE) as proc:
     for line in proc.stdout:
         line = line.decode("ascii")
@@ -105,6 +114,7 @@ with subprocess.Popen(["riscv32-unknown-elf-objdump", "--prefix-addresses"]
 
 def truncate_string(string, length):
     return string[:length-2] + (string[length-2:] and '..')
+
 
 # redirect to stdout to file if desired
 sys.stdout = open(args.output, "w") if args.output else sys.stdout
@@ -135,8 +145,8 @@ with open(trace_filename, "r") as f:
         insn_addr = int(addr.replace("x", "0"), 16)
 
         if not(args.numeric):
-            # TODO: this might not be reliable if we have values like x10 in the
-            # registers
+            # TODO: this might not be reliable if we have values like x10 in
+            # the registers
             reg_vals = reduce(lambda a, kv: a.replace(*kv),
                               regs_alias.items(), reg_vals)
 
@@ -165,8 +175,8 @@ with open(trace_filename, "r") as f:
                                   regs_alias.items(), insn_str)
 
             print("%08x: %-40s %-40s %-20s" % (insn_addr,
-                                               "", # no objdump info
-                                               insn_str, # insn name
+                                               "",  # no objdump info
+                                               insn_str,  # insn name
                                                reg_vals))
 
 if args.output:
