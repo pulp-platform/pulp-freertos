@@ -68,11 +68,6 @@ extern "C" {
 
 
 /**
- * Allocate heap to special section
- */
- __attribute__ ((section(".heap"))) uint8_t ucHeap[ configTOTAL_HEAP_SIZE ];
-
-/**
  * @brief System clock frequency (core clock)
  *
  * The system clock frequency supplied to the SysTick timer and the processor

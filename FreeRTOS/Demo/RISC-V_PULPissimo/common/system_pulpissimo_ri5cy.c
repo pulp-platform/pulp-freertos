@@ -45,10 +45,17 @@
  * (PLL) that is part of the microcontroller device.
  */
 
+#include "FreeRTOSConfig.h"
 
 #ifndef DISABLE_WDOG
   #define DISABLE_WDOG                 1
 #endif
+
+
+/**
+ * Allocate heap to special section
+ */
+ __attribute__ ((section(".heap"))) uint8_t ucHeap[ configTOTAL_HEAP_SIZE ];
 
 
 uint32_t SystemCoreClock = DEFAULT_SYSTEM_CLOCK;
@@ -57,7 +64,7 @@ uint32_t SystemCoreClock = DEFAULT_SYSTEM_CLOCK;
 void SystemInit (void) {
 
     /* Deactivate all soc events as they are active by default */
-    SOCEU->FC_MASK_MSB = 0xFFFFFFFF;
+    //SOCEU->FC_MASK_MSB = 0xFFFFFFFF;
 
 //    SOCEU->FC_MASK_LSB = 0xFFFFFFFF;
 
