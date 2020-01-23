@@ -43,6 +43,9 @@
 
 /* PULPissimo includes. */
 #include "system_pulpissimo_ri5cy.h"
+#include "timer_irq.h"
+#include "fll.h"
+#include "irq.h"
 
 /******************************************************************************
  * This project provides two demo applications.  A simple blinky style project,
@@ -113,6 +116,7 @@ static void prvSetupHardware( void )
 // gpio_pin_config_t mGpioPinConfigStruct;
 
 	/* Init board hardware. */
+	pulp_fll_init();
 //	BOARD_InitPins();
 //	BOARD_BootClockRUN();
 //	BOARD_InitDebugConsole();
@@ -198,13 +202,15 @@ void vApplicationTickHook( void )
 
 void vPortSetupTimerInterrupt( void )
 {
-//extern void SystemSetupSystick(uint32_t tickRateHz, uint32_t intPriority );
+//extern int timer_irq_init(uint32_t ticks);
 
-	/* No CLINT so use the LPIT (Low Power Interrupt Timer) to generate the tick
-	interrupt. */
+	/* No CLINT so use the PULP timer to generate the tick interrupt. */
 // TODO: timer interrupts
 //	CLOCK_SetIpSrc( kCLOCK_Lpit0, kCLOCK_IpSrcFircAsync );
 //	SystemSetupSystick( configTICK_RATE_HZ, configKERNEL_INTERRUPT_PRIORITY - 1 );
+	timer_irq_init( ARCHI_REF_CLOCK / configTICK_RATE_HZ );
+	/* TODO: allow setting interrupt priority (to super high(?)) */
+	irq_enable( IRQ_FC_EVT_TIMER0_LO );
 }
 /*-----------------------------------------------------------*/
 
@@ -245,6 +251,7 @@ void SystemIrqHandler( uint32_t mcause )
 // 	(void)(EVENT_UNIT->INTPTPENDCLEAR);
 //
 // 	/* Now call the real irq handler for ulInterruptNumber */
+	/* TODO: user registered interrupts/driver interrupts !! */
 // 	isrTable[ ulInterruptNumber ]();
 }
 
