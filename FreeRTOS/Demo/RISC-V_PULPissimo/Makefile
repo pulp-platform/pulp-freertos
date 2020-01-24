@@ -43,6 +43,10 @@ LINKERSCRIPT            = link.ld
 
 PROG			= rtosdemo
 
+# simulation
+SIMDIR                  = sim
+VSIM                    = vsim
+
 RTOS_ROOT = ../../../FreeRTOS
 
 # general OS
@@ -149,7 +153,49 @@ $(PROG).siz: $(PROG)
 	@echo 'Finished building: $@'
 	@echo ' '
 
+# run
+ifndef VSIM_PATH
+$(error "VSIM_PATH is not set. Make sure your ran `source setup/vsim.sh` \
+in your PULP/PULPissimo repository")
+endif
+
+# creating symlink farm because PULP/PULPissimo relies on hardcoded paths
+$(SIMDIR)/modelsim.ini:
+	ln -s $(VSIM_PATH)/modelsim.ini $@
+
+$(SIMDIR)/boot:
+	ln -s $(VSIM_PATH)/boot $@
+
+$(SIMDIR)/tcl_files:
+	ln -s $(VSIM_PATH)/tcl_files $@
+
+$(SIMDIR)/waves:
+	ln -s $(VSIM_PATH)/waves $@
+
+$(SIMDIR)/vectors/stim.txt: $(PROG).stim
+	ln -rs $^ $@
+
+run: $(SIMDIR)/modelsim.ini $(SIMDIR)/boot $(SIMDIR)/tcl_files \
+	$(SIMDIR)/waves $(SIMDIR)/vectors/stim.txt
+ifdef gui
+	cd $(SIMDIR) && \
+	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c008080 -gLOAD_L2=JTAG \
+		-dpicpppath $(CXX) -permit_unmatched_virtual_intf \
+		-gBAUDRATE=115200" && \
+	export VOPT_ACC_ENA="YES" && \
+	$(VSIM) -64 -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
+		-do 'source $(VSIM_PATH)/tcl_files/run.tcl; '
+else
+	cd $(SIMDIR) && \
+	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c008080 -gLOAD_L2=JTAG \
+		-dpicpppath $(CXX) -permit_unmatched_virtual_intf \
+		-gBAUDRATE=115200" && \
+	$(VSIM) -64 -c -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
+		-do 'source $(VSIM_PATH)/tcl_files/run.tcl; run_and_exit;'
+endif
+
 
 .PHONY: clean
 clean:
-	rm -f $(OBJS) $(PROG) $(DEPS) $(PROG).hex $(PROG).lst $(PROG).siz $(PROG).stim
+	rm -f $(OBJS) $(PROG) $(DEPS) $(PROG).hex $(PROG).lst $(PROG).siz \
+		$(PROG).stim $(SIMDIR)/vectors/stim.txt
