@@ -154,11 +154,6 @@ $(PROG).siz: $(PROG)
 	@echo ' '
 
 # run
-ifndef VSIM_PATH
-$(error "VSIM_PATH is not set. Make sure your ran `source setup/vsim.sh` \
-in your PULP/PULPissimo repository")
-endif
-
 # creating symlink farm because PULP/PULPissimo relies on hardcoded paths
 $(SIMDIR)/modelsim.ini:
 	ln -s $(VSIM_PATH)/modelsim.ini $@
@@ -177,6 +172,10 @@ $(SIMDIR)/vectors/stim.txt: $(PROG).stim
 
 run: $(SIMDIR)/modelsim.ini $(SIMDIR)/boot $(SIMDIR)/tcl_files \
 	$(SIMDIR)/waves $(SIMDIR)/vectors/stim.txt
+ifndef VSIM_PATH
+	$(error "VSIM_PATH is not set. Make sure your ran `source setup/vsim.sh` \
+	in your PULP/PULPissimo repository")
+endif
 ifdef gui
 	cd $(SIMDIR) && \
 	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c008080 -gLOAD_L2=JTAG \
