@@ -30,6 +30,7 @@ _start:
 
 /* set vector table address */
 	la a0, __vector_start
+	or a0, a0, 1 /* enable vectored mode (hardcoded anyway for RI5CY) */
 	csrw mtvec, a0
 
 /* clear the bss segment */
