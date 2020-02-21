@@ -19,19 +19,21 @@ CC			= $(RISCV_PREFIX)gcc
 OBJCOPY			= $(RISCV_PREFIX)objcopy
 OBJDUMP			= $(RISCV_PREFIX)objdump
 SIZE			= $(RISCV_PREFIX)size
-# CFLAGS			+= -std=gnu11 -fsanitize=address \
-#			-fsanitize=undefined -fsanitize=leak \
-#			-Wall -Wextra -g
-# CFLAGS			+= -std=gnu11 -fsanitize=address \
-# 			-fsanitize=undefined -fsanitize=leak \
-# 			-Wall -Wextra \
-# 			-march=rv32im -msmall-data-limit=8 -mno-save-restore -O0 \
-# 			-fsigned-char -ffunction-sections -fdata-sections  -g3
-
 CFLAGS			+= -std=gnu11 \
-			-Wall -Wextra \
-			-march=rv32im -msmall-data-limit=8 -mno-save-restore -O0 \
-			-fsigned-char -ffunction-sections -fdata-sections
+				-Wall -Wextra \
+				-march=rv32im -msmall-data-limit=8 -mno-save-restore -O0 \
+				-fsigned-char -ffunction-sections -fdata-sections
+# check if we want a release build
+ifndef NDEBUG
+CFLAGS 			+= -g3
+else
+CFLAGS			+= -DNDEBUG
+endif
+
+# check if we want to debug with memory sanitiszers
+ifdef SANITIZE
+CFLAGS                  += -fsanitize=address -fsanitize=undefined -fsanitize=leak
+endif
 
 CPPFLAGS		= -DNOT_MSCC_STDIO_THRU_CORE_UART_APB -DSYS_CLK_FREQ=66000000 \
 			-DmainCREATE_SIMPLE_BLINKY_DEMO_ONLY=1
