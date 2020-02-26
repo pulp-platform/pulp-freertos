@@ -19,7 +19,8 @@ CC			= $(RISCV_PREFIX)gcc
 OBJCOPY			= $(RISCV_PREFIX)objcopy
 OBJDUMP			= $(RISCV_PREFIX)objdump
 SIZE			= $(RISCV_PREFIX)size
-CFLAGS			+= -std=gnu11 \
+CFLAGS			+= \
+				-std=gnu11 \
 				-Wall -Wextra \
 				-march=rv32im -msmall-data-limit=8 -mno-save-restore -O0 \
 				-fsigned-char -ffunction-sections -fdata-sections
@@ -66,7 +67,7 @@ BOOT_SRCS = crt0.S vectors.S
 
 # drivers and runtime
 DRIVER_SRCS += common/system_pulpissimo_ri5cy.c common/fll.c common/timer_irq.c
-DRIVER_SRCS += common/irq.c
+DRIVER_SRCS += common/irq.c common/soc_eu.c
 
 # application/user specific code
 #USER_SRCS = main.c full_demo/main_full.c full_demo/RegTest.S blinky_demo/main_blinky.c
@@ -170,6 +171,7 @@ $(SIMDIR)/waves:
 	ln -s $(VSIM_PATH)/waves $@
 
 $(SIMDIR)/vectors/stim.txt: $(PROG).stim
+	mkdir -p -- "$$(dirname $@)"
 	ln -rs $^ $@
 
 run: $(SIMDIR)/modelsim.ini $(SIMDIR)/boot $(SIMDIR)/tcl_files \
