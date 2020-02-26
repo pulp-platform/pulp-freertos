@@ -40,6 +40,7 @@ void irq_disable(uint32_t mask)
 	writew(mask,
 	       (uint32_t *)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_CLEAR_OFFSET));
 }
+
 /* utility functions for the core level interrupt (CLINT) described in the
  * RISC-V privileged specification */
 
@@ -53,4 +54,12 @@ uint32_t irq_clint_enable()
 {
 	uint32_t val = csr_read_set(CSR_MSTATUS, MSTATUS_IE);
 	return val;
+}
+
+void pulp_irq_init()
+{
+	/* the debug module could have enabled irq so we disable it during
+	 * initialization
+	 */
+	irq_disable(0xffffffff);
 }

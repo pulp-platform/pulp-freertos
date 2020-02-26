@@ -116,7 +116,8 @@ static void prvSetupHardware( void )
 // gpio_pin_config_t mGpioPinConfigStruct;
 
 	/* Init board hardware. */
-	pulp_fll_init();
+	pulp_sys_init();
+
 //	BOARD_InitPins();
 //	BOARD_BootClockRUN();
 //	BOARD_InitDebugConsole();
