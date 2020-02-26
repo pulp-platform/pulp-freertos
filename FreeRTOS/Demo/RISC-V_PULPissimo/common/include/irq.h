@@ -89,4 +89,12 @@
 #define IRQ_FC_EVT_PERIPH0 BIT(30)
 #define IRQ_FC_EVT_PERIPH1 BIT(31)
 
+/* TODO: doc */
+void irq_mask(uint32_t mask);
+void irq_enable(uint32_t mask);
+void irq_disable(uint32_t mask);
+uint32_t irq_clint_disable();
+uint32_t irq_clint_enable();
+void pulp_irq_init();
+
 #endif

@@ -143,4 +143,9 @@
 #define SOC_CL_MASK(x) (SOC_CL_FIRST_MASK + (x)*4)
 #define SOC_PR_MASK(x) (SOC_PR_FIRST_MASK + (x)*4)
 
+/* TODO: doc */
+void soc_eu_mask_set(uint32_t offset, uint32_t mask);
+uint32_t soc_eu_mask_get(uint32_t offset);
+void pulp_soc_eu_event_init();
+
 #endif
