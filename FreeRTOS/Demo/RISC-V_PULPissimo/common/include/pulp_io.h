@@ -45,10 +45,10 @@ static inline void writew(uint32_t val, volatile uint32_t *addr)
 	asm volatile("sw %0, 0(%1)" : : "r"(val), "r"(addr));
 }
 
-// static inline void writed( uint64_t val, volatile uint32_t *addr )
-// {
-// 	asm volatile( "sd %0, 0(%1)" : : "r"( val ), "r"( addr ) );
-// }
+static inline void writed( uint64_t val, volatile uint32_t *addr )
+{
+	asm volatile( "sd %0, 0(%1)" : : "r"( val ), "r"( addr ) );
+}
 
 /* generic I/O read */
 static inline uint8_t readb(const volatile uint32_t *addr)
@@ -75,11 +75,11 @@ static inline uint32_t readw(const volatile uint32_t *addr)
 	return val;
 }
 
-// static inline uint64_t readd( const volatile uint32_t *addr )
-// {
-// 	uint64_t val;
-//
-// 	asm volatile( "ld %0, 0(%1)" : "=r"( val ) : "r"( addr ) );
-// 	return val;
-// }
+static inline uint64_t readd( const volatile uint32_t *addr )
+{
+	uint64_t val;
+
+	asm volatile( "ld %0, 0(%1)" : "=r"( val ) : "r"( addr ) );
+	return val;
+}
 #endif
