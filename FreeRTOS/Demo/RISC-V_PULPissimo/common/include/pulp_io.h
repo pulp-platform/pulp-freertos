@@ -59,7 +59,7 @@ static inline uint8_t readb(const volatile uint32_t *addr)
 	return val;
 }
 
-static inline uint8_t readh(const volatile uint32_t *addr)
+static inline uint16_t readh(const volatile uint32_t *addr)
 {
 	uint16_t val;
 
