@@ -20,5 +20,23 @@
 
 #include <stdint.h>
 #include "pulp_mem_map.h"
-#include "eu.h"
+#include "pulp_io.h"
+#include "soc_eu.h"
 
+void soc_eu_mask_set(uint32_t offset, uint32_t mask)
+{
+	writew(mask, PULP_SOC_EU_ADDR + offset);
+}
+
+uint32_t soc_eu_mask_get(uint32_t offset)
+{
+	return readw(PULP_SOC_EU_ADDR + offset);
+}
+
+void pulp_soc_eu_event_init()
+{
+	/* deactivate all soc events */
+	for (int i = 0; i < SOC_NB_EVENT_REGS; i++) {
+		soc_eu_mask_set(SOC_FC_FIRST_MASK + i * 4, 0xffffffff);
+	}
+}
