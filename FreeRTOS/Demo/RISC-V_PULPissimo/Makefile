@@ -174,6 +174,7 @@ $(SIMDIR)/vectors/stim.txt: $(PROG).stim
 	mkdir -p -- "$$(dirname $@)"
 	ln -rs $^ $@
 
+.PHONY: run
 run: $(SIMDIR)/modelsim.ini $(SIMDIR)/boot $(SIMDIR)/tcl_files \
 	$(SIMDIR)/waves $(SIMDIR)/vectors/stim.txt
 ifndef VSIM_PATH
@@ -196,6 +197,20 @@ else
 	$(VSIM) -64 -c -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
 		-do 'source $(VSIM_PATH)/tcl_files/run.tcl; run_and_exit;'
 endif
+
+# analysis scripts
+sim/trace_fc_postproc.log: sim/trace_core_1f_0.log rtosdemo
+	scripts/pulptrace $^ -o $@
+
+analyze: sim/trace_fc_postproc.log
+
+# backup current simulation folder
+.PHONY: backup
+backup:
+	@STAMP=sim-$$(git rev-parse --short HEAD)-$$(date +"%Y-%m-%d-%H-%M-%S"); \
+	cp -r sim/ $$STAMP; \
+	cp rtosdemo rtosdemo.lst $$STAMP; \
+	echo "generated backup $$STAMP";
 
 
 .PHONY: clean
