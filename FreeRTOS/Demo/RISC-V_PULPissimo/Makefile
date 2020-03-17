@@ -22,13 +22,13 @@ SIZE			= $(RISCV_PREFIX)size
 CFLAGS			+= \
 				-std=gnu11 \
 				-Wall -Wextra \
-				-march=rv32im -msmall-data-limit=8 -mno-save-restore -O0 \
+				-march=rv32im -msmall-data-limit=8 -mno-save-restore \
 				-fsigned-char -ffunction-sections -fdata-sections
 # check if we want a release build
 ifndef NDEBUG
-CFLAGS 			+= -g3
+CFLAGS 			+= -O0 -g3
 else
-CFLAGS			+= -DNDEBUG
+CFLAGS			+= -O2 -g3 -DNDEBUG
 endif
 
 # check if we want to debug with memory sanitiszers
