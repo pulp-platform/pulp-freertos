@@ -12,43 +12,108 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Description: Makefile to build the blinky and other demo applications. Note
+# that it supports the usual GNU Make implicit variables e.g. CC, CFLAGS,
+# CPPFLAGS etc. Consult the GNU Make manual for move information about these.
 
-RISCV			?= $(HOME)/.riscv
-RISCV_PREFIX		?= $(RISCV)/bin/riscv32-unknown-elf-
-CC			= $(RISCV_PREFIX)gcc
-OBJCOPY			= $(RISCV_PREFIX)objcopy
-OBJDUMP			= $(RISCV_PREFIX)objdump
-SIZE			= $(RISCV_PREFIX)size
-CFLAGS			+= \
-				-std=gnu11 \
-				-Wall -Wextra \
-				-march=rv32im -msmall-data-limit=8 -mno-save-restore \
-				-fsigned-char -ffunction-sections -fdata-sections
+# Author: Robert Balas (balasr@iis.ee.ethz.ch)
+
+# Compile options (passed to make) e.g. make NDEBUG=yes
+# NDEBUG    Make release build
+# LTO       Enable link time optimization
+# SANITIZE  Enable gcc sanitizer for debugging memory access problems
+# STACKDBG  Enable stack debugging information and warnings
+
+RISCV		?= $(HOME)/.riscv
+RISCV_PREFIX	?= $(RISCV)/bin/riscv32-unknown-elf-
+CC		= $(RISCV_PREFIX)gcc
+OBJCOPY		= $(RISCV_PREFIX)objcopy
+OBJDUMP		= $(RISCV_PREFIX)objdump
+SIZE		= $(RISCV_PREFIX)size
+
+# CFLAGS defaults explained
+#
+# -std=gnu11
+#
+# This is a c11 project with gnu extension
+#
+# -mno-save-restore
+#
+# Do not use function calls for the prologue/epilogue of functions. This is
+# debatable.
+#
+# -msmall-data-limit
+#
+# Limit data being put into the small data sections. Needs more exploration.
+#
+# -ffunction-sections -fdata-sections:
+#
+# Each function and data element will get its own section. This allows the
+# linker to mark certain sections as unused which in turn will be deleted by
+# feeding --gc-sections to the linker. Shrinks binary.
+#
+# -Wall -Wextra -Wshadow -Wformat=2 -Wundef -Wconversion
+#
+# Good set of warnings preventing some common bugs (integer promotion issues,
+# shadowed variables, undefined macros etc.)
+#
+# -Og and -Os
+#
+# Debug builds are -Og. Gcc promises to make debugabble builds. Release builds
+# are -Os which is basically -O2 withouth optimizations that causes code bloat.
+
+CFLAGS = \
+	-march=rv32imc -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore \
+	-fsigned-char -ffunction-sections -fdata-sections \
+	-std=gnu11 \
+	-Wall -Wextra -Wshadow -Wformat=2 -Wundef -Wconversion
+
+ASFLAGS = \
+	-march=rv32imc -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore \
+	-fsigned-char -ffunction-sections -fdata-sections \
+	-x assembler-with-cpp \
+	-DportasmHANDLE_INTERRUPT=SystemIrqHandler
+
+CPPFLAGS = -DNOT_MSCC_STDIO_THRU_CORE_UART_APB -DSYS_CLK_FREQ=66000000 \
+			-DmainCREATE_SIMPLE_BLINKY_DEMO_ONLY=1
+
+LDFLAGS	= -T link.ld -nostartfiles -Wl,--gc-sections --specs=nano.specs \
+				-Wl,-Map,$@.map # -Wl,--print-gc-sections
+LDLIBS  =
+
 # check if we want a release build
 ifndef NDEBUG
-CFLAGS 			+= -O0 -g3
+CFLAGS 	+= -Og -g3
+ASFLAGS += -Og -g3
 else
-CFLAGS			+= -O2 -g3 -DNDEBUG
+CFLAGS	 += -Os -g3
+CPPFLAGS += -DNDEBUG
+ASFLAGS  += -Os -g3
+endif
+
+# stack debugging information
+ifdef STACKDBG
+CFLAGS += -fstack-usage -Wstack-usage
 endif
 
 # check if we want to debug with memory sanitiszers
 ifdef SANITIZE
-CFLAGS                  += -fsanitize=address -fsanitize=undefined -fsanitize=leak
+CFLAGS += -fsanitize=address -fsanitize=undefined -fsanitize=leak
 endif
 
-CPPFLAGS		= -DNOT_MSCC_STDIO_THRU_CORE_UART_APB -DSYS_CLK_FREQ=66000000 \
-			-DmainCREATE_SIMPLE_BLINKY_DEMO_ONLY=1
+# link time optimization
+# note that the gnu manpage recommends passing the optimization flags used at
+# compile time also to the linker when using LTO (weird!) which is why we have
+# CFLAGS in the linker target
+ifdef LTO
+CFLAGS += -flto
+endif
 
-LDFLAGS			=
-LDLIBS			=
-
-LINKERSCRIPT            = link.ld
-
-PROG			= rtosdemo
+PROG = rtosdemo
 
 # simulation
-SIMDIR                  = sim
-VSIM                    = vsim
+SIMDIR = sim
+VSIM   = vsim
 
 RTOS_ROOT = ../../../FreeRTOS
 
@@ -78,13 +143,16 @@ SRCS = $(RTOS_SRCS) $(BOOT_SRCS) $(DRIVER_SRCS) $(USER_SRCS)
 OBJS = $(addsuffix .o, $(basename $(SRCS))) # .S and .c replaced
 DEPS = $(addsuffix .d, $(basename $(SRCS)))
 
-CC_INCLUDES = $(addprefix -I, "$(RTOS_ROOT)/Source/include" \
+# other possibly generated files
+SU   = $(addsuffix .su, $(basename $(SRCS)))
+
+CPPFLAGS += $(addprefix -I, "$(RTOS_ROOT)/Source/include" \
 		"$(RTOS_ROOT)/Demo/Common/include" \
 		"$(RTOS_ROOT)/Source/portable/GCC/RISC-V" \
 		"$(RTOS_ROOT)/Demo/RISC-V_PULPissimo" \
 		"$(RTOS_ROOT)/Demo/RISC-V_PULPissimo/common/include")
 
-AS_INCLUDES = -I"$(RTOS_ROOT)/Source/portable/GCC/RISC-V/chip_specific_extensions/PULPissimo"
+ASFLAGS  += -I"$(RTOS_ROOT)/Source/portable/GCC/RISC-V/chip_specific_extensions/PULPissimo"
 
 PLPSTIM = scripts/pulpstim
 
@@ -101,29 +169,21 @@ all: $(PROG) $(PROG).stim misc-info
 %.o: %.S
 	@echo 'Building file: $<'
 	@echo 'Invoking: GNU RISC-V Cross Assembler'
-	$(CC) -march=rv32im -msmall-data-limit=8 -mno-save-restore -O0 \
-		-fsigned-char -ffunction-sections -fdata-sections  -g3 \
-		-x assembler-with-cpp \
-		-DportasmHANDLE_INTERRUPT=SystemIrqHandler \
-		$(AS_INCLUDES) \
-		-c -o "$@" "$<"
+	$(CC) $(ASFLAGS) -c -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
 %.o: %.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: GNU RISC-V Cross C Compiler'
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(CC_INCLUDES) -c -o $@ $<
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 	@echo 'Finished building: $<'
 	@echo ' '
 
 $(PROG): $(OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GNU RISC-V Cross C Linker'
-	$(CC) $(CFLAGS) $(CPPFLAGS) -T $(LINKERSCRIPT) \
-		-nostartfiles -Xlinker --gc-sections -Wl,-Map,$(PROG).map \
-		--specs=nano.specs $(CC_INCLUDES) -o $@ \
-		$(LDFLAGS) $^ $(LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ $(LDLIBS) -o $@
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -134,7 +194,7 @@ misc-info: $(PROG).hex $(PROG).lst $(PROG).siz
 $(PROG).stim: $(PROG)
 	@echo 'Invoking: plpstim script'
 	$(PLPSTIM) -o $@ $<
-	@echo 'Finished'
+	@echo 'Finished building: $@'
 	@echo ' '
 
 $(PROG).hex: $(PROG)
@@ -156,7 +216,7 @@ $(PROG).siz: $(PROG)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-# run
+# simulator specific targets
 # creating symlink farm because PULP/PULPissimo relies on hardcoded paths
 $(SIMDIR)/modelsim.ini:
 	ln -s $(VSIM_PATH)/modelsim.ini $@
@@ -215,5 +275,6 @@ backup:
 
 .PHONY: clean
 clean:
-	rm -f $(OBJS) $(PROG) $(DEPS) $(PROG).hex $(PROG).lst $(PROG).siz \
+	rm -f $(OBJS) $(PROG) $(DEPS) $(SU) \
+		$(PROG).hex $(PROG).lst $(PROG).siz \
 		$(PROG).stim $(SIMDIR)/vectors/stim.txt
