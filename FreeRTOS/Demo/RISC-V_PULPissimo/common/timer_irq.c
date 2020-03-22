@@ -42,13 +42,12 @@ int timer_irq_init(uint32_t ticks)
 	 * 64-bit timer.
 	 *
 	 * Enable timer, use 32khz ref clock as source. Timer will reset
-	 * automatically to zero after causing an interrupt. We still need to
-	 * configure the event unit to propagate the interrupt to the core.
+	 * automatically to zero after causing an interrupt.
 	 */
 	writew(TIMER_CFG_LO_ENABLE_MASK | TIMER_CFG_LO_RESET_MASK |
 		       TIMER_CFG_LO_CCFG_MASK | TIMER_CFG_LO_MODE_MASK |
 		       TIMER_CFG_LO_IRQEN_MASK,
-	       (uint32_t *)(PULP_FC_TIMER_ADDR + TIMER_CFG_LO_OFFSET));
+	       (uintptr_t)(PULP_FC_TIMER_ADDR + TIMER_CFG_LO_OFFSET));
 
 	return 0;
 }
@@ -57,8 +56,8 @@ int timer_irq_set_timeout(uint32_t ticks, bool idle)
 {
 	(void)idle;
 	/* fast reset, value doesn't matter */
-	writew(1, (uint32_t *)(PULP_FC_TIMER_ADDR + TIMER_RESET_LO_OFFSET));
-	writew(ticks, (uint32_t *)(PULP_FC_TIMER_ADDR + TIMER_CMP_LO_OFFSET));
+	writew(1, (uintptr_t)(PULP_FC_TIMER_ADDR + TIMER_RESET_LO_OFFSET));
+	writew(ticks, (uintptr_t)(PULP_FC_TIMER_ADDR + TIMER_CMP_LO_OFFSET));
 	return 0;
 }
 
@@ -70,5 +69,5 @@ uint32_t timer_irq_clock_elapsed()
 
 uint32_t timer_irq_cycle_get_32()
 {
-	return readw((uint32_t *)(PULP_FC_TIMER_ADDR + TIMER_CNT_LO_OFFSET));
+	return readw((uintptr_t)(PULP_FC_TIMER_ADDR + TIMER_CNT_LO_OFFSET));
 }

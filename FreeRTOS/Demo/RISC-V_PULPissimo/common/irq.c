@@ -27,18 +27,18 @@
 /* utility functions for PULPs external interrupt controller */
 void irq_mask(uint32_t mask)
 {
-	writew(mask, (uint32_t *)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_OFFSET));
+	writew(mask, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_OFFSET));
 }
 
 void irq_enable(uint32_t mask)
 {
-	writew(mask, (uint32_t *)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_SET_OFFSET));
+	writew(mask, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_SET_OFFSET));
 }
 
 void irq_disable(uint32_t mask)
 {
 	writew(mask,
-	       (uint32_t *)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_CLEAR_OFFSET));
+	       (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_CLEAR_OFFSET));
 }
 
 /* utility functions for the core level interrupt (CLINT) described in the

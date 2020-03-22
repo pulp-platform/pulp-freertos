@@ -100,7 +100,7 @@ unsigned int __fll_init(int fll)
 	//rt_trace(RT_TRACE_INIT, "Initializing FLL (fll: %d)\n", fll);
 
 	fll_reg_conf1_t reg1 = {
-		.raw = readw((uint32_t *)(PULP_FLL_ADDR + FLL_CONF1_OFFSET +
+		.raw = readw((uintptr_t)(PULP_FLL_ADDR + FLL_CONF1_OFFSET +
 					  fll * PULP_FLL_AREA_SIZE))
 	};
 
@@ -108,14 +108,14 @@ unsigned int __fll_init(int fll)
 	if (reg1.mode == 0) {
 		/* Set Clock Ref lock assert count */
 		fll_reg_conf2_t reg2 = {
-			.raw = readw((uint32_t *)(PULP_FLL_ADDR +
+			.raw = readw((uintptr_t)(PULP_FLL_ADDR +
 						  FLL_CONF2_OFFSET +
 						  fll * PULP_FLL_AREA_SIZE))
 		};
 
 		reg2.assert_cycles = 6;
 		reg2.lock_tolerance = 0x50;
-		writew(reg2.raw, (uint32_t *)(PULP_FLL_ADDR + FLL_CONF2_OFFSET +
+		writew(reg2.raw, (uintptr_t)(PULP_FLL_ADDR + FLL_CONF2_OFFSET +
 					      fll * PULP_FLL_AREA_SIZE));
 		/*
 		* In order to lock the fll faster, we first setup an approximated
@@ -127,7 +127,7 @@ unsigned int __fll_init(int fll)
 		//rt_trace(RT_TRACE_INIT, "Priming FLL in open loop (fll: %d)\n",
 		//	 fll);
 		fll_reg_integrator_t reg_int = {
-			.raw = readw((uint32_t *)(PULP_FLL_ADDR +
+			.raw = readw((uintptr_t)(PULP_FLL_ADDR +
 						  FLL_INTEGRATOR_OFFSET +
 						  fll * PULP_FLL_AREA_SIZE))
 		};
@@ -148,13 +148,13 @@ unsigned int __fll_init(int fll)
 #endif
 
 		writew(reg_int.raw,
-		       (uint32_t *)(PULP_FLL_ADDR + FLL_INTEGRATOR_OFFSET +
+		       (uintptr_t)(PULP_FLL_ADDR + FLL_INTEGRATOR_OFFSET +
 				    fll * PULP_FLL_AREA_SIZE));
 
 		/* Lock Fll */
 		reg1.output_lock_enable = 1;
 		reg1.mode = 1;
-		writew(reg1.raw, (uint32_t *)(PULP_FLL_ADDR + FLL_CONF1_OFFSET +
+		writew(reg1.raw, (uintptr_t)(PULP_FLL_ADDR + FLL_CONF1_OFFSET +
 					      fll * PULP_FLL_AREA_SIZE));
 	}
 
@@ -191,7 +191,7 @@ unsigned int __rt_fll_set_freq(int fll, unsigned int frequency)
 	__rt_fll_freq[fll] = real_freq;
 	if (__rt_fll_is_on[fll]) {
 		fll_reg_conf1_t reg1 = {
-			.raw = readw((uint32_t *)(PULP_FLL_ADDR +
+			.raw = readw((uintptr_t)(PULP_FLL_ADDR +
 						  FLL_CONF1_OFFSET +
 						  fll * PULP_FLL_AREA_SIZE))
 		};
@@ -199,7 +199,7 @@ unsigned int __rt_fll_set_freq(int fll, unsigned int frequency)
 		reg1.mult_factor = mult;
 		reg1.clock_out_divider = div;
 
-		writew(reg1.raw, (uint32_t *)(PULP_FLL_ADDR + FLL_CONF1_OFFSET +
+		writew(reg1.raw, (uintptr_t)(PULP_FLL_ADDR + FLL_CONF1_OFFSET +
 					      fll * PULP_FLL_AREA_SIZE));
 	}
 

@@ -25,12 +25,12 @@
 
 void soc_eu_mask_set(uint32_t offset, uint32_t mask)
 {
-	writew(mask, (uint32_t *)(PULP_SOC_EU_ADDR + offset));
+	writew(mask, (uintptr_t)(PULP_SOC_EU_ADDR + offset));
 }
 
 uint32_t soc_eu_mask_get(uint32_t offset)
 {
-	return readw((uint32_t *)(PULP_SOC_EU_ADDR + offset));
+	return readw((uintptr_t)(PULP_SOC_EU_ADDR + offset));
 }
 
 void pulp_soc_eu_event_init()
