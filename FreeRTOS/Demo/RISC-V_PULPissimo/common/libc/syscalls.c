@@ -22,6 +22,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "pulp_mem_map.h"
 #include "pulp_io.h"
@@ -46,6 +47,8 @@ extern int errno;
 #define _fstat	fstat
 #define _isatty isatty
 #endif
+
+ssize_t _write(int file, const void *ptr, size_t len);
 
 void unimplemented_syscall()
 {
@@ -239,7 +242,7 @@ ssize_t _write(int file, const void *ptr, size_t len)
 
 	const void *eptr = ptr + len;
 	while (ptr != eptr)
-		writew(*(char *)(ptr++),
+		writew(*(unsigned char *)(ptr++),
 		       (uintptr_t)(PULP_STDOUT_ADDR + STDOUT_PUTC_OFFSET +
 				   (pulp_core_id() << 3) +
 				   (pulp_cluster_id() << 7)));
