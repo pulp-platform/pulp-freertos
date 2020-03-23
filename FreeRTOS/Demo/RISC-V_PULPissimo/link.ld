@@ -269,9 +269,9 @@ SECTIONS
   {
     __heap_start = .;
     /* . += __heap_size; */
-    /* __heap_end = .; */
+    /* __heap_end = .; */ /* Will be automatically filled by the ucHeap array */
     /* . = ALIGN(16); */
-    *(.heap)
+    KEEP(*(.heap))
     __heap_end = .;
     ASSERT((__heap_start + __heap_size < __heap_end), "Error (Linkerscript): Heap is too large");
   } > L2
