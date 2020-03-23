@@ -62,14 +62,32 @@ SIZE		= $(RISCV_PREFIX)size
 # Debug builds are -Og. Gcc promises to make debugabble builds. Release builds
 # are -Os which is basically -O2 withouth optimizations that causes code bloat.
 
+# FIXME: NOTE to -march
+# Compiler toolchain looks like this currently
+# ~/.riscv/bin/riscv32-unknown-elf-gcc --print-multi-lib
+# .;
+# rv32i/ilp32;@march=rv32i@mabi=ilp32
+# rv32im/ilp32;@march=rv32im@mabi=ilp32
+# rv32iac/ilp32;@march=rv32iac@mabi=ilp32
+# rv32imac/ilp32;@march=rv32imac@mabi=ilp32
+# rv32imafc/ilp32f;@march=rv32imafc@mabi=ilp32f
+# rv64imac/lp64;@march=rv64imac@mabi=lp64
+# rv64imafdc/lp64d;@march=rv64imafdc@mabi=lp64d
+
+# This unfortunately means that when we use -march=rv32imc then the libc code
+# that will be linked is from -march=rv32im since that is the best fitting
+# subset. This results in non compressed libc code. A quick fix is using
+# -march=rv32imac but thats just weird since we don't really support the
+# A-Extension in this PULP version.
+
 CFLAGS = \
-	-march=rv32imc -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore \
+	-march=rv32imac -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore \
 	-fsigned-char -ffunction-sections -fdata-sections \
 	-std=gnu11 \
-	-Wall -Wextra -Wshadow -Wformat=2 -Wundef -Wconversion
+	-Wall -Wextra -Wshadow -Wformat=2 -Wundef -Wconversion -Wno-unused-parameter
 
 ASFLAGS = \
-	-march=rv32imc -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore \
+	-march=rv32imac -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore \
 	-fsigned-char -ffunction-sections -fdata-sections \
 	-x assembler-with-cpp \
 	-DportasmHANDLE_INTERRUPT=SystemIrqHandler
@@ -77,12 +95,12 @@ ASFLAGS = \
 CPPFLAGS = -DNOT_MSCC_STDIO_THRU_CORE_UART_APB -DSYS_CLK_FREQ=66000000 \
 			-DmainCREATE_SIMPLE_BLINKY_DEMO_ONLY=1
 
-LDFLAGS	= -T link.ld -nostartfiles -Wl,--gc-sections --specs=nano.specs \
-				-Wl,-Map,$@.map # -Wl,--print-gc-sections
+LDFLAGS	= -T link.ld -nostartfiles -Wl,--gc-sections \
+			-Wl,-Map,$@.map # -Wl,--print-gc-sections
 LDLIBS  =
 
 # check if we want a release build
-ifndef NDEBUG
+ifneq ($(NDEBUG),yes)
 CFLAGS 	+= -Og -g3
 ASFLAGS += -Og -g3
 else
@@ -92,12 +110,12 @@ ASFLAGS  += -Os -g3
 endif
 
 # stack debugging information
-ifdef STACKDBG
+ifeq ($(STACKDBG),yes)
 CFLAGS += -fstack-usage -Wstack-usage
 endif
 
 # check if we want to debug with memory sanitiszers
-ifdef SANITIZE
+ifeq ($(SANITIZE),yes)
 CFLAGS += -fsanitize=address -fsanitize=undefined -fsanitize=leak
 endif
 
@@ -105,7 +123,7 @@ endif
 # note that the gnu manpage recommends passing the optimization flags used at
 # compile time also to the linker when using LTO (weird!) which is why we have
 # CFLAGS in the linker target
-ifdef LTO
+ifeq ($(LTO),yes)
 CFLAGS += -flto
 endif
 
