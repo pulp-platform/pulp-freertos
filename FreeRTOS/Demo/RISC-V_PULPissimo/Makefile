@@ -109,6 +109,24 @@ CPPFLAGS += -DNDEBUG
 ASFLAGS  += -Os -g3
 endif
 
+# do we need libc (by default yes)
+ifeq ($(LIBC),no)
+$(warning Libc disabled. This setup is hard to get working and probably fails at the linker stage)
+LDFLAGS += -nolibc
+else
+# We want to link against newlib with where we provide our syscall
+# implementation. Note we can't use --specs=nano.specs since that links against
+# newlib and libgloss where the later provides already a syscall implementation
+# (which is just forwarding the implementation with systemcalls). Actually we
+# can use --specs=nano.specs and just provide your syscalls.c file. For the most
+# part it works well; our implementation overwrites the one from libgloss, but
+# when enabling LTO everything breaks apart because of duplicate symbols. So we
+# do it the proper way: link everything by hand.
+LDFLAGS     += -nolibc -static
+LDLIBS      += -lc_nano -lm_nano
+DRIVER_SRCS += common/libc/syscalls.c # syscall shims / implementation
+endif
+
 # stack debugging information
 ifeq ($(STACKDBG),yes)
 CFLAGS += -fstack-usage -Wstack-usage
