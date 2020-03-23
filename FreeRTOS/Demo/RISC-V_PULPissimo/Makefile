@@ -20,9 +20,11 @@
 
 # Compile options (passed to make) e.g. make NDEBUG=yes
 # NDEBUG    Make release build
+# LIBC      Link against libc
 # LTO       Enable link time optimization
 # SANITIZE  Enable gcc sanitizer for debugging memory access problems
-# STACKDBG  Enable stack debugging information and warnings
+# STACKDBG  Enable stack debugging information and warnings.
+#           By default 1 KiB but can be changed with MAXSTACKSIZE=your_value
 
 RISCV		?= $(HOME)/.riscv
 RISCV_PREFIX	?= $(RISCV)/bin/riscv32-unknown-elf-
@@ -129,7 +131,12 @@ endif
 
 # stack debugging information
 ifeq ($(STACKDBG),yes)
-CFLAGS += -fstack-usage -Wstack-usage
+CFLAGS += -fstack-usage
+ifeq ($(MAXSTACKSIZE),)
+CFLAGS += -Wstack-usage=1024
+else
+CFLAGS += -Wstack-usage=$(MAXSTACKSIZE)
+endif
 endif
 
 # check if we want to debug with memory sanitiszers
