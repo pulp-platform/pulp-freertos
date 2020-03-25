@@ -302,8 +302,8 @@ else
 endif
 
 # analysis scripts
-sim/trace_fc_postproc.log: sim/trace_core_1f_0.log rtosdemo
-	scripts/pulptrace $^ -o $@
+sim/trace_fc_postproc.log: sim/trace_core_1f_0.log
+	scripts/pulptrace $^ rtosdemo -o $@
 
 analyze: sim/trace_fc_postproc.log
 
