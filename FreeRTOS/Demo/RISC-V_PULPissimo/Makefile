@@ -102,7 +102,7 @@ LDFLAGS	= -T link.ld -nostartfiles -Wl,--gc-sections \
 LDLIBS  =
 
 # check if we want a release build
-ifneq ($(NDEBUG),yes)
+ifneq ($(RELEASE),yes)
 CFLAGS 	+= -Og -g3
 ASFLAGS += -Og -g3
 else
