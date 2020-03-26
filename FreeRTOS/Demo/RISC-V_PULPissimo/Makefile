@@ -168,7 +168,7 @@ RTOS_SRCS += $(addprefix $(RTOS_ROOT)/Source/portable/GCC/RISC-V/,\
 		port.c portASM.S)
 # memory managment
 RTOS_SRCS += $(addprefix $(RTOS_ROOT)/Source/portable/MemMang/,\
-		heap_4.c)
+		heap_3.c)
 
 # c runtime and init
 BOOT_SRCS = crt0.S vectors.S

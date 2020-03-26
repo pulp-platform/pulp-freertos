@@ -17,6 +17,7 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
+/* C lib */
 #include <sys/stat.h>
 #include <newlib.h>
 #include <unistd.h>
@@ -24,11 +25,20 @@
 #include <stdint.h>
 #include <string.h>
 
+/* Drivers */
 #include "pulp_mem_map.h"
 #include "pulp_io.h"
 #include "apb_soc.h"
 #include "stdout.h"
 #include "pulp_riscv.h"
+
+/* FreeRTOS */
+#include "FreeRTOS.h"
+#include "task.h"
+#if !defined(configUSE_NEWLIB_REENTRANT) || (configUSE_NEWLIB_REENTRANT != 1)
+#warning "configUSE_NEWLIB_REENTRANT is unset or zero. This settings \
+is required for thread-safety of newlib sprintf, strtok, etc..."
+#endif
 
 #undef errno
 extern int errno;
@@ -261,16 +271,26 @@ int _brk(void *addr)
 
 void *_sbrk(ptrdiff_t incr)
 {
+	/* TODO: Check for stack collision by reading sp */
 	char *old_brk = brk;
 
-	if (__heap_start == __heap_end) {
-		return NULL;
+	if (brk + incr >= __heap_end) {
+		errno = ENOMEM;
+		return (void *)-1;
 	}
 
-	if ((brk += incr) < __heap_end) {
-		brk += incr;
-	} else {
-		brk = __heap_end;
-	}
+	brk += incr;
 	return old_brk;
+}
+
+void __malloc_lock(struct _reent *p)
+{
+	/* Make sure no mallocs inside ISRs */
+	/* configASSERT(!xPortIsInsideInterrupt()); */
+	vTaskSuspendAll();
+}
+
+void __malloc_unlock(struct _reent *p)
+{
+	(void)xTaskResumeAll();
 }
