@@ -55,10 +55,12 @@
 #define DISABLE_WDOG 1
 #endif
 
-/**
- * Allocate heap to special section
+/* Allocate heap to special section. Note that we have no references in the
+ * whole program to this variable (since its just here to allocate space in the
+ * section for our heap), so when using LTO it will be removed. We force it to
+ * stay with the "used" attribute
  */
-__attribute__((section(".heap"))) uint8_t ucHeap[configTOTAL_HEAP_SIZE];
+__attribute__((section(".heap"), used)) uint8_t ucHeap[configTOTAL_HEAP_SIZE];
 
 /* Inform linker script about .heap section size. Note: GNU ld seems to
  * internally represent integers with the bfd_vma type, that is a type that can
