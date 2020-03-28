@@ -175,7 +175,7 @@ BOOT_SRCS = crt0.S vectors.S
 
 # drivers and runtime
 DRIVER_SRCS += common/system_pulpissimo_ri5cy.c common/fll.c common/timer_irq.c
-DRIVER_SRCS += common/irq.c common/soc_eu.c
+DRIVER_SRCS += common/irq.c common/soc_eu.c common/gpio.c common/pinmux.c
 
 # application/user specific code
 #USER_SRCS = main.c full_demo/main_full.c full_demo/RegTest.S blinky_demo/main_blinky.c

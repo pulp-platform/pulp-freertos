@@ -5,3 +5,7 @@
 Make sure it is compiled.
 2. Call `make all run` to start simulating FreeRTOS' blinky.
 
+
+## Notes
+`assert()` from `#include <assert.h>` calls `__assert_func`, `fiprintf` then
+`abort`. This is all in newlib.

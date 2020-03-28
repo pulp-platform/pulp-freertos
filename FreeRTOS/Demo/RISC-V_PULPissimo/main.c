@@ -41,11 +41,15 @@
 #include <FreeRTOS.h>
 #include <task.h>
 
+/* c stdlib */
+#include <stdio.h>
+
 /* PULPissimo includes. */
 #include "system_pulpissimo_ri5cy.h"
 #include "timer_irq.h"
 #include "fll.h"
 #include "irq.h"
+#include "gpio.h"
 
 /******************************************************************************
  * This project provides two demo applications.  A simple blinky style project,
@@ -93,7 +97,7 @@ void vSendString( const char * const pcString );
 
 /*-----------------------------------------------------------*/
 
-void main( void )
+int main( void )
 {
 	prvSetupHardware();
 
@@ -118,6 +122,9 @@ static void prvSetupHardware( void )
 	/* Init board hardware. */
 	pulp_sys_init();
 
+	/* configure led0 (spim_csn1) as gpio */
+	gpio_pin_configure(0x5, GPIO_OUTPUT);
+
 //	BOARD_InitPins();
 //	BOARD_BootClockRUN();
 //	BOARD_InitDebugConsole();
@@ -131,15 +138,14 @@ static void prvSetupHardware( void )
 
 void vToggleLED( void )
 {
-	// TODO: toggle leds
-	//GPIO_TogglePinsOutput( BOARD_LED1_GPIO, 1U << BOARD_LED1_GPIO_PIN );
+	gpio_pin_toggle( 0x5 );
 }
 /*-----------------------------------------------------------*/
 
 void vSendString( const char * const pcString )
 {
 	// TODO: Uart dumping
-	//PRINTF( pcString );
+	printf( "%s", pcString );
 }
 /*-----------------------------------------------------------*/
 
