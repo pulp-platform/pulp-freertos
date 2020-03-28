@@ -71,10 +71,10 @@ static QueueHandle_t xPrintQueue;
 
 void vPrintInitialise( void )
 {
-const unsigned portBASE_TYPE uxQueueSize = 20;
+const UBaseType_t uxQueueSize = 20;
 
 	/* Create the queue on which errors will be reported. */
-	xPrintQueue = xQueueCreate( uxQueueSize, ( unsigned portBASE_TYPE ) sizeof( char * ) );
+	xPrintQueue = xQueueCreate( uxQueueSize, ( UBaseType_t ) sizeof( char * ) );
 }
 /*-----------------------------------------------------------*/
 

@@ -113,7 +113,7 @@ const char * const pcSemaphoreTaskStart = "Guarded shared variable task started.
 
 /*-----------------------------------------------------------*/
 
-void vStartSemaphoreTasks( unsigned portBASE_TYPE uxPriority )
+void vStartSemaphoreTasks( UBaseType_t uxPriority )
 {
 xSemaphoreParameters *pxFirstSemaphoreParameters, *pxSecondSemaphoreParameters;
 const TickType_t xBlockTime = ( TickType_t ) 100;

@@ -179,7 +179,15 @@ DRIVER_SRCS += common/irq.c common/soc_eu.c
 
 # application/user specific code
 #USER_SRCS = main.c full_demo/main_full.c full_demo/RegTest.S blinky_demo/main_blinky.c
-USER_SRCS = main.c blinky_demo/main_blinky.c
+USER_SRCS = main.c blinky_demo/main_blinky.c full_demo/main_full.c full_demo/RegTest.S \
+		../Common/Full/dynamic.c ../Common/Full/semtest.c \
+		../Common/Minimal/EventGroupsDemo.c ../Common/Minimal/TaskNotify.c \
+		../Common/Minimal/StreamBufferDemo.c ../Common/Minimal/StreamBufferInterrupt.c \
+		../Common/Full/print.c ../Common/Minimal/GenQTest.c \
+		../Common/Minimal/TimerDemo.c ../Common/Minimal/countsem.c \
+		../Common/Minimal/blocktim.c ../Common/Minimal/recmutex.c \
+		../Common/Minimal/AbortDelay.c ../Common/Minimal/death.c \
+		../Common/Minimal/MessageBufferDemo.c
 
 # derived variables for compiling
 SRCS = $(RTOS_SRCS) $(BOOT_SRCS) $(DRIVER_SRCS) $(USER_SRCS)

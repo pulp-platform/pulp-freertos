@@ -225,7 +225,7 @@ unsigned long *pulCounter;
 static void vContinuousIncrementTask( void * pvParameters )
 {
 unsigned long *pulCounter;
-unsigned portBASE_TYPE uxOurPriority;
+UBaseType_t uxOurPriority;
 
 	/* Take a pointer to the shared variable from the parameters passed into
 	the task. */
