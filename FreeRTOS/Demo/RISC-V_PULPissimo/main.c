@@ -239,6 +239,14 @@ version that does not enable interrupts is provided below.  THIS INTERRUPT
 HANDLER IS SPECIFIC TO THE VEGA BOARD WHICH DOES NOT INCLUDE A CLINT! */
 void SystemIrqHandler( uint32_t mcause )
 {
+BaseType_t xTaskIncrementTick( void );
+void vTaskSwitchContext( void );
+
+	if( xTaskIncrementTick() != 0 )
+	{
+		vTaskSwitchContext();
+	}
+
 // uint32_t ulInterruptNumber;
 // typedef void ( * irq_handler_t )( void );
 // extern const irq_handler_t isrTable[];
