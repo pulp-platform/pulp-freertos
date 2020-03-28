@@ -285,9 +285,16 @@ $(SIMDIR)/vectors/stim.txt: $(PROG).stim
 	mkdir -p -- "$$(dirname $@)"
 	ln -rs $^ $@
 
+$(SIMDIR)/stdout:
+	mkdir -p -- $@
+
+$(SIMDIR)/fs:
+	mkdir -p -- $@
+
 .PHONY: run
 run: $(SIMDIR)/modelsim.ini $(SIMDIR)/boot $(SIMDIR)/tcl_files \
-	$(SIMDIR)/waves $(SIMDIR)/vectors/stim.txt
+	$(SIMDIR)/waves $(SIMDIR)/vectors/stim.txt \
+	$(SIMDIR)/stdout $(SIMDIR)/fs
 ifndef VSIM_PATH
 	$(error "VSIM_PATH is not set. Make sure your ran `source setup/vsim.sh` \
 	in your PULP/PULPissimo repository")
