@@ -44,6 +44,7 @@ is required for thread-safety of newlib sprintf, strtok, etc..."
 extern int errno;
 
 #define STDOUT_FILENO 1
+#define STDERR_FILENO 2
 
 /* It turns out that older newlib versions use different symbol names which goes
  * against newlib recommendations. Anyway this is fixed in later version.
@@ -245,7 +246,8 @@ int _wait(int *status)
 
 ssize_t _write(int file, const void *ptr, size_t len)
 {
-	if (file != STDOUT_FILENO) {
+	/* fuse stout and stderr. remains to be seen if this is a good idea */
+	if (file != STDOUT_FILENO && file != STDERR_FILENO) {
 		errno = ENOSYS;
 		return -1;
 	}
