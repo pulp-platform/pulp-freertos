@@ -126,6 +126,7 @@ else
 # do it the proper way: link everything by hand.
 LDFLAGS     += -nolibc -static
 LDLIBS      += -lc_nano -lm_nano
+CPPFLAGS    += -D__PULP_USE_LIBC
 DRIVER_SRCS += common/libc/syscalls.c # syscall shims / implementation
 endif
 
@@ -203,7 +204,8 @@ CPPFLAGS += $(addprefix -I, "$(RTOS_ROOT)/Source/include" \
 		"$(RTOS_ROOT)/Demo/RISC-V_PULPissimo" \
 		"$(RTOS_ROOT)/Demo/RISC-V_PULPissimo/common/include")
 
-ASFLAGS  += -I"$(RTOS_ROOT)/Source/portable/GCC/RISC-V/chip_specific_extensions/PULPissimo"
+# for assembler
+CPPFLAGS  += -I"$(RTOS_ROOT)/Source/portable/GCC/RISC-V/chip_specific_extensions/PULPissimo"
 
 PLPSTIM = scripts/pulpstim
 
@@ -220,7 +222,7 @@ all: $(PROG) $(PROG).stim misc-info
 %.o: %.S
 	@echo 'Building file: $<'
 	@echo 'Invoking: GNU RISC-V Cross Assembler'
-	$(CC) $(ASFLAGS) -c -o "$@" "$<"
+	$(CC) $(ASFLAGS) $(CPPFLAGS) -c -o $@ $<
 	@echo 'Finished building: $<'
 	@echo ' '
 

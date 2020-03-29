@@ -56,7 +56,6 @@ SECTIONS
     KEEP( *(.fini) )
   } > L2
 
-
   .preinit_array : ALIGN(4)
   {
     PROVIDE_HIDDEN (__preinit_array_start = .);
@@ -64,34 +63,51 @@ SECTIONS
     PROVIDE_HIDDEN (__preinit_array_end = .);
   } > L2
 
-
   .init_array : ALIGN(4)
   {
     PROVIDE_HIDDEN (__init_array_start = .);
-    __CTOR_LIST__ = .;
-    LONG((__CTOR_END__ - __CTOR_LIST__) / 4 - 2)
-    KEEP(*(.ctors.start))
-    KEEP(*(.ctors))
-    KEEP (*(SORT(.init_array.*)))
-    KEEP (*(.init_array ))
-    LONG(0)
-    __CTOR_END__ = .;
+    KEEP (*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
+    KEEP (*(.init_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .ctors))
     PROVIDE_HIDDEN (__init_array_end = .);
   } > L2
-
 
   .fini_array : ALIGN(4)
   {
     PROVIDE_HIDDEN (__fini_array_start = .);
-    __DTOR_LIST__ = .;
-    LONG((__DTOR_END__ - __DTOR_LIST__) / 4 - 2)
-    KEEP(*(.dtors.start))
-    KEEP(*(.dtors))
-    LONG(0)
-    __DTOR_END__ = .;
-    KEEP (*(SORT(.fini_array.*)))
-    KEEP (*(.fini_array ))
+    KEEP (*(SORT_BY_INIT_PRIORITY(.fini_array.*) SORT_BY_INIT_PRIORITY(.dtors.*)))
+    KEEP (*(.fini_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .dtors))
     PROVIDE_HIDDEN (__fini_array_end = .);
+  } > L2
+
+  .ctors          :
+  {
+    /* gcc uses crtbegin.o to find the start of
+       the constructors, so we make sure it is
+       first.  Because this is a wildcard, it
+       doesn't matter if the user does not
+       actually link against crtbegin.o; the
+       linker won't look for a file to match a
+       wildcard.  The wildcard also means that it
+       doesn't matter which directory crtbegin.o
+       is in.  */
+    KEEP (*crtbegin.o(.ctors))
+    KEEP (*crtbegin?.o(.ctors))
+    /* We don't want to include the .ctor section from
+       the crtend.o file until after the sorted ctors.
+       The .ctor section from the crtend file contains the
+       end of ctors marker and it must be last */
+    KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .ctors))
+    KEEP (*(SORT(.ctors.*)))
+    KEEP (*(.ctors))
+  } > L2
+
+  .dtors          :
+  {
+    KEEP (*crtbegin.o(.dtors))
+    KEEP (*crtbegin?.o(.dtors))
+    KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .dtors))
+    KEEP (*(SORT(.dtors.*)))
+    KEEP (*(.dtors))
   } > L2
 
 
@@ -100,7 +116,6 @@ SECTIONS
     *(.boot)
     *(.boot.data)
   } > L2
-
 
 
   /* .got : ALIGN(4) */
