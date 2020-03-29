@@ -209,64 +209,38 @@ void vApplicationTickHook( void )
 
 void vPortSetupTimerInterrupt( void )
 {
-//extern int timer_irq_init(uint32_t ticks);
+extern int timer_irq_init(uint32_t ticks);
 
 	/* No CLINT so use the PULP timer to generate the tick interrupt. */
-// TODO: timer interrupts
-//	CLOCK_SetIpSrc( kCLOCK_Lpit0, kCLOCK_IpSrcFircAsync );
-//	SystemSetupSystick( configTICK_RATE_HZ, configKERNEL_INTERRUPT_PRIORITY - 1 );
+	/* TODO: configKERNEL_INTERRUPT_PRIORITY - 1 ? */
 	timer_irq_init( ARCHI_REF_CLOCK / configTICK_RATE_HZ );
 	/* TODO: allow setting interrupt priority (to super high(?)) */
 	irq_enable( IRQ_FC_EVT_TIMER0_LO );
 }
 /*-----------------------------------------------------------*/
 
-//void LPIT0_IRQHandler( void )
-//{
-//BaseType_t xTaskIncrementTick( void );
-//void vTaskSwitchContext( void );
-//
-//#warning requires critical section if interrpt nesting is used.
-//
-//	/* vPortSetupTimerInterrupt() uses LPIT0 to generate the tick interrupt. */
-//	if( xTaskIncrementTick() != 0 )
-//	{
-//		vTaskSwitchContext();
-//	}
-//
-//	/* Clear LPIT0 interrupt. */
-//	LPIT0->MSR = 1U;
-//}
-/*-----------------------------------------------------------*/
-
-/* At the time of writing, interrupt nesting is not supported, so do not use
-the default SystemIrqHandler() implementation as that enables interrupts.  A
-version that does not enable interrupts is provided below.  THIS INTERRUPT
-HANDLER IS SPECIFIC TO THE VEGA BOARD WHICH DOES NOT INCLUDE A CLINT! */
-void SystemIrqHandler( uint32_t mcause )
+void timer_irq_handler(void)
 {
 BaseType_t xTaskIncrementTick( void );
 void vTaskSwitchContext( void );
+
+#warning requires critical section if interrupt nesting is used.
 
 	if( xTaskIncrementTick() != 0 )
 	{
 		vTaskSwitchContext();
 	}
 
-// uint32_t ulInterruptNumber;
-// typedef void ( * irq_handler_t )( void );
-// extern const irq_handler_t isrTable[];
-//
-// 	ulInterruptNumber = mcause & 0x1FUL;
-//
-// 	/* Clear pending flag in EVENT unit .*/
-// 	EVENT_UNIT->INTPTPENDCLEAR = ( 1U << ulInterruptNumber );
-// 
-// 	/* Read back to make sure write finished. */
-// 	(void)(EVENT_UNIT->INTPTPENDCLEAR);
-//
-// 	/* Now call the real irq handler for ulInterruptNumber */
-	/* TODO: user registered interrupts/driver interrupts !! */
-// 	isrTable[ ulInterruptNumber ]();
+}
+/*-----------------------------------------------------------*/
+
+/* At the time of writing, interrupt nesting is not supported, so do not use
+the default vSystemIrqHandler() implementation as that enables interrupts.  A
+version that does not enable interrupts is provided below.  THIS INTERRUPT
+HANDLER IS SPECIFIC TO THE VEGA BOARD WHICH DOES NOT INCLUDE A CLINT! */
+void vSystemIrqHandler( uint32_t mcause )
+{
+extern (*isr_table[32])(void);
+	isr_table[mcause & 0xf]();
 }
 

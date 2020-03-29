@@ -92,7 +92,7 @@ ASFLAGS = \
 	-march=rv32imac -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore \
 	-fsigned-char -ffunction-sections -fdata-sections \
 	-x assembler-with-cpp \
-	-DportasmHANDLE_INTERRUPT=SystemIrqHandler
+	-DportasmHANDLE_INTERRUPT=vSystemIrqHandler
 
 CPPFLAGS = -DNOT_MSCC_STDIO_THRU_CORE_UART_APB -DSYS_CLK_FREQ=66000000 \
 			-DmainCREATE_SIMPLE_BLINKY_DEMO_ONLY=1

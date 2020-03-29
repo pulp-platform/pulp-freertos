@@ -24,6 +24,9 @@
 #include "irq.h"
 #include "csr.h"
 
+void timer_irq_handler(void);
+void (*isr_table[32])(void);
+
 /* utility functions for PULPs external interrupt controller */
 void irq_mask(uint32_t mask)
 {
@@ -37,8 +40,7 @@ void irq_enable(uint32_t mask)
 
 void irq_disable(uint32_t mask)
 {
-	writew(mask,
-	       (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_CLEAR_OFFSET));
+	writew(mask, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_CLEAR_OFFSET));
 }
 
 /* utility functions for the core level interrupt (CLINT) described in the
@@ -56,8 +58,14 @@ uint32_t irq_clint_enable()
 	return val;
 }
 
+/* TODO: make this a constructor? */
 void pulp_irq_init()
 {
+	/* Hook up isr table. This table is temporary until we figure out how to
+	 * do proper vectored interrupts.
+	 */
+	isr_table[0xa] = timer_irq_handler;
+
 	/* the debug module could have enabled irq so we disable it during
 	 * initialization
 	 */
