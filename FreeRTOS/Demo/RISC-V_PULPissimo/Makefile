@@ -97,7 +97,7 @@ ASFLAGS = \
 CPPFLAGS = -DNOT_MSCC_STDIO_THRU_CORE_UART_APB -DSYS_CLK_FREQ=66000000 \
 			-DmainCREATE_SIMPLE_BLINKY_DEMO_ONLY=1
 
-LDFLAGS	= -T link.ld -nostartfiles -Wl,--gc-sections \
+LDFLAGS	= -T common/chips/pulpissimo/link.ld -nostartfiles -Wl,--gc-sections \
 			-Wl,-Map,$@.map # -Wl,--print-gc-sections
 LDLIBS  =
 
@@ -172,7 +172,7 @@ RTOS_SRCS += $(addprefix $(RTOS_ROOT)/Source/portable/MemMang/,\
 		heap_3.c)
 
 # c runtime and init
-BOOT_SRCS = crt0.S vectors.S
+BOOT_SRCS = common/crt0.S common/vectors.S
 
 # drivers and runtime
 DRIVER_SRCS += common/system_pulpissimo_ri5cy.c common/fll.c common/timer_irq.c
