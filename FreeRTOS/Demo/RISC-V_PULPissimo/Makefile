@@ -127,7 +127,7 @@ else
 LDFLAGS     += -nolibc -static
 LDLIBS      += -lc_nano -lm_nano
 CPPFLAGS    += -D__PULP_USE_LIBC
-DRIVER_SRCS += common/libc/syscalls.c # syscall shims / implementation
+PULP_SRCS   += common/libc/syscalls.c # syscall shims / implementation
 endif
 
 # stack debugging information
@@ -175,8 +175,8 @@ RTOS_SRCS += $(addprefix $(RTOS_ROOT)/Source/portable/MemMang/,\
 BOOT_SRCS = common/crt0.S common/vectors.S
 
 # drivers and runtime
-DRIVER_SRCS += common/system_pulpissimo_ri5cy.c common/fll.c common/timer_irq.c
-DRIVER_SRCS += common/irq.c common/soc_eu.c common/gpio.c common/pinmux.c
+PULP_SRCS += common/system_pulpissimo_ri5cy.c common/fll.c common/timer_irq.c
+PULP_SRCS += common/irq.c common/soc_eu.c common/gpio.c common/pinmux.c
 
 # application/user specific code
 #USER_SRCS = main.c full_demo/main_full.c full_demo/RegTest.S blinky_demo/main_blinky.c
@@ -191,7 +191,7 @@ USER_SRCS = main.c blinky_demo/main_blinky.c full_demo/main_full.c full_demo/Reg
 		../Common/Minimal/MessageBufferDemo.c
 
 # derived variables for compiling
-SRCS = $(RTOS_SRCS) $(BOOT_SRCS) $(DRIVER_SRCS) $(USER_SRCS)
+SRCS = $(RTOS_SRCS) $(BOOT_SRCS) $(PULP_SRCS) $(USER_SRCS)
 OBJS = $(addsuffix .o, $(basename $(SRCS))) # .S and .c replaced
 DEPS = $(addsuffix .d, $(basename $(SRCS)))
 
