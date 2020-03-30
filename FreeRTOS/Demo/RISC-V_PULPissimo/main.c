@@ -151,6 +151,7 @@ void vApplicationMallocFailedHook( void )
 	to query the size of free heap space that remains (although it does not
 	provide information on how the remaining heap might be fragmented). */
 	taskDISABLE_INTERRUPTS();
+	printf( "error: application malloc failed\n" );
 	__asm volatile( "ebreak" );
 	for( ;; );
 }
