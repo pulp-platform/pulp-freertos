@@ -65,10 +65,10 @@ int gpio_pin_configure(int pin, uint32_t flags)
 
 	/* default value to prevent glitches */
 	if (flags & GPIO_OUTPUT_INIT_HIGH)
-		gpio_pin_set_raw(BIT(pin), 1);
+		gpio_pin_set_raw(pin, 1);
 
 	if (flags & GPIO_OUTPUT_INIT_LOW)
-		gpio_pin_set_raw(BIT(pin), 0);
+		gpio_pin_set_raw(pin, 0);
 
 	/* control pad clock gating: need to enable clock for inputs */
 	uint32_t en = readw((uintptr_t)(PULP_GPIO_ADDR + GPIO_GPIOEN_OFFSET));
