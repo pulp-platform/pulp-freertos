@@ -92,8 +92,8 @@
 /* The period of the check task, in ms, converted to ticks using the
 pdMS_TO_TICKS() macro.  mainNO_ERROR_CHECK_TASK_PERIOD is used if no errors have
 been found, mainERROR_CHECK_TASK_PERIOD is used if an error has been found. */
-#define mainNO_ERROR_CHECK_TASK_PERIOD		pdMS_TO_TICKS( 3000UL )
-#define mainERROR_CHECK_TASK_PERIOD			pdMS_TO_TICKS( 500UL )
+#define mainNO_ERROR_CHECK_TASK_PERIOD		pdMS_TO_TICKS( 200UL )
+#define mainERROR_CHECK_TASK_PERIOD			pdMS_TO_TICKS( 100UL )
 
 /* Parameters that are passed into the register check tasks solely for the
 purpose of ensuring parameters are passed into tasks correctly. */
