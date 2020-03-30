@@ -1,0 +1,19 @@
+# User Test
+#------------------------------------
+APP = test
+APP_SRCS 	= ./Firmware.c ./EPI_task.c ./EPI_math.c ./measure.c ./print_float.c ./model_spi.c  ./simulation.c #./model_uart.c
+APP_CFLAGS      +=
+INC_PATH	+= ./
+
+# Uncomment to disable preemptive scheduling
+# NO_PREEMPTION	= true
+
+
+# Uncomment to add debug option
+#COMMON += -g
+
+PMSIS_OS = freertos
+BOARD_NAME ?= gapuino
+#io=host
+
+include $(GAP_SDK_HOME)/tools/rules/pmsis_rules.mk

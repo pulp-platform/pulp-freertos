@@ -1,0 +1,96 @@
+
+FreeRTOS API:
+
+	Primary Importance:
+		xTaskCreate()
+		vTaskStartScheduler()
+		vTaskNotifyGiveFromISR()
+		portYIELD_FROM_ISR()
+		ulTaskNotifyTake()
+		
+	Secondary Importance:
+		xSemaphoreTake()
+		xSemaphoreGive()
+		xSemaphoreCreateMutex()		
+
+	Last but not Least:
+		vTaskSuspend()
+
+	Present, but not meaningful
+		taskYIELD()
+		vTaskDelete()
+		vTaskPrioritySet()
+		xSemaphoreGiveFromISR()
+		
+		
+The API that needs more optimized implementation: 
+	1. vTaskNotifyGiveFromISR(), portYIELD_FROM_ISR() : needed to create the periodicity of the control task
+	2. ulTaskNotifyTake() : same as above.
+	3. xSemaphoreGiveFromISR() : Semaphore will be maybe used for I/O part.
+	4. xSemaphoreTake(), xSemaphoreGive() : used for global variables and information exchange between tasks.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Non freeRTOS API:
+(relative to GAP SDK 2.*)
+
+	Primary Importance:
+		A way to create a Timer interrupt and the related ISR: this can be problematic since it has to 
+			interact with FreeRTOS part (configuration in FreeRTOSConfig.h [1]). FreeRTOS "FromISR" api 
+			need to	be called inside the ISR, and ISR has to have an hardware priority greater that any 
+			FreeRTOS objects (I think, not sure). FreeRTOS itself has an hardware timer interrupt that 
+			is needed for the ticks count (unity of measure of freeRTOS) and the execution of the scheduler 
+			every tick.
+		like: Timer_Initialize(), Timer_Enable(), NVIC_SetVector(), NVIC_EnableIRQ(), 
+			Handler_Wrapper_Light(), Timer_DisableInterrupt(), Timer_SetInterrupt()
+	
+	Secondary Importance:
+		Api to trigger a Software interrupt (trap).	Not yet implemented in the code, but theoretically 
+			for security reasons, the procedure for the I/O should be: 
+				1. Trap
+				2. Go inside the ISR with an higher priority/privilege
+				3. Call a DMA/SPI/AXI async (i.e. non blocking) Read or Write
+				4. Return
+				5. Do other stuff and wait for the Semaphore to be given meaning the Read/Write is completed
+					(the semaphore would probably be given from a callback function, a sort of ISR itself)
+			
+	Api for SPI comunication.
+				
+	Present, but not meaningful:
+		Api to initialize and use PIN, mainly due to debug reason through oscilloscope
+		like: PORT_SetPinConfig(), GPIO_WritePinOutput()
+		Api to set the voltage and frequency of the chip (GAP8)			
+			
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			
+[1]: example of GAP8, from FreeRTOSConfig.h:
+/* Cortex-M specific definitions. */
+#ifdef __NVIC_PRIO_BITS
+    /* __BVIC_PRIO_BITS will be specified when CMSIS is being used. */
+    #define configPRIO_BITS    __NVIC_PRIO_BITS
+#else
+    #define configPRIO_BITS    4                                 /* 15 priority levels. */
+#endif
+
+/* The lowest interrupt priority that can be used in a call to a "set priority"
+ * function. */
+#define configLIBRARY_LOWEST_INTERRUPT_PRIORITY         0xf
+
+/* The highest interrupt priority that can be used by any interrupt service
+ * routine that makes calls to interrupt safe FreeRTOS API functions.  DO NOT CALL
+ * INTERRUPT SAFE FREERTOS API FUNCTIONS FROM ANY INTERRUPT THAT HAS A HIGHER
+ * PRIORITY THAN THIS! (higher priorities are lower numeric values. */
+#define configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY    5
+
+/* Interrupt priorities used by the kernel port layer itself.  These are generic
+* to all Cortex-M ports, and do not rely on any particular library functions. */
+#define configKERNEL_INTERRUPT_PRIORITY \
+    ( configLIBRARY_LOWEST_INTERRUPT_PRIORITY << ( 8 - configPRIO_BITS ) )
+
+/* !!!! configMAX_SYSCALL_INTERRUPT_PRIORITY must not be set to zero !!!!
+ * See http://www.FreeRTOS.org/RTOS-Cortex-M3-M4.html. */
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY \
+    ( configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY << ( 8 - configPRIO_BITS ) 
+	
+	
