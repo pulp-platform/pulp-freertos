@@ -163,43 +163,66 @@ void main_full( void )
 	/* Start all the other standard demo/test tasks.  They have no particular
 	functionality, but do demonstrate how to use the FreeRTOS API and test the
 	kernel port. */
+	printf("vStartDynamicPriorityTasks()\n");
 	vStartDynamicPriorityTasks();
+	printf("vCreateBlockTimeTasks()\n");
 	vCreateBlockTimeTasks();
+	printf("vStartGenericQueueTasks(\n");
 	vStartGenericQueueTasks( tskIDLE_PRIORITY );
+	printf("vStartRecursiveMutexTasks()\n");
 	vStartRecursiveMutexTasks();
+	printf("vStartTimerDemoTask(\n");
 	vStartTimerDemoTask( mainTIMER_TEST_PERIOD );
+	printf("vStartEventGroupTasks()\n");
 	vStartEventGroupTasks();
+	printf("vStartTaskNotifyTask()\n");
 	vStartTaskNotifyTask();
+	printf("vCreateAbortDelayTasks()\n");
 	vCreateAbortDelayTasks();
+	printf("vStartCountingSemaphoreTasks()\n");
 	vStartCountingSemaphoreTasks();
+	printf("vStartMessageBufferTasks(\n");
 	vStartMessageBufferTasks( configMINIMAL_STACK_SIZE  );
+	printf("vStartStreamBufferTasks()\n");
 	vStartStreamBufferTasks();
+	printf("vStartStreamBufferInterruptDemo()\n");
 	vStartStreamBufferInterruptDemo();
 
 	/* Create the register check tasks, as described at the top of this	file.
 	Use xTaskCreateStatic() to create a task using only statically allocated
 	memory. */
+
+	printf("xTaskCreate prvRegTestTaskEntry1\n");
 	xTaskCreate( prvRegTestTaskEntry1, 			/* The function that implements the task. */
 				 "Reg1", 						/* The name of the task. */
 				 mainREG_TEST_STACK_SIZE_WORDS, /* Size of stack to allocate for the task - in words not bytes!. */
 				 mainREG_TEST_TASK_1_PARAMETER, /* Parameter passed into the task. */
 				 tskIDLE_PRIORITY, 				/* Priority of the task. */
 				 NULL );						/* Can be used to pass out a handle to the created task. */
+
+	printf("xTaskCreate prvRegTestTaskEntry2\n");
 	xTaskCreate( prvRegTestTaskEntry2, "Reg2", mainREG_TEST_STACK_SIZE_WORDS, mainREG_TEST_TASK_2_PARAMETER, tskIDLE_PRIORITY, NULL );
 
 	/* Create the task that performs the 'check' functionality,	as described at
 	the top of this file. */
+
+	printf("xTaskCreate prvCheckTask\n");
 	xTaskCreate( prvCheckTask, "Check", mainCHECK_TASK_STACK_SIZE_WORDS, NULL, mainCHECK_TASK_PRIORITY, NULL );
 
 	/* The set of tasks created by the following function call have to be
 	created last as they keep account of the number of tasks they expect to see
 	running. */
+
+	printf("vCreateSuicidalTasks \n");
 	vCreateSuicidalTasks( mainCREATOR_TASK_PRIORITY );
 
 	/* Start the timers that are used to exercise external interrupt handling. */
+
+	printf("prvSetupPeripheralTimers\n");
 	prvSetupPeripheralTimers();
 
 	/* Start the scheduler. */
+	printf("vTaskStartScheduler()\n)");
 	vTaskStartScheduler();
 
 	/* If all is well, the scheduler will now be running, and the following
@@ -241,71 +264,85 @@ extern void vToggleLED( void );
 	doing gives visual feedback of the system status. */
 	for( ;; )
 	{
+		printf("vTaskDelayUntil xDelayPeriod\n");
 		/* Delay until it is time to execute again. */
 		vTaskDelayUntil( &xLastExecutionTime, xDelayPeriod );
 
 		/* Check all the demo tasks (other than the flash tasks) to ensure
 		that they are all still running, and that none have detected an error. */
+		printf("dynamic priority tasks\n");
 		if( xAreDynamicPriorityTasksStillRunning() == pdFALSE )
 		{
 			pcStatusMessage = "ERROR: Dynamic priority demo/tests.\r\n";
 		}
 
+		printf("time test tasks\n");
 		if( xAreBlockTimeTestTasksStillRunning() == pdFALSE )
 		{
 			pcStatusMessage = "ERROR: Block time demo/tests.\r\n";
 		}
 
+		printf("generic queue tasks\n");
 		if( xAreGenericQueueTasksStillRunning() == pdFALSE )
 		{
 			pcStatusMessage = "ERROR: Generic queue demo/tests.\r\n";
 		}
 
+		printf("recursive mutx tasks\n");
 		if( xAreRecursiveMutexTasksStillRunning() == pdFALSE )
 		{
 			pcStatusMessage = "ERROR: Recursive mutex demo/tests.\r\n";
 		}
 
+		printf("timer demo tasks\n");
 		if( xAreTimerDemoTasksStillRunning( ( TickType_t ) xDelayPeriod ) == pdFALSE )
 		{
 			pcStatusMessage = "ERROR: Timer demo/tests.\r\n";
 		}
 
+		printf("event group tasks\n");
 		if( xAreEventGroupTasksStillRunning() == pdFALSE )
 		{
 			pcStatusMessage = "ERROR: Event group demo/tests.\r\n";
 		}
 
+		printf("notification tasks\n");
 		if( xAreTaskNotificationTasksStillRunning() == pdFALSE )
 		{
 			pcStatusMessage = "ERROR: Task notification demo/tests.\r\n";
 		}
 
+		printf("delay tasks\n");
 		if( xAreAbortDelayTestTasksStillRunning() == pdFALSE )
 		{
 			pcStatusMessage = "ERROR: Abort delay.\r\n";
 		}
 
+		printf("couting semaphore tasks\n");
 		if( xAreCountingSemaphoreTasksStillRunning() == pdFALSE )
 		{
 			pcStatusMessage = "ERROR: Counting semaphores.\r\n";
 		}
 
+		printf("create tasks\n");
 		if( xIsCreateTaskStillRunning() == pdFALSE )
 		{
 			pcStatusMessage = "ERROR: Suicide tasks.\r\n";
 		}
 
+		printf("message buffer tasks\n");
 		if( xAreMessageBufferTasksStillRunning() == pdFALSE )
 		{
 			pcStatusMessage = "ERROR: Message buffer.\r\n";
 		}
 
+		printf("stream buffer tasks\n");
 		if( xAreStreamBufferTasksStillRunning() == pdFALSE )
 		{
 			pcStatusMessage = "ERROR: Stream buffer.\r\n";
 		}
 
+		printf("interrupt stream buffer tasks\n");
 		if( xIsInterruptStreamBufferDemoStillRunning() == pdFALSE )
 		{
 			pcStatusMessage = "ERROR: Stream buffer interrupt.\r\n";
@@ -325,6 +362,7 @@ extern void vToggleLED( void );
 		}
 		ulLastRegTest2Value = ulRegTest2LoopCounter;
 
+		printf("toggle led\n");
 		/* Write the status message to the UART. */
 		vToggleLED();
 		vSendString( pcStatusMessage );

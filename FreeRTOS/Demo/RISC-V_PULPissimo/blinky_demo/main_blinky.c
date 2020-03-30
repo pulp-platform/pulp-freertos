@@ -112,11 +112,16 @@ static QueueHandle_t xQueue = NULL;
 
 void main_blinky( void )
 {
+
+	printf( "Calling %s\n", __func__);
+	printf( "testing if 2nd call comes\n" );
 	/* Create the queue. */
 	xQueue = xQueueCreate( mainQUEUE_LENGTH, sizeof( uint32_t ) );
 
 	if( xQueue != NULL )
 	{
+
+	    printf( "Creating two tasks (xTaskCreate)\n" );
 		/* Start the two tasks as described in the comments at the top of this
 		file. */
 		xTaskCreate( prvQueueReceiveTask,				/* The function that implements the task. */
@@ -125,9 +130,12 @@ void main_blinky( void )
 					NULL, 								/* The parameter passed to the task - not used in this case. */
 					mainQUEUE_RECEIVE_TASK_PRIORITY, 	/* The priority assigned to the task. */
 					NULL );								/* The task handle is not required, so NULL is passed. */
+		printf( "created prvQueueReceveiTask\n" );
 
 		xTaskCreate( prvQueueSendTask, "TX", configMINIMAL_STACK_SIZE * 2U, NULL, mainQUEUE_SEND_TASK_PRIORITY, NULL );
+		printf( "created prvQueueSendTask\n" );
 
+	    printf( "Starting scheduler (vTaskStartScheduler)\n" );
 		/* Start the tasks and timer running. */
 		vTaskStartScheduler();
 	}
@@ -148,6 +156,7 @@ TickType_t xNextWakeTime;
 const unsigned long ulValueToSend = 100UL;
 BaseType_t xReturned;
 
+	printf( "Calling %s\n", __func__ );
 	/* Remove compiler warning about unused parameter. */
 	( void ) pvParameters;
 
@@ -178,6 +187,7 @@ const char * const pcFailMessage = "Unexpected value received\r\n";
 extern void vSendString( const char * const pcString );
 extern void vToggleLED( void );
 
+	printf( "Calling %s\n", __func__ );
 	/* Remove compiler warning about unused parameter. */
 	( void ) pvParameters;
 
