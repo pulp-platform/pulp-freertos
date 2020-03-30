@@ -3,7 +3,7 @@
 
 # TODO: make this depend on source script and set sensible default with warning
 # as of now this is a totally broken relative link that "just works"
-RTOS_ROOT = ../../../FreeRTOS
+RTOS_ROOT = ../FreeRTOS
 
 # general OS
 RTOS_SRCS = $(addprefix $(RTOS_ROOT)/Source/,\
