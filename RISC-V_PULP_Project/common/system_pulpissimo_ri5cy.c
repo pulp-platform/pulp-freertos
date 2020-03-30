@@ -85,6 +85,7 @@ void vTaskSwitchContext(void);
 
 /* interrupt handling */
 void timer_irq_handler(void);
+void undefined_handler(void);
 void (*isr_table[32])(void);
 
 /**
@@ -130,4 +131,14 @@ void timer_irq_handler(void)
 	if (xTaskIncrementTick() != 0) {
 		vTaskSwitchContext();
 	}
+}
+
+void undefined_handler(void)
+{
+#ifdef __PULP_USE_LIBC
+	abort();
+#else
+	taskDISABLE_INTERRUPTS();
+	for(;;);
+#endif
 }
