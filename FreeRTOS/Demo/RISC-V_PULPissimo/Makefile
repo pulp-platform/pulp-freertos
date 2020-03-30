@@ -303,7 +303,7 @@ ifndef VSIM_PATH
 endif
 ifdef gui
 	cd $(SIMDIR) && \
-	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c008080 -gLOAD_L2=JTAG \
+	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG \
 		-dpicpppath $(CXX) -permit_unmatched_virtual_intf \
 		-gBAUDRATE=115200" && \
 	export VOPT_ACC_ENA="YES" && \
@@ -311,7 +311,7 @@ ifdef gui
 		-do 'source $(VSIM_PATH)/tcl_files/run.tcl; '
 else
 	cd $(SIMDIR) && \
-	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c008080 -gLOAD_L2=JTAG \
+	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG \
 		-dpicpppath $(CXX) -permit_unmatched_virtual_intf \
 		-gBAUDRATE=115200" && \
 	$(VSIM) -64 -c -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \

@@ -21,7 +21,7 @@ MEMORY
 SECTIONS
 {
 
-  PROVIDE(__boot_address = 0x1c008080);
+  PROVIDE(__boot_address = 0x1c000880);
   /* stack and heap related settings */
   __stack_size = DEFINED(__stack_size) ? __stack_size : 0x800;
   PROVIDE(__stack_size = __stack_size);
@@ -31,7 +31,7 @@ SECTIONS
   /*
    * L2 PRIVATE BANK0
    *
-   * Contains FC data
+   * Contains FC tiny data and code
    */
 
   /* This section is for tiny FC data which benefits
@@ -45,17 +45,127 @@ SECTIONS
   } > L2_aliased AT> L2
 
 
+  /* text */
   .init : ALIGN(4)
   {
     KEEP( *(.init) )
   } > L2
 
+  .vectors MAX(0x1c000800, ALIGN(256)) : /* lets leak the first 2k free for now "half zero page" */
+  {
+    __irq_vector_base = .;
+    __vector_start = .;
+    KEEP(*(.vectors))
+  } > L2
+
+  .text __boot_address :
+  {
+    _stext = .;
+    *(.text.start)
+    *(.text)
+    *(.text.*)
+    _etext = .; /* man 3 end: first addr after text */
+    *(.lit)
+    *(.shdata)
+    _endtext = .;
+    . = ALIGN(4);
+  } > L2
 
   .fini : ALIGN(4)
   {
     KEEP( *(.fini) )
   } > L2
 
+
+  __l2_priv0_end = ALIGN(4);
+
+
+  /*
+   * L2 PRIVATE BANK1
+   *
+   * Contains FC data
+   */
+
+
+  /* make sure we start filling fc data into the correct bank */
+  /* read-only sections */
+  .rodata MAX(0x1c008000, ALIGN(4)) :
+  {
+    *(.rodata .rodata.* .gnu.linkonce.r.*)
+  } > L2
+  .rodata1        :
+  {
+    *(.rodata1)
+  } > L2
+
+
+  .boot : ALIGN(4)
+  {
+    *(.boot)
+    *(.boot.data)
+  } > L2
+
+  /* .got : ALIGN(4) */
+  /* { */
+  /*   *(.got.plt) * (.igot.plt) *(.got) *(.igot) */
+  /* } > L2 */
+
+  .talias :
+  {
+  } > L2
+
+
+  /* gcc language agnostic exception related sections (try-catch-finally) */
+  .eh_frame_hdr :
+  {
+    *(.eh_frame_hdr) *(.eh_frame_entry .eh_frame_entry.*)
+  } > L2
+  .eh_frame       : ONLY_IF_RO
+  {
+    KEEP (*(.eh_frame)) *(.eh_frame.*)
+  } > L2
+  .gcc_except_table   : ONLY_IF_RO
+  {
+    *(.gcc_except_table .gcc_except_table.*)
+  } > L2
+  .gnu_extab   : ONLY_IF_RO
+  {
+    *(.gnu_extab*)
+  } > L2
+
+
+  /* Exception handling  */
+  .eh_frame       : ONLY_IF_RW
+  {
+    KEEP (*(.eh_frame)) *(.eh_frame.*)
+  } > L2
+  .gnu_extab      : ONLY_IF_RW
+  {
+    *(.gnu_extab)
+  } > L2
+  .gcc_except_table   : ONLY_IF_RW
+  {
+    *(.gcc_except_table .gcc_except_table.*)
+  } > L2
+  .exception_ranges   : ONLY_IF_RW
+  {
+    *(.exception_ranges .exception_ranges*)
+  } > L2
+
+
+  /* Thread Local Storage sections  */
+  .tdata	  :
+  {
+    PROVIDE_HIDDEN (__tdata_start = .);
+    *(.tdata .tdata.* .gnu.linkonce.td.*)
+  } > L2
+  .tbss		  :
+  {
+    *(.tbss .tbss.* .gnu.linkonce.tb.*) *(.tcommon)
+  } > L2
+
+
+  /* constructors / destructors */
   .preinit_array : ALIGN(4)
   {
     PROVIDE_HIDDEN (__preinit_array_start = .);
@@ -108,116 +218,6 @@ SECTIONS
     KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .dtors))
     KEEP (*(SORT(.dtors.*)))
     KEEP (*(.dtors))
-  } > L2
-
-
-  .boot : ALIGN(4)
-  {
-    *(.boot)
-    *(.boot.data)
-  } > L2
-
-
-  /* .got : ALIGN(4) */
-  /* { */
-  /*   *(.got.plt) * (.igot.plt) *(.got) *(.igot) */
-  /* } > L2 */
-
-
-  .talias :
-  {
-  } > L2
-
-
-  __l2_priv0_end = ALIGN(4);
-
-
-  /*
-   * L2 PRIVATE BANK1
-   *
-   * Contains FC code
-   */
-
-  .vectors MAX(0x1c008000, ALIGN(256)) :
-  {
-    __irq_vector_base = .;
-    __vector_start = .;
-    KEEP(*(.vectors))
-  } > L2
-
-
-  .text __boot_address :
-  {
-    _stext = .;
-    *(.text.start)
-    *(.text)
-    *(.text.*)
-    _etext = .; /* man 3 end: first addr after text */
-    *(.lit)
-    *(.shdata)
-    _endtext = .;
-    . = ALIGN(4);
-  } > L2
-
-
-  /* read-only sections */
-  .rodata         :
-  {
-    *(.rodata .rodata.* .gnu.linkonce.r.*)
-  } > L2
-  .rodata1        :
-  {
-    *(.rodata1)
-  } > L2
-
-
-  /* gcc language agnostic exception related sections (try-catch-finally) */
-  .eh_frame_hdr :
-  {
-    *(.eh_frame_hdr) *(.eh_frame_entry .eh_frame_entry.*)
-  } > L2
-  .eh_frame       : ONLY_IF_RO
-  {
-    KEEP (*(.eh_frame)) *(.eh_frame.*)
-  } > L2
-  .gcc_except_table   : ONLY_IF_RO
-  {
-    *(.gcc_except_table .gcc_except_table.*)
-  } > L2
-  .gnu_extab   : ONLY_IF_RO
-  {
-    *(.gnu_extab*)
-  } > L2
-
-
-  /* Exception handling  */
-  .eh_frame       : ONLY_IF_RW
-  {
-    KEEP (*(.eh_frame)) *(.eh_frame.*)
-  } > L2
-  .gnu_extab      : ONLY_IF_RW
-  {
-    *(.gnu_extab)
-  } > L2
-  .gcc_except_table   : ONLY_IF_RW
-  {
-    *(.gcc_except_table .gcc_except_table.*)
-  } > L2
-  .exception_ranges   : ONLY_IF_RW
-  {
-    *(.exception_ranges .exception_ranges*)
-  } > L2
-
-
-  /* Thread Local Storage sections  */
-  .tdata	  :
-  {
-    PROVIDE_HIDDEN (__tdata_start = .);
-    *(.tdata .tdata.* .gnu.linkonce.td.*)
-  } > L2
-  .tbss		  :
-  {
-    *(.tbss .tbss.* .gnu.linkonce.tb.*) *(.tcommon)
   } > L2
 
 
