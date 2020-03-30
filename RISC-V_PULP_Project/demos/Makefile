@@ -40,34 +40,35 @@
 #           By default 1 KiB but can be changed with MAXSTACKSIZE=your_value
 
 
+# indicate this repository's root folder
+PROJ_ROOT = $(shell git rev-parse --show-toplevel)
+
 # good defaults for many environment variables
-include common/default_flags.mk
+include ../common/default_flags.mk
 
 # rtos and pulp sources
-include common/freertos_srcs.mk
+include ../common/freertos_srcs.mk
 
 # application name
 PROG = rtosdemo
 
 # application/user specific code
-USER_SRCS = main.c blinky_demo/main_blinky.c full_demo/RegTest.S
-# ../Common/Full/dynamic.c ../Common/Full/semtest.c \
-# ../Common/Minimal/EventGroupsDemo.c ../Common/Minimal/TaskNotify.c \
-# ../Common/Minimal/StreamBufferDemo.c ../Common/Minimal/StreamBufferInterrupt.c \
-# ../Common/Full/print.c ../Common/Minimal/GenQTest.c \
-# ../Common/Minimal/TimerDemo.c ../Common/Minimal/countsem.c \
-# ../Common/Minimal/blocktim.c ../Common/Minimal/recmutex.c \
-# ../Common/Minimal/AbortDelay.c ../Common/Minimal/death.c \
-# ../Common/Minimal/MessageBufferDemo.c
+USER_SRCS = main.c blinky_demo/main_blinky.c full_demo/RegTest.S \
+	shared/Full/dynamic.c shared/Full/semtest.c \
+	shared/Minimal/EventGroupsDemo.c shared/Minimal/TaskNotify.c \
+	shared/Minimal/StreamBufferDemo.c shared/Minimal/StreamBufferInterrupt.c \
+	shared/Full/print.c shared/Minimal/GenQTest.c \
+	shared/Minimal/TimerDemo.c shared/Minimal/countsem.c \
+	shared/Minimal/blocktim.c shared/Minimal/recmutex.c \
+	shared/Minimal/AbortDelay.c shared/Minimal/death.c \
+	shared/Minimal/MessageBufferDemo.c
 
 # user headers
-CPPFLAGS += $(addprefix -I, \
-		"../Common/include" \
-		".")
+CPPFLAGS += $(addprefix -I, "shared/include" ".")
 
 # point to irq handler
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
 CPPFLAGS += -DmainCREATE_SIMPLE_BLINKY_DEMO_ONLY=1
 
 # compile, simulation and analysis targets
-include common/default_targets.mk
+include ../common/default_targets.mk

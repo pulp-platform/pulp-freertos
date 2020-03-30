@@ -16,6 +16,15 @@ OBJCOPY		= $(RISCV_PREFIX)objcopy
 OBJDUMP		= $(RISCV_PREFIX)objdump
 SIZE		= $(RISCV_PREFIX)size
 
+# set some project specific path variables
+ifndef PROJ_ROOT
+$error("PROJ_ROOT is unset. Point it to this project's root directory.")
+endif
+
+RTOS_ROOT    = $(PROJ_ROOT)/FreeRTOS
+COMMON_ROOT  = $(PROJ_ROOT)/RISC-V_PULP_Project/common
+SCRIPTS_ROOT = $(PROJ_ROOT)/RISC-V_PULP_Project/scripts
+
 # CFLAGS defaults explained
 #
 # -std=gnu11
@@ -78,8 +87,9 @@ ASFLAGS = \
 
 CPPFLAGS =
 
-LDFLAGS	= -T common/chips/pulpissimo/link.ld -nostartfiles -Wl,--gc-sections \
-			-Wl,-Map,$@.map # -Wl,--print-gc-sections
+# TODO: ugly path reference
+LDFLAGS	= -T $(COMMON_ROOT)/chips/pulpissimo/link.ld \
+		-nostartfiles -Wl,--gc-sections -Wl,-Map,$@.map # -Wl,--print-gc-sections
 LDLIBS =
 
 # check if we want a release build
@@ -134,8 +144,8 @@ CFLAGS += -flto
 endif
 
 # script paths
-PLPSTIM   = scripts/pulpstim
-PULPTRACE = scripts/pulptrace
+PLPSTIM   = $(SCRIPTS_ROOT)/pulpstim
+PULPTRACE = $(SCRIPTS_ROOT)/pulptrace
 
 # simulation names and paths
 VSIM   = vsim

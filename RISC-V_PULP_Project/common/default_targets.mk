@@ -85,6 +85,9 @@ $(PROG).siz: $(PROG)
 	@echo ' '
 
 # simulator specific targets
+# make sure we have sim directory
+$(shell mkdir -p $(SIMDIR))
+
 # creating symlink farm because PULP/PULPissimo relies on hardcoded paths
 $(SIMDIR)/modelsim.ini:
 	ln -s $(VSIM_PATH)/modelsim.ini $@
