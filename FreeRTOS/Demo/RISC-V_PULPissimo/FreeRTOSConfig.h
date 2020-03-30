@@ -89,11 +89,13 @@
  *----------------------------------------------------------*/
 
 #include <stddef.h>
+#ifdef __PULP_USE_LIBC
+	#include <assert.h>
+#endif
 
 /* Ensure stdint is only used by the compiler, and not the assembler. */
-#if defined( __ICCARM__ ) || defined( __CC_ARM ) || defined( __GNUC__ )
+#if defined( __GNUC__ )
     #include <stdint.h>
-	extern uint32_t SystemCoreClock;
 #endif
 
 #define configCLINT_BASE_ADDRESS		 0 /* There is no CLINT so the base address must be set to 0. */
@@ -123,6 +125,7 @@
 //#define configOVERRIDE_DEFAULT_TICK_CONFIGURATION    1
 //#define configRECORD_STACK_HIGH_ADDRESS              1
 //#define configUSE_POSIX_ERRNO                        1
+
 /* newlib reentrancy */
 #define configUSE_NEWLIB_REENTRANT 1
 /* Co-routine definitions. */
@@ -157,7 +160,12 @@ to exclude the API function. */
 
 /* Normal assert() semantics without relying on the provision of an assert.h
 header file. */
-#define configASSERT( x ) if( ( x ) == 0 ) { taskDISABLE_INTERRUPTS(); for( ;; ); }
+#ifdef __PULP_USE_LIBC
+	#define configASSERT( x ) assert ( x )
+#else
+	#define configASSERT( x ) do { if( ( x ) == 0 ) { taskDISABLE_INTERRUPTS(); for( ;; ); } } while ( 0 )
+#endif
+
 
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION 0
 #define configKERNEL_INTERRUPT_PRIORITY 7
