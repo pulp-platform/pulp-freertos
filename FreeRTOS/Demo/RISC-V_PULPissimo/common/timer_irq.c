@@ -34,6 +34,8 @@ static uint32_t last_count;
 
 int timer_irq_init(uint32_t ticks)
 {
+	/* TODO: enable soc_eu timer interrupt */
+
 	/* set the interrupt interval */
 	timer_irq_set_timeout(ticks, false);
 

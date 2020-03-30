@@ -45,6 +45,10 @@
  * (PLL) that is part of the microcontroller device.
  */
 
+#include <stdint.h>
+#include <assert.h>
+
+#include <FreeRTOS.h>
 #include "FreeRTOSConfig.h"
 
 #include "fll.h"
@@ -54,6 +58,10 @@
 #ifndef DISABLE_WDOG
 #define DISABLE_WDOG 1
 #endif
+
+/* test some assumptions we make about compiler settings */
+static_assert(sizeof(uintptr_t) == 4,
+	      "uintptr_t is not 4 bytes. Make sure you are using -mabi=ilp32*");
 
 /* Allocate heap to special section. Note that we have no references in the
  * whole program to this variable (since its just here to allocate space in the
@@ -71,7 +79,17 @@ uint32_t __heap_size = configTOTAL_HEAP_SIZE;
 
 uint32_t system_core_clock = DEFAULT_SYSTEM_CLOCK;
 
-// TODO: Fix init code
+/* FreeRTOS task handling */
+BaseType_t xTaskIncrementTick(void);
+void vTaskSwitchContext(void);
+
+/* interrupt handling */
+void timer_irq_handler(void);
+void (*isr_table[32])(void);
+
+/**
+ * Board init code. Always call this before anything else.
+ */
 void pulp_sys_init(void)
 {
 	/* TODO: check this code */
@@ -79,6 +97,11 @@ void pulp_sys_init(void)
 
 	/* make sure irq (itc) is a good state */
 	pulp_irq_init();
+
+	/* Hook up isr table. This table is temporary until we figure out how to
+	 * do proper vectored interrupts.
+	 */
+	isr_table[0xa] = timer_irq_handler;
 
 	/* mtvec is set in crt0.S */
 
@@ -89,22 +112,6 @@ void pulp_sys_init(void)
 	/* TODO: I$ enable*/
 	/* enable core level interrupt (mie) */
 	irq_clint_enable();
-
-
-	//    SCBC->ICACHE_ENABLE = 0xFFFFFFFF;
-
-	/* Here we bind same Handler in M and U mode vector table, TODO, security problem */
-	/* If we need to protect the access to peripheral IRQ, we need do as SysTick_Handler */
-	/* by using ecall form U mode to M mode */
-	//    NVIC_SetVector(FC_SOC_EVENT_IRQn, (uint32_t)__handler_wrapper_light_FC_EventHandler);
-
-	/* Activate interrupt handler for soc event */
-	//    NVIC_EnableIRQ(FC_SOC_EVENT_IRQn);
-
-	/* Initialize malloc functions */
-	//    FC_MallocInit();
-	// TODO: irq enable
-	//    __enable_irq();
 }
 
 //
@@ -114,4 +121,13 @@ void system_core_clock_update()
 
 	/* Need to update clock divider for each peripherals */
 	//    uart_is_init     = 0;
+}
+
+void timer_irq_handler(void)
+{
+#warning requires critical section if interrupt nesting is used.
+
+	if (xTaskIncrementTick() != 0) {
+		vTaskSwitchContext();
+	}
 }

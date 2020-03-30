@@ -208,21 +208,6 @@ extern int timer_irq_init(uint32_t ticks);
 }
 /*-----------------------------------------------------------*/
 
-void timer_irq_handler(void)
-{
-BaseType_t xTaskIncrementTick( void );
-void vTaskSwitchContext( void );
-
-#warning requires critical section if interrupt nesting is used.
-
-	if( xTaskIncrementTick() != 0 )
-	{
-		vTaskSwitchContext();
-	}
-
-}
-/*-----------------------------------------------------------*/
-
 /* At the time of writing, interrupt nesting is not supported, so do not use
 the default vSystemIrqHandler() implementation as that enables interrupts.  A
 version that does not enable interrupts is provided below.  THIS INTERRUPT
