@@ -30,7 +30,7 @@
 
 int pinmux_pin_set(int pin, uint32_t func)
 {
-	assert(0 < pin && pin < 32);
+	assert(0 <= pin && pin < 32);
 
 	uintptr_t padfun_reg =
 		((pin & 0xf) >> 4) * 4 +
@@ -43,7 +43,7 @@ int pinmux_pin_set(int pin, uint32_t func)
 
 int pinmux_pin_get(int pin, uint32_t *func)
 {
-	assert(0 < pin && pin < 32);
+	assert(0 <= pin && pin < 32);
 
 	uintptr_t padfun_reg =
 		((pin & 0xf) >> 4) * 4 +

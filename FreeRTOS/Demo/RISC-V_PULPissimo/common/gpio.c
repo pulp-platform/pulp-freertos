@@ -29,7 +29,7 @@
 
 int gpio_pin_conf_pad(int pin, uint32_t flags)
 {
-	assert(0 < pin && pin < 32);
+	assert(0 <= pin && pin < 32);
 
 	/* this is only correct if the static assert in gpio.h regarding padcfg*
 	 * registers doesn't fail
@@ -128,7 +128,7 @@ inline int gpio_port_toggle_bits(uint32_t mask)
 
 inline int gpio_pin_get_raw(int pin)
 {
-	assert(0 < pin && pin < 32);
+	assert(0 <= pin && pin < 32);
 
 	uint32_t value = 0;
 	int ret = gpio_port_get_raw(&value);
@@ -140,7 +140,7 @@ inline int gpio_pin_get_raw(int pin)
 
 inline int gpio_pin_set_raw(int pin, int value)
 {
-	assert(0 < pin && pin < 32);
+	assert(0 <= pin && pin < 32);
 
 	if (value != 0)
 		gpio_port_set_bits_raw(BIT(pin));
