@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+# pulpstim
+import argparse
+import os
+import sys
+from stim_utils import stim
+
+parser = argparse.ArgumentParser(prog='pulpstim',
+                                 description="""Generate stimuli files from ELF
+                                 files for the JTAG TAP in PULPissimo""")
+
+parser.version = '0.1'
+parser.add_argument('Path', metavar='path',
+                    type=str, help='the path to elf file')
+parser.add_argument('-o', '--output', metavar='output',
+                    type=str, help='the output file name')
+parser.add_argument('--verbose', action='store_true',
+                    help='enable verbose output')
+
+args = parser.parse_args()
+elf_file = args.Path
+
+if not os.path.isfile(elf_file):
+    print('The specified path does not exist')
+    sys.exit(1)
+
+stimuli_generator = stim(args.verbose)
+stimuli_generator.add_binary(elf_file)
+stimuli_generator.gen_stim_slm_64(args.output if args.output else 'stim.txt')
