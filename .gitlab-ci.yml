@@ -1,6 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
 # Author: Robert Balas (balasr@iis.ee.ethz.ch)
 
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
 before_script:
   - pwd
   - export RISCV=~balasr/.riscv
