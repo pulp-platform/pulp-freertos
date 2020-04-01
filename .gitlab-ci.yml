@@ -1,0 +1,61 @@
+# SPDX-License-Identifier: Apache-2.0
+# Author: Robert Balas (balasr@iis.ee.ethz.ch)
+
+before_script:
+  - pwd
+  - export RISCV=~balasr/.riscv
+
+stages:
+  - fetch
+  - test
+
+fetch_gcc:
+  stage: fetch
+  script:
+    - echo "FIXME using balasr hardcoded path"
+
+fetch_pulp:
+  stage: fetch
+  script:
+     - git clone https://github.com/pulp-platform/pulp
+     - cd pulp
+     # latest "stable" version
+     - git checkout 75cc0947d85cd86e63b499f5465fd054fa795e5a
+     - ./update-ips
+     - make build
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - pulp/*
+
+test_demos:
+  stage: test
+  script:
+    - echo "FIXME run demos tests"
+
+test_apps:
+  stage: test
+  script:
+    - echo "FIXME add app tests"
+
+test_semaphore:
+  stage: test
+  script:
+    - source pulp/setup/vsim.sh
+    - cd RISC-V_PULP_Project/tests/semaphore
+    - make clean all run
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
+    paths:
+     - RISC-V_PULP_Project/tests/semaphore
+
+test_queue:
+  stage: test
+  script:
+    - source pulp/setup/vsim.sh
+    - cd RISC-V_PULP_Project/tests/queue
+    - make clean all run
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - RISC-V_PULP_Project/tests/queue

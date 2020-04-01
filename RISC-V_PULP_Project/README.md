@@ -1,4 +1,5 @@
-# PULP PROJECT FREERTOS
+
+# PULP PROJECT FREERTOS [![pipeline status](https://iis-git.ee.ethz.ch/freertos/freertos/badges/master/pipeline.svg)](https://iis-git.ee.ethz.ch/freertos/freertos/commits/master)
 
 ## Quick start (running a simulation)
 1. Set up `VSIM_PATH` correctly by sourcing `setup/vsim.sh` in your PULP project.
