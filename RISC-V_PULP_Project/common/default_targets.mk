@@ -138,7 +138,7 @@ endif
 
 # analysis scripts
 $(SIMDIR)/trace_fc_postproc.log: $(SIMDIR)/trace_core_1f_0.log
-	$(PULPTRACE) $^ rtosdemo -o $@
+	$(PULPTRACE) $^ $(PROG) -o $@
 
 analyze: $(SIMDIR)/trace_fc_postproc.log
 
@@ -147,7 +147,7 @@ analyze: $(SIMDIR)/trace_fc_postproc.log
 backup:
 	@STAMP=sim-$$(git rev-parse --short HEAD)-$$(date +"%Y-%m-%d-%H-%M-%S"); \
 	cp -r $(SIMDIR) $$STAMP; \
-	cp rtosdemo rtosdemo.lst $$STAMP; \
+	cp $(PROG) $(PROG).lst $$STAMP; \
 	echo "generated backup $$STAMP";
 
 
