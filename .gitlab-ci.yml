@@ -62,3 +62,14 @@ test_queue:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
     paths:
       - RISC-V_PULP_Project/tests/queue
+
+test_streambufferisr:
+  stage: test
+  script:
+    - source pulp/setup/vsim.sh
+    - cd RISC-V_PULP_Project/tests/streambufferisr
+    - make clean all run
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - RISC-V_PULP_Project/tests/streambufferisr

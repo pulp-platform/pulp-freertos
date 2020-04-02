@@ -51,3 +51,19 @@ calls.
 
 ### Measurements
 TODO: describe in detail
+
+## Stream Buffers
+### Description
+
+A simple example that shows a stream buffer being used to pass data from an
+interrupt to a task.
+
+There are two strings, pcStringToSend and pcStringToReceive, where
+pcStringToReceive is a substring of pcStringToSend. The interrupt sends a few
+bytes of pcStringToSend to a stream buffer ever few times that it executes. A
+task reads the bytes from the stream buffer, looking for the substring, and
+flagging an error if the received data is invalid. The error is propagated via
+newlib's `exit`.
+
+### Measurements
+TODO: describe in detail
