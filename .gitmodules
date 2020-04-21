@@ -1,3 +1,6 @@
 [submodule "FreeRTOS/Source"]
 	path = FreeRTOS/Source
 	url = ../../freertos/freertos-kernel.git
+[submodule "RISC-V_PULP_Project/common/pmsis_api"]
+	path = RISC-V_PULP_Project/common/pmsis_api
+	url = https://github.com/GreenWaves-Technologies/pmsis_api/
