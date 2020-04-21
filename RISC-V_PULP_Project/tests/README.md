@@ -1,6 +1,6 @@
 # Tests
 
-Tests and measurements of FreeRTOS primitives.
+Generic tests and measurements of FreeRTOS primitives.
 
 
 ## Queue
