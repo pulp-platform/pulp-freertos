@@ -2,7 +2,7 @@
 #define __PMSIS_BACKEND_NATIVE_TASK_API_H__
 
 #include "pmsis/pmsis_types.h"
-#include "FreeRTOS_util.h"
+/* #include "FreeRTOS_util.h" */ /* TODO: don't think we need this */
 #include "gap_common.h"
 #include "pmsis_gcc.h"
 #include "pmsis_backend_native_types.h"

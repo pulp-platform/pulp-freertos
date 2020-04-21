@@ -31,8 +31,10 @@
 #ifndef _GAP_IO_H_
 #define _GAP_IO_H_
 
+#include <stdio.h>
+
 #include "gap_util.h"
-#include "printf.h"
+/* #include "printf.h" */ /* TODO: I/O from newlib */
 
 /**
  * \addtogroup io

@@ -6,9 +6,10 @@
 
 #if defined(__GAP8__)
 #include "system_gap8.h"
-#else
+#elseif defined(__GAP9__)
 #include "system_gap9.h"
 #endif  /* __GAP8__ */
+/* TODO: add system_pulp */
 
 #define __INC_TO_STRING(x) #x
 
@@ -16,6 +17,7 @@
 #define DEFAULT_MALLOC_INC                   __INC_TO_STRING(pmsis/rtos/malloc/l2_malloc.h)
 
 // default malloc for driver structs etc (might not be compatible with udma!)
+/* TODO: rereoute to newlib malloc (?)*/
 #define pi_default_malloc(x)  pmsis_l2_malloc(x)
 #define pi_default_free(x,y)  pmsis_l2_malloc_free(x,y)
 #define pi_data_malloc(x)     pmsis_l2_malloc(x)
