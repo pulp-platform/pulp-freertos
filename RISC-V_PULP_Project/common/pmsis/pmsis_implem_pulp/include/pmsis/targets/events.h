@@ -30,32 +30,41 @@
 /* Number of SW events. */
 #define NB_SW_EVENTS                    (8)
 
-/*! @brief FC events */
+/*! @brief FC events (aka IRQ lines)*/
 #define FC_EVENT_SW(id)                 (id & (NB_SW_EVENTS - 1))
 #define FC_EVENT_DMA_EVT                (8)
 #define FC_EVENT_DMA                    (9)
 #define FC_EVENT_TIMER0                 (10) /* Timer low.  */
-#define SYSTICK_IRQN                    (10)
+#define SYSTICK_IRQN                    FC_EVENT_TIMER0
 #define FC_EVENT_TIMER1                 (11) /* Timer high. */
-#define FC_EVENT_EU_HWCE                (12)
+/* #define FC_EVENT_EU_HWCE                (12) */
 
+/*
+ * SoC event unit events: Many events get implicitely muxed into this interrupt.
+ * A user that gets such an interrupt has to check the event unit's registers to
+ * see what happened
+ */
 #define FC_EVENT_SOC_EVENT              (27)
-#define FC_EVENT_MPU_ERROR              (28)
+/* #define FC_EVENT_MPU_ERROR              (28) */
+/*
+ * Event queue error: If we don't process event unit events quickly enough
+ * internal fifos can overflow and we get this error interrupt
+ */
 #define FC_EVENT_FC_QUEUE_ERROR         (29)
 #define FC_EVENT_HP0                    (30)
 #define FC_EVENT_HP1                    (31)
 
 /*! @name SoC events  */
 /*! @brief Number of FC_Events. */
-#define SOC_EU_NB_FC_EVENTS             (57)
+/* #define SOC_EU_NB_FC_EVENTS             (57) */
 
 /*! @brief UDMA events */
 /* SPIM */
 #define SOC_EVENT_UDMA_SPIM_RX(id)      ((UDMA_SPIM_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_RX)
 #define SOC_EVENT_UDMA_SPIM_TX(id)      ((UDMA_SPIM_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_TX)
 /* HYPER */
-#define SOC_EVENT_UDMA_HYPER_RX(id)     ((UDMA_HYPER_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_RX)
-#define SOC_EVENT_UDMA_HYPER_TX(id)     ((UDMA_HYPER_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_TX)
+/* #define SOC_EVENT_UDMA_HYPER_RX(id)     ((UDMA_HYPER_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_RX) */
+/* #define SOC_EVENT_UDMA_HYPER_TX(id)     ((UDMA_HYPER_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_TX) */
 /* UART */
 #define SOC_EVENT_UDMA_UART_RX(id)      ((UDMA_UART_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_RX)
 #define SOC_EVENT_UDMA_UART_TX(id)      ((UDMA_UART_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_TX)
@@ -63,8 +72,8 @@
 #define SOC_EVENT_UDMA_I2C_RX(id)       ((UDMA_I2C_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_RX)
 #define SOC_EVENT_UDMA_I2C_TX(id)       ((UDMA_I2C_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_TX)
 /* DMACPY */
-#define SOC_EVENT_UDMA_DMACPY_RX(id)    ((UDMA_DMACPY_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_RX)
-#define SOC_EVENT_UDMA_DMACPY_TX(id)    ((UDMA_DMACPY_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_TX)
+/* #define SOC_EVENT_UDMA_DMACPY_RX(id)    ((UDMA_DMACPY_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_RX) */
+/* #define SOC_EVENT_UDMA_DMACPY_TX(id)    ((UDMA_DMACPY_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_TX) */
 /* I2S */
 #define SOC_EVENT_UDMA_I2S_RX(id)       ((UDMA_I2S_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_RX)
 #define SOC_EVENT_UDMA_I2S_TX(id)       ((UDMA_I2S_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_TX)
@@ -75,15 +84,15 @@
 #define SOC_EVENT_UDMA_SPIM_EOT(id)     (22 + id)
 //#define SOC_EVENT_UDMA_I2C_ERROR(id)  (26 + id)
 
-/*! @brief PMU events */
-#define SOC_EVENT_PMU_CLUSTER_POWER     (31)
-#define SOC_EVENT_PMU_CLUSTER_CG        (35)
-#define SOC_EVENT_PMU_DLC_BRIDGE_PICL   (36)
-#define SOC_EVENT_PMU_DLC_BRIDGE_SCU    (37)
-#define SOC_EVENT_PWM(id)               (38 + id)
+/*! @brief PMU events, no pmu*/
+/* #define SOC_EVENT_PMU_CLUSTER_POWER     (31) */
+/* #define SOC_EVENT_PMU_CLUSTER_CG        (35) */
+/* #define SOC_EVENT_PMU_DLC_BRIDGE_PICL   (36) */
+/* #define SOC_EVENT_PMU_DLC_BRIDGE_SCU    (37) */
+/* #define SOC_EVENT_PWM(id)               (38 + id) */
 #define SOC_EVENT_GPIO                  (42)
-#define SOC_EVENT_RTC_APB               (43)
-#define SOC_EVENT_RTC                   (44)
+/* #define SOC_EVENT_RTC_APB               (43) */
+/* #define SOC_EVENT_RTC                   (44) */
 
 #define SOC_EVENT_SW(id)                (48 + (id & (NB_SW_EVENTS - 1)))
 #define SOC_EVENT_REF32K_CLK_RISE       (56)
@@ -101,8 +110,8 @@
 #define CL_EVENT_BAR                    (16)
 #define CL_EVENT_MUTEX                  (17)
 #define CL_EVENT_DISPATCH               (18)
-#define CL_EVENT_CLUSTER0               (22)
-#define CL_EVENT_CLUSTER1               (23)
-#define CL_EVENT_SOC_EVT                (27)
+/* #define CL_EVENT_CLUSTER0               (22) */
+/* #define CL_EVENT_CLUSTER1               (23) */
+#define CL_EVENT_SOC_EVT                (30) /* adapted */
 
 #endif  /* __EVENTS_H__ */

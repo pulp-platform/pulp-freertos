@@ -1027,8 +1027,8 @@ typedef struct {
 /* ----------------------------------------------------------------------------
    -- RTC_APB Peripheral Access Layer
    ---------------------------------------------------------------------------- */
-#include "periph/rtc_periph.h"
-#define rtc(id) ((rtc_t *) RTC_ADDR)
+/* #include "periph/rtc_periph.h" */
+/* #define rtc(id) ((rtc_t *) RTC_ADDR) */
 
 
 /* ----------------------------------------------------------------------------

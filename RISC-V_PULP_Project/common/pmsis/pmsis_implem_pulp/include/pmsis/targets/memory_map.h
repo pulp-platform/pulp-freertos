@@ -61,12 +61,13 @@
 #define APB_SOC_CTRL_ADDR                           (SOC_PERIPHERALS_ADDR + APB_SOC_CTRL_OFFSET)
 #define ADV_TIMER_ADDR                              (SOC_PERIPHERALS_ADDR + ADV_TIMER_OFFSET)
 #define SOC_EU_ADDR                                 (SOC_PERIPHERALS_ADDR + SOC_EU_OFFSET)
-#define DLC_ADDR                                    (SOC_PERIPHERALS_ADDR + DLC_OFFSET)
-#define RTC_ADDR                                    (SOC_PERIPHERALS_ADDR + RTC_BASE_OFFSET)
-#define EFUSE_ADDR                                  (SOC_PERIPHERALS_ADDR + EFUSE_OFFSET)
+/* #define DLC_ADDR                                    (SOC_PERIPHERALS_ADDR + DLC_OFFSET) */
+/* #define RTC_ADDR                                    (SOC_PERIPHERALS_ADDR + RTC_BASE_OFFSET) */
+
+/* #define EFUSE_ADDR                                  (SOC_PERIPHERALS_ADDR + EFUSE_OFFSET) */
 
 /* UDMA peripherals */
-#define UDMA_GC_ADDR                                (UDMA_CTRL_ADDR + 0x780)
+/* #define UDMA_GC_ADDR                                (UDMA_CTRL_ADDR + 0x780) */
 /* UDMA base peripheral addr = UDMA base address + UDMA ctrl. */
 #define UDMA_PERIPH_BASE_ADDR                       (UDMA_CTRL_ADDR)
 #define UDMA_SPIM(id)                               (UDMA_PERIPH_BASE_ADDR + (UDMA_SPIM_ID(id) << UDMA_PERIPH_SIZE_LOG2))
