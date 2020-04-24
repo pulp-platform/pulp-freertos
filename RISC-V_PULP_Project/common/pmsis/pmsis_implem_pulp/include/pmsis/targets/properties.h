@@ -43,23 +43,7 @@
 /* L1 cluster TS */
 #define ARCHI_HAS_CL_L1_TS          (1)
 
-/* ROM memory 8 KiB */
-#define ROM_SIZE                    (0x00002000)
 
-/* Peripherals */
-/* SoC peripherals */
-#define SOC_FLL_OFFSET              (0x00000000)
-#define CL_FLL_OFFSET               (0x00000800)
-#define GPIO_OFFSET                 (0x00001000)
-#define UDMA_OFFSET                 (0x00002000)
-#define APB_SOC_CTRL_OFFSET         (0x00004000)
-#define ADV_TIMER_OFFSET            (0x00005000) /* PWM. */
-#define SOC_EU_OFFSET               (0x00006000)
-/* #define DLC_OFFSET                  (0x00007000) */
-/* #define RTC_BASE_OFFSET             (0x00008000) */
-/* #define EFUSE_OFFSET                (0x00009000) */
-#define FC_TIMER_OFFSET             (0x0000B000)
-#define STDOUT_OFFSET               (0x0000F000)
 
 /* TODO: fix this table */
 /* UDMA peripherals */

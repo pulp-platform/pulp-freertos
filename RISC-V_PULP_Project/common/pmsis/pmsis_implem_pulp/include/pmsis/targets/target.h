@@ -44,8 +44,8 @@
 #define __PMSIS_TARGETS_H__
 
 #include "pmsis/targets/periph.h"
-#include "cores/TARGET_RISCV_32/core_gap.h"
-#include "cores/TARGET_RISCV_32/core_gap_cluster.h"
+#include "cores/TARGET_RISCV_32/core_pulp.h"
+#include "cores/TARGET_RISCV_32/core_pulp_cluster.h"
 #include "cores/TARGET_RISCV_32/core_utils.h"
 
 /**

@@ -1,11 +1,12 @@
 /**************************************************************************//**
- * @file     cmsis_gcc.h
+ * @file     pmsis_gcc.h
  * @brief    CMSIS compiler GCC header file
  * @version  V5.0.2
- * @date     13. February 2017
+ * @date     4. April 2020
  ******************************************************************************/
 /*
  * Copyright (c) 2009-2017 ARM Limited. All rights reserved.
+ * Copyright (c) 20202 ETH Zurich
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -35,7 +36,7 @@
 
 #include <stdint.h>
 
-#define __RISCV_ARCH_GAP__ 1
+#define __RISCV_ARCH_PULP__ 1
 /* ignore some GCC warnings */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-conversion"
@@ -122,198 +123,6 @@
   #define __RESTRICT                             __restrict
 #endif
 
-
-/* ###########################  Core Function Access  ########################### */
-/** \ingroup  CMSIS_Core_FunctionInterface
-    \defgroup CMSIS_Core_RegAccFunctions CMSIS Core Register Access Functions
-  @{
- */
-/**
-  \brief   Get PRIVLVL Register
-  \details Returns the content of the PRIVLVL Register.
-  \return               PRIVLVL Register value
- */
-__attribute__((always_inline)) __STATIC_INLINE uint32_t __get_CPRIV(void)
-{
-  uint32_t result;
-  asm volatile ("csrr %0, 0xC10" : "=r" (result) );
-  return(result);
-}
-
-/**
-  \brief   Restore the MIE bit
-  \details Restore the MIE bit of MSTATUS
- */
-__attribute__((always_inline)) __STATIC_INLINE void __restore_irq(int irq)
-{
-    // We are in machine mode, already mask all interrupt, so just set MIE = irq
-    __builtin_pulp_spr_write(0x300, irq);
-}
-
-/**
-  \brief   Enable IRQ Interrupts
-  \details Enables IRQ interrupts by setting the MPIE-bit in the MSTATUS.
-           Can only be executed in Privileged modes.
- */
-__attribute__((always_inline)) __STATIC_INLINE void __enable_irq(void)
-{
-    // We are in machine mode, already mask all interrupt, so just set MIE = 1
-    int irq;
-    asm volatile ("csrrs %0, 0x300, %1" : "=r" (irq) : "I" (0x1<<3) );
-}
-
-/**
-  \brief   Disable IRQ Interrupts
-  \details Disables IRQ interrupts by clearing the MPIE-bit in the CPSR.
-           Can only be executed in Privileged modes.
- */
-__attribute__((always_inline)) __STATIC_INLINE int __disable_irq(void)
-{
-    int state;
-    asm volatile ("csrrc %0, 0x300, %1" :  "=r" (state) : "I" (0x1<<3) );
-    return state;
-}
-
-/**
-  \brief   Set ustatus Register
-  \details Writes the given value to the ustatus Register.
-  \param [in]    control  ustatus Register value to set
- */
-__attribute__((always_inline)) __STATIC_INLINE void __set_USTATUS(uint32_t control)
-{
-
-    __ASM volatile ("csrw 0x0, %0" :: "r" (control) );
-}
-
-/**
-  \brief   Set mstatus Register
-  \details Writes the given value to the mstatus Register.
-  \param [in]    control  mstatus Register value to set
- */
-__attribute__((always_inline)) __STATIC_INLINE void __set_MSTATUS(uint32_t control)
-{
-
-    __ASM volatile ("csrw mstatus, %0" :: "r" (control) );
-}
-
-/**
-  \brief   Get MCAUSE Register
-  \details Returns the content of the MCAUSE Register.
-  \return               MCAUSE Register value
- */
-__attribute__((always_inline)) __STATIC_INLINE uint32_t __get_MCAUSE(void)
-{
-  uint32_t result;
-
-  __ASM volatile ("csrr %0, mcause" : "=r" (result) );
-  return(result);
-}
-
-/**
-  \brief   Get UCAUSE Register
-  \details Returns the content of the UCAUSE Register.
-  \return               UCAUSE Register value
- */
-__attribute__((always_inline)) __STATIC_INLINE uint32_t __get_UCAUSE(void)
-{
-  uint32_t result;
-
-  __ASM volatile ("csrr %0, 0x042" : "=r" (result) );
-  return(result);
-}
-
-/**
-  \brief   Get MSTATUS Register
-  \details Returns the content of the MSTATUS Register.
-  \return               MSTATUS Register value
- */
-__attribute__((always_inline)) __STATIC_INLINE uint32_t __get_MSTATUS(void)
-{
-  uint32_t result;
-
-  __ASM volatile ("csrr %0, mstatus" : "=r" (result) );
-  return(result);
-}
-
-
-/**
-  \brief   Get USTATUS Register
-  \details Returns the content of the USTATUS Register.
-  \return               USTATUS Register value
- */
-__attribute__((always_inline)) __STATIC_INLINE uint32_t __get_USTATUS(void)
-{
-  uint32_t result;
-
-  __ASM volatile ("csrr %0, 0x0" : "=r" (result) );
-  return(result);
-}
-
-/**
-  \brief   Get Process Stack Pointer
-  \details Returns the current value of the Process Stack Pointer (PSP).
-  \return               PSP Register value
- */
-__attribute__((always_inline)) __STATIC_INLINE uint32_t __get_PSP(void)
-{
-  register uint32_t result;
-
-  __ASM volatile ("lw %0, (userStack)"  : "=r" (result) );
-  return(result);
-}
-
-/**
-  \brief   Set Process Stack Pointer
-  \details Assigns the given value to the Process Stack Pointer (PSP).
-  \param [in]    topOfProcStack  Process Stack Pointer value to set
- */
-__attribute__((always_inline)) __STATIC_INLINE void __set_PSP(uint32_t topOfProcStack)
-{
-  __ASM volatile ("sw %0, (userStack)(x0)"  :: "r" (topOfProcStack) );
-}
-
-/**
-  \brief   Get Main Stack Pointer
-  \details Returns the current value of the Main Stack Pointer (MSP).
-  \return               MSP Register value
- */
-__attribute__((always_inline)) __STATIC_INLINE uint32_t __get_MSP(void)
-{
-  register uint32_t result;
-
-  __ASM volatile ("lw %0, (kernelStack)" : "=r" (result) );
-  return(result);
-}
-
-/**
-  \brief   Set Main Stack Pointer
-  \details Assigns the given value to the Main Stack Pointer (MSP).
-  \param [in]    topOfMainStack  Main Stack Pointer value to set
- */
-__attribute__((always_inline)) __STATIC_INLINE void __set_MSP(uint32_t topOfMainStack)
-{
-  __ASM volatile ("sw %0, (kernelStack)(x0)"  :: "r" (topOfMainStack) );
-}
-
-/**
-  \brief   Get the running mode is User Mode
-  \details Read 0xC10 privilege register
-  \return               Is User mode
- */
-__attribute__((always_inline)) __STATIC_INLINE uint32_t __is_U_Mode()
-{
-    return (__builtin_pulp_spr_read(0xC10) & 0x3) == 0;
-}
-
-/**
-  \brief   Get the running mode is Machine Mode
-  \details Read 0xC10 privilege register
-  \return               Is Machine mode
- */
-__attribute__((always_inline)) __STATIC_INLINE uint32_t __is_M_Mode()
-{
-    return (__builtin_pulp_spr_read(0xC10) & 0x3) == 1;
-}
 
 #define __get_BASEPRI()      0
 #define __get_PRIMASK()      1

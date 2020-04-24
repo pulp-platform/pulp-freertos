@@ -1,16 +1,17 @@
 /*
 ** ###################################################################
-**     Processors:          GAP8
+**     Processors:          PULP
 **
 **     Compilers:           GNU C Compiler
 **
 **     Reference manual:    riscv-spec-v2.1, January 2017
-**     Version:             rev. 2.9, 2017-07-19
+**     Version:             rev. 2.9, 2020-04-04
 **
 **     Abstract:
-**         CMSIS Peripheral Access Layer for GAP8
+**         CMSIS Peripheral Access Layer for PULP
 **
 **     Copyright (c) 2015 - 2018 GreenWave Technologies, Inc.
+**     Copyright (c) 2020 ETH Zurich
 **     All rights reserved.
 **
 **     Redistribution and use in source and binary forms, with or without modification,
@@ -48,16 +49,16 @@
 */
 
 /*!
- * @file GAP8.h
+ * @file periph.h
  * @version 1.0
  * @date 2017-07-19
- * @brief CMSIS Peripheral Access Layer for GAP8
+ * @brief CMSIS Peripheral Access Layer for PULP
  *
- * CMSIS Peripheral Access Layer for GAP8
+ * CMSIS Peripheral Access Layer for PULP
  */
 
-#ifndef _PMSIS_PERIPH_GAP8_H_
-#define _PMSIS_PERIPH_GAP8_H_                        /**< Symbol preventing repeated inclusion */
+#ifndef _PMSIS_PERIPH_PULP_H_
+#define _PMSIS_PERIPH_PULP_H_                        /**< Symbol preventing repeated inclusion */
 /* ----------------------------------------------------------------------------
    -- Interrupt vector numbers
    ---------------------------------------------------------------------------- */
@@ -82,24 +83,24 @@ typedef enum IRQn {
   DMA_EVT_IRQN                 = 8,                /**< DMA event interrupt */
   DMA_IRQN                     = 9,                /**< DMA interrupt */
   FC_TIMER0_IRQN               = 10,               /**< FC timer0 event interrupt */
-  SYSTICK_IRQN                 = 10,               /**< GAP8 U -> M System Tick Interrupt */
+  SYSTICK_IRQN                 = 10,               /**< PULP U -> M System Tick Interrupt */
   FC_TIMER1_IRQN               = 11,               /**< FC timer1 interrupt */
 
-  EU_HWCE_EVENT                = 12,              /**< GAP8 HWCE SW Event */
-  EU_HW_BARRIER_EVENT          = 16,              /**< GAP8 Hardware Barrier SW Event */
-  EU_MUTEX_EVENT               = 17,              /**< GAP8 Mutex SW Event */
-  EU_DISPATCH_EVENT            = 18,              /**< GAP8 Dispatch SW Event */
-  EU_LOOP_EVENT                = 19,              /**< GAP8 Loop SW Event */
+  EU_HWCE_EVENT                = 12,              /**< PULP HWCE SW Event */
+  EU_HW_BARRIER_EVENT          = 16,              /**< PULP Hardware Barrier SW Event */
+  EU_MUTEX_EVENT               = 17,              /**< PULP Mutex SW Event */
+  EU_DISPATCH_EVENT            = 18,              /**< PULP Dispatch SW Event */
+  EU_LOOP_EVENT                = 19,              /**< PULP Loop SW Event */
 
   /* Fault interrupts */
-  FC_SOC_EVENT_IRQN            = 27,              /**< GAP8 SoC Event Interrupt */
-  MPU_ERROR_IRQN               = 28,              /**< GAP8 MPU Error Interrupt */
-  ERR_EVENT_IRQN               = 29,              /**< GAP8 Event Error Interrupt */
+  FC_SOC_EVENT_IRQN            = 27,              /**< PULP SoC Event Interrupt */
+  MPU_ERROR_IRQN               = 28,              /**< PULP MPU Error Interrupt */
+  ERR_EVENT_IRQN               = 29,              /**< PULP Event Error Interrupt */
 
   /* Core interrupts */
-  RST_HANDLER_IRQN             = 32,              /**< GAP8 Reset handler Interrupt */
-  ILL_INS_IRQN                 = 33,              /**< GAP8 Usage Fault Interrupt */
-  SVCALL_IRQN                  = 34               /**< GAP8 SV Call Interrupt */
+  RST_HANDLER_IRQN             = 32,              /**< PULP Reset handler Interrupt */
+  ILL_INS_IRQN                 = 33,              /**< PULP Usage Fault Interrupt */
+  SVCALL_IRQN                  = 34               /**< PULP SV Call Interrupt */
 } IRQn_Type;
 
 /*!
@@ -108,29 +109,29 @@ typedef enum IRQn {
 
 
 /* ----------------------------------------------------------------------------
-   -- GAP8 Core Configuration
+   -- PULP Core Configuration
    ---------------------------------------------------------------------------- */
 
 /*!
- * @addtogroup GAP8_Core_Configuration GAP8 Core Configuration
+ * @addtogroup PULP_Core_Configuration PULP Core Configuration
  * @{
  */
 
-#define __MPU_PRESENT                  1         /**< Defines if an MPU is present or not */
+#define __MPU_PRESENT                  0         /**< Defines if an MPU is present or not */
 #define __NVIC_PRIO_BITS               0         /**< Number of priority bits implemented in the NVIC */
 #define __Vendor_SysTickConfig         0         /**< Vendor specific implementation of SysTickConfig is defined */
 #define __FPU_PRESENT                  0         /**< Defines if an FPU is present or not */
 
-#include "core_gap.h"              /* Core Peripheral Access Layer */
-#include "core_gap_memory_define.h"       /* Core Memory regions definitions */
+#include "core_pulp.h"              /* Core Peripheral Access Layer */
+#include "core_pulp_memory_define.h"       /* Core Memory regions definitions */
 
 #ifdef FEATURE_CLUSTER
-#include "core_gap_cluster.h"              /* Cluster Access Layer */
+#include "core_pulp_cluster.h"              /* Cluster Access Layer */
 #endif
 
 /*!
  * @}
- */ /* end of group GAP8_Core_Configuration */
+ */ /* end of group PULP_Core_Configuration */
 
 
 /* ----------------------------------------------------------------------------
@@ -1386,18 +1387,6 @@ typedef struct {
 ** End of section using anonymous unions
 */
 
-#if defined(__ARMCC_VERSION)
-  #pragma pop
-#elif defined(__CWCC__)
-  #pragma pop
-#elif defined(__GNUC__)
-  /* leave anonymous unions enabled */
-#elif defined(__IAR_SYSTEMS_ICC__)
-  #pragma language=default
-#else
-  #error Not supported compiler type
-#endif
-
 /*!
  * @}
  */ /* end of group Peripheral_access_layer */
@@ -1416,4 +1405,4 @@ typedef struct {
  */ /* end of group SDK_Compatibility_Symbols */
 
 
-#endif  /* _PMSIS_PERIPH_GAP8_H_ */
+#endif  /* _PMSIS_PERIPH_PULP_H_ */

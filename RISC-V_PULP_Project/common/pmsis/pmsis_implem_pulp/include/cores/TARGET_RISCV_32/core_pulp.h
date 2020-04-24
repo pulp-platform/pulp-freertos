@@ -1,11 +1,12 @@
 /**************************************************************************//**
- * @file     core_gap.h
- * @brief    CMSIS GAP Core Peripheral Access Layer Header File
+ * @file     core_pulp.h
+ * @brief    CMSIS PULP Core Peripheral Access Layer Header File
  * @version  V0.0.1
- * @date     04. October 2017
+ * @date     04. April 2020
  ******************************************************************************/
 /*
  * Copyright (c) 2017 GreenWaves Technologies SAS. All rights reserved.
+ * Copyright (c) 2020 ETH Zurich
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,10 +22,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef __CORE_GAP_H_GENERIC__
-#define __CORE_GAP_H_GENERIC__
+#ifndef __CORE_PULP_H_GENERIC__
+#define __CORE_PULP_H_GENERIC__
 
 #include <stdint.h>
+#include <assert.h>
+#include "pmsis/targets/memory_map.h"
+#include "cores/TARGET_RISCV_32/csr.h"
+#include "cores/TARGET_RISCV_32/bits.h"
+#include "cores/TARGET_RISCV_32/pulp_io.h"
 
 #ifdef __cplusplus
  extern "C" {
@@ -34,17 +40,17 @@
  *                 CMSIS definitions
  ******************************************************************************/
 /**
-  \ingroup GAP
+  \ingroup PULP
   @{
  */
 
-/*  CMSIS GAP definitions */
-#define __GAP_CMSIS_VERSION_MAIN  ( 5U)                                  /*!< [31:16] CMSIS HAL main version */
-#define __GAP_CMSIS_VERSION_SUB   ( 0U)                                  /*!< [15:0]  CMSIS HAL sub version */
-#define __GAP_CMSIS_VERSION       ((__GAP_CMSIS_VERSION_MAIN << 16U) | \
-                                    __GAP_CMSIS_VERSION_SUB           )  /*!< CMSIS HAL version number */
+/*  CMSIS PULP definitions */
+#define __PULP_CMSIS_VERSION_MAIN  ( 5U)                                  /*!< [31:16] CMSIS HAL main version */
+#define __PULP_CMSIS_VERSION_SUB   ( 0U)                                  /*!< [15:0]  CMSIS HAL sub version */
+#define __PULP_CMSIS_VERSION       ((__PULP_CMSIS_VERSION_MAIN << 16U) | \
+				    __PULP_CMSIS_VERSION_SUB           )  /*!< CMSIS HAL version number */
 
-#define __GAP_V                   (1U)                                   /*!< GAP Core Version */
+#define __PULP_V                   (1U)                                   /*!< PULP Core Version */
 
 #include "pmsis_gcc.h"               /* CMSIS compiler specific defines */
 
@@ -53,12 +59,12 @@
 }
 #endif
 
-#endif /* __CORE_GAP_H_GENERIC */
+#endif /* __CORE_PULP_H_GENERIC */
 
 #ifndef __CMSIS_GENERIC
 
-#ifndef __CORE_GAP_H_DEPENDANT
-#define __CORE_GAP_H_DEPENDANT
+#ifndef __CORE_PULP_H_DEPENDANT
+#define __CORE_PULP_H_DEPENDANT
 
 #ifdef __cplusplus
  extern "C" {
@@ -66,9 +72,9 @@
 
 /* check device defines and use defaults */
 #if defined __CHECK_DEVICE_DEFINES
-  #ifndef __GAP_REV
-    #define __GAP_REV               0x0000U
-    #warning "__GAP_REV not defined in device header file; using default!"
+  #ifndef __PULP_REV
+    #define __PULP_REV               0x0000U
+    #warning "__PULP_REV not defined in device header file; using default!"
   #endif
 
   #ifndef __FPU_PRESENT
@@ -113,7 +119,7 @@
 #define     __OM     volatile            /*! Defines 'write only' structure member permissions */
 #define     __IOM    volatile            /*! Defines 'read / write' structure member permissions */
 
-/*@} end of group GAP */
+/*@} end of group PULP */
 
 /*******************************************************************************
  *                 Register Abstraction
@@ -128,7 +134,7 @@
 ******************************************************************************/
 /**
    \defgroup CMSIS_core_register Defines and Type Definitions
-   \brief Type definitions and defines for GAP processor based devices.
+   \brief Type definitions and defines for PULP processor based devices.
 */
 
 /**
@@ -137,21 +143,27 @@
   \brief      Core Register type definitions.
   @{
  */
-#define MSTATUS_ADDR    0x300             /*!< Mahcine Status Register */
+#define MSTATUS_ADDR    0x300             /*!< Machine Status Register */
 #define MISA_ADDR       0x301             /*!< ISA and Extensions Register */
+#define MIE_ADDR	0x304             /*!< Machine interrupt enable Register */
 #define MTVEC_ADDR      0x305             /*!< Machine Trap-handler Base Address Register */
+#define MSCRATCH_ADDR   0x340             /*!< Machine Scratch Register */
 #define MEPC_ADDR       0x341             /*!< Machine Exception Program Counter Register */
 #define MCAUSE_ADDR     0x342             /*!< Machine Trap Cause Register */
+#define MTVAL_ADDR      0x343             /*!< Machine Trap Value Register */
+#define MIP_ADDR        0x344             /*!< Machine Interrupt Pending Register */
+#define PMPCFG0_ADDR    0x3a0             /*!< PMP Configuration Register 0 */
+#define PMPADDR0_ADDR   0x3b0             /*!< PMP Address Register 0 */
 
 #define MVENDORID_ADDR  0xF11             /*!< Vendor ID Register */
 #define MARCHID_ADDR    0xF12             /*!< Architecture ID Register */
 #define MIMPID_ADDR     0xF13             /*!< Implementation ID Register */
 #define MHARTID_ADDR    0xF14             /*!< Hardware Thread ID Register */
 
-#define PCER_ADDR       0x7A0             /*!< Performance Counter Mode Register */
-#define PCMR_ADDR       0x7A1             /*!< Performance Counter Event Register */
+#define PCER_ADDR       0x7E0             /*!< Performance Counter Event Register */
+#define PCMR_ADDR       0x7E1             /*!< Performance Counter Mode Register */
 
-#ifndef ASIC
+/* #ifndef ASIC */
 #define PERF_CYCLE_OFFSET      0x00       /*!< Performance Counter Counter CYCLE Register */
 #define PERF_INSTR_OFFSET      0x01       /*!< Performance Counter Counter INSTR Register */
 #define PERF_LD_STALL_OFFSET   0x02       /*!< Performance Counter Counter LD_STALL Register */
@@ -168,26 +180,21 @@
 #define PERF_LD_EXT_CYC_OFFSET 0x0D       /*!< Performance Counter Counter LD_EXT_CYC Register */
 #define PERF_ST_EXT_CYC_OFFSET 0x0E       /*!< Performance Counter Counter ST_EXT_CYC Register */
 #define PERF_TCDM_COUNT_OFFSET 0x0F       /*!< Performance Counter Counter TCDM_CONT Register */
-#endif
+/* #endif */
 #define PERF_ALL_OFFSET        0x1F       /*!< Performance Counter Counter ALL Register, used to reset all counters */
 
 #define PCCR_ADDR(x)    (0x780 + x)       /*!< Performance Counter Counter access */
 
-#define HWLP_S0_ADDR    0x7B0             /*!< Hardware Loop Start0 Register */
-#define HWLP_E0_ADDR    0x7B1             /*!< Hardware Loop End0 Register */
-#define HWLP_C0_ADDR    0x7B2             /*!< Hardware Loop Count0 Register */
-#define HWLP_S1_ADDR    0x7B3             /*!< Hardware Loop Start1 Register */
-#define HWLP_E1_ADDR    0x7B4             /*!< Hardware Loop End1 Register */
-#define HWLP_C1_ADDR    0x7B5             /*!< Hardware Loop Count1 Register */
+#define HWLP_S0_ADDR    0x7C0             /*!< Hardware Loop Start0 Register */
+#define HWLP_E0_ADDR    0x7C1             /*!< Hardware Loop End0 Register */
+#define HWLP_C0_ADDR    0x7C2             /*!< Hardware Loop Count0 Register */
+#define HWLP_S1_ADDR    0x7C3             /*!< Hardware Loop Start1 Register */
+#define HWLP_E1_ADDR    0x7C4             /*!< Hardware Loop End1 Register */
+#define HWLP_C1_ADDR    0x7C5             /*!< Hardware Loop Count1 Register */
 
-#define DMHARTID_ADDR   0x014             /*!< User Unique Hardware Thread ID Register */
 #define UEPC_ADDR       0x041             /*!< User Exception Program Counter Register */
-
-#define CPRIV_ADDR      0xC10             /*!< Current Privilege Level Register */
-/* Only for FC */
-#define USTATUS_FC_ADDR 0x000             /*!< FC User Status Register */
-#define UTVEC_FC_ADDR   0x005             /*!< FC User Trap-handler Base Address Register */
-#define UCAUSE_FC_ADDR  0x042             /*!< FC User Trap Cause Register */
+#define CPRIV_ADDR      0xC10             /*!< Current Privilege Level Register (unofficial) */
+#define UCAUSE_ADDR     0x042             /*!< FC User Trap Cause Register */
 
 /**
   \brief  Union type to access the Vendor ID Register (MVENDORID).
@@ -516,17 +523,79 @@ typedef union
  */
 typedef struct
 {
-  __IOM  uint32_t MASK;                    /**< EU_DEMUX mask register, offset: 0x00 */
-  __IOM  uint32_t MASK_AND;                /**< EU_DEMUX mask and register, offset: 0x04 */
-  __IOM  uint32_t MASK_OR;                 /**< EU_DEMUX mask or register, offset: 0x08 */
-  __IOM  uint32_t MASK_IRQ;                /**< EU_DEMUX mask irq register, offset: 0x0C */
-  __IOM  uint32_t MASK_IRQ_AND;            /**< EU_DEMUX mask irq and register, offset: 0x10 */
-  __IOM  uint32_t MASK_IRQ_OR;             /**< EU_DEMUX mask irq or register, offset: 0x14 */
-  __IOM  uint32_t STATUS;                  /**< EU_DEMUX Status register, offset: 0x18 */
+  __IOM  uint32_t MASK;                    /**< Interrupt Controller mask register, offset: 0x00 */
+  __IOM  uint32_t MASK_SET;                /**< Interrupt Controller mask set register, offset: 0x04 */
+  __IOM  uint32_t MASK_CLEAR;              /**< Interrupt Controller mask clear register, offset: 0x08 */
+  __IOM  uint32_t IRQ;                     /**< Interrupt Controller irq register, offset: 0x0C */
+  __IOM  uint32_t IRQ_SET;                 /**< Interrupt Controller irq set register, offset: 0x10 */
+  __IOM  uint32_t IRQ_CLEAR;               /**< Interrupt Controller irq clear register, offset: 0x14 */
+  __IOM  uint32_t ACK;                     /**< Interrupt Controller ack register, offset: 0x18 */
+  __IOM  uint32_t ACK_SET;                 /**< Interrupt Controller ack set register, offset: 0x1C */
+  __IOM  uint32_t ACK_CLEAR;               /**< Interrupt Controller ack clear register, offset: 0x20 */
+  __IOM  uint32_t FIFO;                    /**< Interrupt Controller soc event fifo register, offset: 0x24 */
 }  NVIC_Type;
 /*@} end of group CMSIS_NVIC */
 
+#define IRQ_REG_MASK_OFFSET	  0x000
+#define IRQ_REG_MASK_SET_OFFSET	  0x004
+#define IRQ_REG_MASK_CLEAR_OFFSET 0x008
+#define IRQ_REG_INT_OFFSET	  0x00C
+#define IRQ_REG_INT_SET_OFFSET	  0x010
+#define IRQ_REG_INT_CLEAR_OFFSET  0x014
+#define IRQ_REG_ACK_OFFSET	  0x018
+#define IRQ_REG_ACK_SET_OFFSET	  0x01C
+#define IRQ_REG_ACK_CLEAR_OFFSET  0x020
+#define IRQ_REG_FIFO_OFFSET	  0x024
 
+/* Interrupt line masks: these interrupts directly go to the core (after being
+ * serialized as reqest + id). We refer to these interrupts with the prefix IRQ.
+ * Events on the other we strictly use to refer to "interrupts/events" that are
+ * signaled through (muxed) EU SoC interrupts (IRQ_FC_EVT_SOC_EVT) and need
+ * additional handling by the user through the Event Unit.
+ */
+#define IRQ_FC_EVT_SW0	      BIT(0)
+#define IRQ_FC_EVT_SW1	      BIT(1)
+#define IRQ_FC_EVT_SW2	      BIT(2)
+#define IRQ_FC_EVT_SW3	      BIT(3)
+#define IRQ_FC_EVT_SW4	      BIT(4)
+#define IRQ_FC_EVT_SW5	      BIT(5)
+#define IRQ_FC_EVT_SW6	      BIT(6)
+#define IRQ_FC_EVT_SW7	      BIT(7)
+#define IRQ_FC_EVT_DMA_PE_EVT BIT(8)
+#define IRQ_FC_EVT_DMA_PE_IRQ BIT(9)
+#define IRQ_FC_EVT_TIMER0_LO  BIT(10)
+#define IRQ_FC_EVT_TIMER0_HI  BIT(11)
+#define IRQ_FC_EVT_PF	      BIT(12)
+#define IRQ_FC_EVT_CLK_REF    BIT(14)
+#define IRQ_FC_EVT_GPIO	      BIT(15)
+/* doesn't exist in pulp */
+/*#define IRQ_FC_EVT_RTC		   16 */
+#define IRQ_FC_EVT_ADV_TIMER0 BIT(17)
+#define IRQ_FC_EVT_ADV_TIMER1 BIT(18)
+#define IRQ_FC_EVT_ADV_TIMER2 BIT(19)
+#define IRQ_FC_EVT_ADV_TIMER3 BIT(20)
+/* doesn't exist in pulp */
+/* #define IRQ_FC_EVT_CLUSTER_NOT_BUSY 21 */
+/* #define IRQ_FC_EVT_CLUSTER_POK	   22 */
+/* #define IRQ_FC_EVT_CLUSTER_CG_OK	   23 */
+/* #define IRQ_FC_EVT_PICL_OK     24 */
+/* #define IRQ_FC_EVT_SCU_OK      25 */
+/*
+ * SoC event unit events: Many events get implicitely muxed into this interrupt.
+ * A user that gets such an interrupt has to check the event unit's registers to
+ * see what happened
+ */
+#define IRQ_FC_EVT_SOC_EVT BIT(26)
+/*
+ * Event queue error: If we don't process event unit events quickly enough
+ * internal fifos can overflow and we get this error interrupt
+ */
+#define IRQ_FC_EVT_QUIRQE_ERROR BIT(29)
+/* High priority peripheral events: these are hardcoded to directly go to the
+ * core using a dedicated interrupt line
+ */
+#define IRQ_FC_EVT_PERIPH0 BIT(30)
+#define IRQ_FC_EVT_PERIPH1 BIT(31)
 
 /**
   \ingroup    CMSIS_core_register
@@ -619,13 +688,13 @@ typedef struct
 typedef struct
 {
   __IOM uint32_t CTRL;                         /*!< Offset: 0x000 (R/W)  TIMERL Configuration Register for lower 32-bits */
-        uint32_t _reserved0;                   /*!< Offset: 0x004 (R/W)  Empty Registers */
+	uint32_t _reserved0;                   /*!< Offset: 0x004 (R/W)  Empty Registers */
   __IOM uint32_t VALUE;                        /*!< Offset: 0x008 (R/W)  TIMERL Timer Value Register for low 32-bits */
-        uint32_t _reserved1;                   /*!< Offset: 0x00C (R/W)  Empty Registers */
+	uint32_t _reserved1;                   /*!< Offset: 0x00C (R/W)  Empty Registers */
   __IOM uint32_t COMPARE;                      /*!< Offset: 0x010 (R/W)  TIMERL Timer comparator Register for low 32-bits */
-        uint32_t _reserved2;                   /*!< Offset: 0x014 (R/W)  Empty Registers */
+	uint32_t _reserved2;                   /*!< Offset: 0x014 (R/W)  Empty Registers */
   __OM  uint32_t START;                        /*!< Offset: 0x014 (R/W)  SysTick Timer start Register for low 32-bits */
-        uint32_t _reserved3;                   /*!< Offset: 0x014 (R/W)  Empty Registers */
+	uint32_t _reserved3;                   /*!< Offset: 0x014 (R/W)  Empty Registers */
   __OM  uint32_t RESET;                        /*!< Offset: 0x014 (R/W)  SysTick Timer reset Register for low 32-bits */
 } TimerL_Type;
 
@@ -634,15 +703,15 @@ typedef struct
  */
 typedef struct
 {
-        uint32_t _reserved0;                   /*!< Offset: 0x000 (R/W)  Empty Registers */
+	uint32_t _reserved0;                   /*!< Offset: 0x000 (R/W)  Empty Registers */
   __IOM uint32_t CTRL;                         /*!< Offset: 0x004 (R/W)  TIMERH Configuration Register for high 32-bits */
-        uint32_t _reserved1;                   /*!< Offset: 0x008 (R/W)  Empty Registers */
+	uint32_t _reserved1;                   /*!< Offset: 0x008 (R/W)  Empty Registers */
   __IOM uint32_t VALUE;                        /*!< Offset: 0x00C (R/W)  TIMERH Timer Value Register for high 32-bits */
-        uint32_t _reserved2;                   /*!< Offset: 0x010 (R/W)  Empty Registers */
+	uint32_t _reserved2;                   /*!< Offset: 0x010 (R/W)  Empty Registers */
   __IOM uint32_t COMPARE;                      /*!< Offset: 0x014 (R/W)  TIMERH Timer comparator Register for high 32-bits */
-        uint32_t _reserved3;                   /*!< Offset: 0x014 (R/W)  Empty Registers */
+	uint32_t _reserved3;                   /*!< Offset: 0x014 (R/W)  Empty Registers */
   __OM  uint32_t START;                        /*!< Offset: 0x014 (R/W)  SysTick Timer start Register for high 32-bits */
-        uint32_t _reserved4;                   /*!< Offset: 0x014 (R/W)  Empty Registers */
+	uint32_t _reserved4;                   /*!< Offset: 0x014 (R/W)  Empty Registers */
   __OM  uint32_t RESET;                        /*!< Offset: 0x014 (R/W)  SysTick Timer reset Register for high 32-bits */
 } TimerH_Type;
 
@@ -764,6 +833,7 @@ typedef struct
 
 
 #if defined (__MPU_PRESENT) && (__MPU_PRESENT == 1U)
+#error "PULP doesn't have an MPU"
 /**
   \ingroup  CMSIS_core_register
   \defgroup CMSIS_MPU     Memory Protection Unit (MPU)
@@ -1087,12 +1157,12 @@ typedef struct {
  */
 
 /* Memory mapping of Core Hardware */
-#define CL_PERI_BASE        (0x10000000UL)
+/* #define CL_PERI_BASE        (0x10000000UL) */
 
 #define FC_BASE             (0x1B000000UL)                             /*!< FC Base Address */
 
-#define SOC_ROM_BASE        (0x1A000000UL)                             /*!< SOC ROM Base Address */
-#define SOC_PERI_BASE       (0x1A100000UL)                             /*!< SOC Peripherals Base Address */
+#define SOC_ROM_BASE        ROM_ADDR                                   /*!< SOC ROM Base Address */
+#define SOC_PERI_BASE       SOC_PERIPHERALS_ADDR                       /*!< SOC Peripherals Base Address */
 
 #define CORE_PERI_BASE      (0x00200000UL)                             /*!< RISC Core Peripheral Base Address */
 #define CORE_SCB_BASE       (CORE_PERI_BASE)                           /*!< RISC Core System Control Block Base Address */
@@ -1115,14 +1185,10 @@ typedef struct {
 #define CORE_EU_BARRIER_DEMUX_BASE   (CORE_EU_DEMUX_BASE + 0x0200UL)   /*!< RISC Core Event Unit HW Barrier Demux Base Address */
 
 
-#define CORE_SysTick_BASE   (CORE_PERI_BASE +  0x0400UL)               /*!< RISC Core SysTick Base Address */
-
-#define NVIC_BASE           (CORE_EU_CORE_DEMUX_BASE)                  /*!< RISC NVIC Base Address */
 #define CORE_MCHAN_BASE     (CORE_EU_DEMUX_BASE + 0x0400UL)            /*!< RISC Core DMAMCHAN Base Address between L2 and Cluster TCDM */
 
 /* FC core Memory map */
 #define FC_SCBC_BASE        (FC_BASE + CORE_SCBC_BASE)                 /*!< FC System Control Block Cache Base Address */
-#define FC_SysTick_BASE     (FC_BASE + CORE_SysTick_BASE)              /*!< FC SysTick Base Address */
 
 #define FC_EU_BARRIER_BASE         (FC_BASE + CORE_EU_BARRIER_BASE)    /*!< FC Event Unit HW Barrier Base Address */
 #define FC_EU_SW_EVENTS_BASE       (FC_BASE + CORE_EU_SW_EVENTS_BASE)  /*!< FC Event Unit SW Events Base Address */
@@ -1143,9 +1209,9 @@ typedef struct {
 #define SCBC                ((SCBC_Type   *)   CORE_SCBC_BASE )               /*!< Icache SCBC configuration struct */
 
 /* Core Structrue definitions */
-#define SysTick             ((SysTick_Type   *)     FC_SysTick_BASE  )    /*!< SysTick configuration struct */
-#define TIMERL              ((TimerL_Type    *)     FC_SysTick_BASE  )    /*!< SysTick configuration struct */
-#define TIMERH              ((TimerH_Type    *)     FC_SysTick_BASE  )    /*!< SysTick configuration struct */
+#define SysTick             ((SysTick_Type *) FC_TIMER_ADDR)    /*!< SysTick configuration struct */
+#define TIMERL              ((TimerL_Type  *) FC_TIMER_ADDR)    /*!< SysTick configuration struct */
+#define TIMERH              ((TimerH_Type  *) FC_TIMER_ADDR)    /*!< SysTick configuration struct */
 
 #if defined (__MPU_PRESENT) && (__MPU_PRESENT == 1U)
   #define FC_MPU_BASE       (FC_BASE + CORE_PERI_BASE + 0x4400UL)         /*!< Memory Protection Unit */
@@ -1156,7 +1222,7 @@ typedef struct {
 #define EU_SOC_EVENTS        ((EU_SOC_EVENTS_Type   *)      CORE_EU_SOC_EVENTS_BASE)          /*!< EU_SW_EVENTS_DEMUX configuration struct */
 
 
-#define NVIC                ((NVIC_Type   *)      NVIC_BASE)                       /*!< NVIC configuration struct */
+#define NVIC                ((NVIC_Type   *)      FC_IRQ_OFFSET)                       /*!< NVIC configuration struct */
 
 #define EU_CORE_DEMUX       ((EU_CORE_DEMUX_Type   *)      CORE_EU_CORE_DEMUX_BASE)         /*!< EU_CORE_DEMUX configuration struct */
 #define EU_SEC_DEMUX        ((EU_SEC_DEMUX_Type   *)       CORE_EU_SEC_DEMUX_BASE)          /*!< EU_SEC_DEMUX configuration struct */
@@ -1178,6 +1244,7 @@ typedef struct {
 /*******************************************************************************
  *                Hardware Abstraction Layer
   Core Function Interface contains:
+  - Core Function Access
   - Core NVIC Functions
   - Core SysTick Functions
   - Core Debug Functions
@@ -1187,6 +1254,192 @@ typedef struct {
   \defgroup CMSIS_Core_FunctionInterface Functions and Instructions Reference
 */
 
+
+
+
+/* ###########################  Core Function Access  ########################### */
+/** \ingroup  CMSIS_Core_FunctionInterface
+    \defgroup CMSIS_Core_RegAccFunctions CMSIS Core Register Access Functions
+  @{
+ */
+/**
+  \brief   Get PRIVLVL Register
+  \details Returns the content of the PRIVLVL Register.
+  \return               PRIVLVL Register value
+ */
+__attribute__((always_inline)) __STATIC_INLINE uint32_t __get_CPRIV(void)
+{
+    uint32_t result = csr_read(CPRIV_ADDR);
+    return result;
+}
+
+/**
+  \brief   Restore the MIE bit
+  \details Restore the MIE bit of MSTATUS
+ */
+__attribute__((always_inline)) __STATIC_INLINE void __restore_irq(int irq)
+{
+    // We are in machine mode, already mask all interrupt, so just set MIE = irq
+    /* __builtin_pulp_spr_write(0x300, irq); */
+    csr_write(MSTATUS_ADDR, irq);
+}
+
+/**
+  \brief   Enable IRQ Interrupts
+  \details Enables IRQ interrupts by setting the MPIE-bit in the MSTATUS.
+           Can only be executed in Privileged modes.
+ */
+__attribute__((always_inline)) __STATIC_INLINE void __enable_irq(void)
+{
+    csr_read_set(MSTATUS_ADDR, BIT(MSTATUS_MIE_Pos));
+}
+
+/**
+  \brief   Disable IRQ Interrupts
+  \details Disables IRQ interrupts by clearing the MPIE-bit in the CPSR.
+           Can only be executed in Privileged modes.
+ */
+__attribute__((always_inline)) __STATIC_INLINE int __disable_irq(void)
+{
+    uint32_t val = csr_read_clear(MSTATUS_ADDR, BIT(MSTATUS_MIE_Pos));
+    return val;
+}
+
+/**
+  \brief   Set ustatus Register
+  \details Writes the given value to the ustatus Register.
+  \param [in]    control  ustatus Register value to set
+ */
+__attribute__((always_inline)) __STATIC_INLINE void __set_USTATUS(uint32_t control)
+{
+    assert(0);
+}
+
+/**
+  \brief   Set mstatus Register
+  \details Writes the given value to the mstatus Register.
+  \param [in]    control  mstatus Register value to set
+ */
+__attribute__((always_inline)) __STATIC_INLINE void __set_MSTATUS(uint32_t control)
+{
+    csr_write(MSTATUS_ADDR, control);
+}
+
+/**
+  \brief   Get MCAUSE Register
+  \details Returns the content of the MCAUSE Register.
+  \return               MCAUSE Register value
+ */
+__attribute__((always_inline)) __STATIC_INLINE uint32_t __get_MCAUSE(void)
+{
+    uint32_t result = csr_read(MCAUSE_ADDR);
+    return result;
+}
+
+/**
+  \brief   Get UCAUSE Register
+  \details Returns the content of the UCAUSE Register.
+  \return               UCAUSE Register value
+ */
+__attribute__((always_inline)) __STATIC_INLINE uint32_t __get_UCAUSE(void)
+{
+    uint32_t result = csr_read(UCAUSE_ADDR);
+    return result;
+}
+
+/**
+  \brief   Get MSTATUS Register
+  \details Returns the content of the MSTATUS Register.
+  \return               MSTATUS Register value
+ */
+__attribute__((always_inline)) __STATIC_INLINE uint32_t __get_MSTATUS(void)
+{
+    uint32_t result = csr_read(MSTATUS_ADDR);
+    return result;
+}
+
+
+/**
+  \brief   Get USTATUS Register
+  \details Returns the content of the USTATUS Register.
+  \return               USTATUS Register value
+ */
+__attribute__((always_inline)) __STATIC_INLINE uint32_t __get_USTATUS(void)
+{
+    assert(0);
+}
+
+/**
+  \brief   Get Process Stack Pointer
+  \details Returns the current value of the Process Stack Pointer (PSP).
+  \return               PSP Register value
+ */
+__attribute__((always_inline)) __STATIC_INLINE uint32_t __get_PSP(void)
+{
+    assert(0);
+  /* register uint32_t result; */
+
+  /* __ASM volatile ("lw %0, (userStack)"  : "=r" (result) ); */
+  /* return(result); */
+}
+
+/**
+  \brief   Set Process Stack Pointer
+  \details Assigns the given value to the Process Stack Pointer (PSP).
+  \param [in]    topOfProcStack  Process Stack Pointer value to set
+ */
+__attribute__((always_inline)) __STATIC_INLINE void __set_PSP(uint32_t topOfProcStack)
+{
+    assert(0);
+  /* __ASM volatile ("sw %0, (userStack)(x0)"  :: "r" (topOfProcStack) ); */
+}
+
+/**
+  \brief   Get Main Stack Pointer
+  \details Returns the current value of the Main Stack Pointer (MSP).
+  \return               MSP Register value
+ */
+__attribute__((always_inline)) __STATIC_INLINE uint32_t __get_MSP(void)
+{
+    assert(0);
+  /* register uint32_t result; */
+
+  /* __ASM volatile ("lw %0, (kernelStack)" : "=r" (result) ); */
+  /* return(result); */
+}
+
+/**
+  \brief   Set Main Stack Pointer
+  \details Assigns the given value to the Main Stack Pointer (MSP).
+  \param [in]    topOfMainStack  Main Stack Pointer value to set
+ */
+__attribute__((always_inline)) __STATIC_INLINE void __set_MSP(uint32_t topOfMainStack)
+{
+    assert(0);
+    /*__ASM volatile ("sw %0, (kernelStack)(x0)"  :: "r" (topOfMainStack) ); */
+}
+
+/**
+  \brief   Get the running mode is User Mode
+  \details Read 0xC10 privilege register
+  \return               Is User mode
+ */
+__attribute__((always_inline)) __STATIC_INLINE uint32_t __is_U_Mode()
+{
+    uint32_t mode = csr_read(CPRIV_ADDR);
+    return ((mode & 0x3) == 0);
+}
+
+/**
+  \brief   Get the running mode is Machine Mode
+  \details Read 0xC10 privilege register
+  \return               Is Machine mode
+ */
+__attribute__((always_inline)) __STATIC_INLINE uint32_t __is_M_Mode()
+{
+    uint32_t mode = csr_read(CPRIV_ADDR);
+    return ((mode & 0x3) == 1);
+}
 
 
 /* ##########################   NVIC functions  #################################### */
@@ -1236,7 +1489,8 @@ typedef struct {
 __STATIC_INLINE void __NVIC_EnableIRQ(IRQn_Type IRQn)
 {
   /* U mode does not has the right */
-  NVIC->MASK_IRQ_OR = (1UL << IRQn);
+  /* NVIC->MASK_SET = (1UL << IRQn); */
+  writew(1UL << IRQn, (uintptr_t)(FC_IRQ_ADDR + IRQ_REG_MASK_SET_OFFSET));
 }
 
 /**
@@ -1250,7 +1504,9 @@ __STATIC_INLINE void __NVIC_EnableIRQ(IRQn_Type IRQn)
 __STATIC_INLINE uint32_t __NVIC_GetEnableIRQ(IRQn_Type IRQn)
 {
   /* U mode does not has the right */
-  return ((uint32_t)((NVIC->MASK_IRQ & (1UL << IRQn)) ? 1UL : 0UL));
+  /* return ((uint32_t)((NVIC->MASK_IRQ & (1UL << IRQn)) ? 1UL : 0UL)); */
+  uint32_t mask = readw((uintptr_t)(FC_IRQ_ADDR + IRQ_REG_MASK_OFFSET));
+  return (mask >> IRQn) & 1;
 }
 
 
@@ -1263,7 +1519,8 @@ __STATIC_INLINE uint32_t __NVIC_GetEnableIRQ(IRQn_Type IRQn)
 __STATIC_INLINE void __NVIC_DisableIRQ(IRQn_Type IRQn)
 {
   /* U mode does not has the right */
-  NVIC->MASK_IRQ_AND = (1UL << IRQn);
+  /* NVIC->MASK_IRQ_AND = (1UL << IRQn); */
+  writew(1UL << IRQn, (uintptr_t)(FC_IRQ_ADDR + IRQ_REG_MASK_CLEAR_OFFSET));
 }
 
 
@@ -1277,7 +1534,9 @@ __STATIC_INLINE void __NVIC_DisableIRQ(IRQn_Type IRQn)
  */
 __STATIC_INLINE uint32_t __NVIC_GetPendingIRQ(IRQn_Type IRQn)
 {
-    return(0U);
+    /* return(0U); */
+    uint32_t pending = readw((uintptr_t)(FC_IRQ_ADDR + IRQ_REG_INT_OFFSET));
+    return (pending >> IRQn) & 1;
 }
 
 
@@ -1289,6 +1548,7 @@ __STATIC_INLINE uint32_t __NVIC_GetPendingIRQ(IRQn_Type IRQn)
  */
 __STATIC_INLINE void __NVIC_SetPendingIRQ(IRQn_Type IRQn)
 {
+  writew(1UL << IRQn,(uintptr_t)(FC_IRQ_ADDR + IRQ_REG_INT_SET_OFFSET));
 }
 
 
@@ -1300,6 +1560,7 @@ __STATIC_INLINE void __NVIC_SetPendingIRQ(IRQn_Type IRQn)
  */
 __STATIC_INLINE void __NVIC_ClearPendingIRQ(IRQn_Type IRQn)
 {
+  writew(1UL << IRQn,(uintptr_t)(FC_IRQ_ADDR + IRQ_REG_INT_CLEAR_OFFSET));
 }
 
 
@@ -1313,13 +1574,17 @@ __STATIC_INLINE void __NVIC_ClearPendingIRQ(IRQn_Type IRQn)
  */
 __STATIC_INLINE uint32_t __NVIC_GetActive(IRQn_Type IRQn)
 {
+  assert(0);
   /* U mode does not has the right */
-  return ((uint32_t)((NVIC->STATUS & (1UL << IRQn)) ? 1UL : 0UL));
+  /* return ((uint32_t)((NVIC->STATUS & (1UL << IRQn)) ? 1UL : 0UL)); */
+  /* TODO */
+  return -1;
 }
 
 __STATIC_INLINE uint32_t __NVIC_ForgeItVect(uint32_t ItBaseAddr, uint32_t ItIndex, uint32_t ItHandler)
 
 {
+  assert(0);
   /* Prepare 32bit container to be stored at
    *(ItBaseAddr+ItIndex) containing a relative jump from
     (ItBaseAddr+ItIndex) to Handler */
@@ -1342,14 +1607,16 @@ __STATIC_INLINE uint32_t __NVIC_ForgeItVect(uint32_t ItBaseAddr, uint32_t ItInde
 /**
   \brief   Set Interrupt Vector
   \details Sets an interrupt vector in SRAM based interrupt vector table.
-           The interrupt number can be positive to specify a device specific interrupt,
-           or negative to specify a processor exception.
-           VTOR must been relocated to SRAM before.
+	   The interrupt number can be positive to specify a device specific interrupt,
+	   or negative to specify a processor exception.
+	   VTOR must been relocated to SRAM before.
   \param [in]   IRQn      Interrupt number
   \param [in]   vector    Address of interrupt handler function
  */
 __STATIC_INLINE void __NVIC_SetVector(IRQn_Type IRQn, uint32_t vector)
 {
+  assert(0);
+  /*
   volatile uint32_t *vectors;
 
   if((__get_CPRIV() & CPRIV_PRIV_Msk) != 0U) {
@@ -1358,18 +1625,21 @@ __STATIC_INLINE void __NVIC_SetVector(IRQn_Type IRQn, uint32_t vector)
     vectors = (uint32_t *)(0x1C000000);
   }
   vectors[IRQn] = __NVIC_ForgeItVect((uint32_t)vectors, IRQn, vector);
+  */
 }
 
 /**
   \brief   Get Interrupt Vector
   \details Reads an interrupt vector from interrupt vector table.
-           The interrupt number can be positive to specify a device specific interrupt,
-           or negative to specify a processor exception.
+	   The interrupt number can be positive to specify a device specific interrupt,
+	   or negative to specify a processor exception.
   \param [in]   IRQn      Interrupt number.
   \return                 Address of interrupt handler function
  */
 __STATIC_INLINE uint32_t __NVIC_GetVector(IRQn_Type IRQn)
 {
+  assert(0);
+  /*
   volatile uint32_t *vectors;
   if((__get_CPRIV() & CPRIV_PRIV_Msk) != 0U) {
     vectors = (uint32_t *)(__builtin_pulp_spr_read(0x305));
@@ -1377,6 +1647,7 @@ __STATIC_INLINE uint32_t __NVIC_GetVector(IRQn_Type IRQn)
     vectors = (uint32_t *)(0x1C000000);
   }
   return vectors[IRQn];
+  */
 }
 
 
@@ -1393,7 +1664,7 @@ __STATIC_INLINE void __NVIC_SystemReset(void)
 /* ##########################  MPU functions  #################################### */
 
 #if defined (__MPU_PRESENT) && (__MPU_PRESENT == 1U)
-
+#error "PULP doens't support MPU"
 #include "mpu_gap.h"
 
 #endif
@@ -1407,15 +1678,16 @@ __STATIC_INLINE void __NVIC_SystemReset(void)
  */
 
 __attribute__((always_inline)) __STATIC_INLINE uint32_t __core_ID() {
-  int hart_id;
-  __ASM volatile ("csrr %0, 0x014" : "=r" (hart_id) : );
-  return hart_id & 0x1f;
+  /* encoding of mhartid: {21'b0, cluster_id_i[5:0], 1'b0, core_id_i[3:0]} */
+  uint32_t mhartid = csr_read(MHARTID_ADDR);
+  return mhartid & 0x01f;
+
 }
 
 __attribute__((always_inline)) __STATIC_INLINE uint32_t __cluster_ID() {
-  int hart_id;
-  __ASM volatile ("csrr %0, 0x014" : "=r" (hart_id) : );
-  return (hart_id >> 5) & 0x3f;
+  /* encoding of mhartid {21'b0, cluster_id_i[5:0], 1'b0, core_id_i[3:0]} */
+  uint32_t mhartid = csr_read(MHARTID_ADDR);
+  return (mhartid >> 5) & 0x3f;
 }
 
 __attribute__((always_inline)) __STATIC_INLINE uint32_t __is_FC() {
@@ -1440,28 +1712,26 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __is_FC() {
 /* Configure the active events. eventMask is an OR of events got through SPR_PCER_EVENT_MASK */
 __attribute__((always_inline)) __STATIC_INLINE void __PCER_Set(uint32_t eventMask)
 {
-    __ASM volatile ("csrw 0x7A0, %0" :: "r" (eventMask));
+    csr_write(PCER_ADDR, eventMask);
 }
 
 /* Return events configuration */
 __attribute__((always_inline)) __STATIC_INLINE uint32_t __PCER_Get()
 {
-    uint32_t result = 0;
-    __ASM volatile ("csrr %0, 0x7A0" : "=r" (result));
+    uint32_t result = csr_read(PCER_ADDR);
     return result;
 }
 
 /* Configure the mode. confMask is an OR of all SPR_PCMR_* macros */
 __attribute__((always_inline)) __STATIC_INLINE void __PCMR_Set(uint32_t value)
 {
-    __ASM volatile ("csrw 0x7A1, %0" :: "r" (value));
+    csr_write(PCMR_ADDR, value);
 }
 
 /* Get the PCMR */
 __attribute__((always_inline)) __STATIC_INLINE uint32_t __PCMR_Get()
 {
-    uint32_t result = 0;
-    __ASM volatile ("csrr %0, 0x7A1" : "=r" (result));
+    uint32_t result = csr_read(PCER_ADDR);
     return result;
 }
 
@@ -1516,10 +1786,11 @@ __attribute__((always_inline)) __STATIC_INLINE void __PCCR31_Set(uint32_t value)
 
 /*@} end of CMSIS_Core_PerformanceFunctions */
 
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __CORE_GAP_H_DEPENDANT */
+#endif /* __CORE_PULP_H_DEPENDANT */
 
 #endif /* __CMSIS_GENERIC */

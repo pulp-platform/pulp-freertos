@@ -28,8 +28,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __CORE_GAP_COMMON_H
-#define __CORE_GAP_COMMON_H
+#ifndef __CORE_PULP_COMMON_H
+#define __CORE_PULP_COMMON_H
+
 
 /*! @brief Data declared with this attribute will be dropped after startup */
 #define GAP_BOOT_DATA     __attribute__((section(".boot.data")))
@@ -71,4 +72,4 @@
 #define FC_L1_MEM          PI_FC_L1
 
 
-#endif  /* __CORE_GAP_COMMON_H */
+#endif  /* __CORE_PULP_COMMON_H */

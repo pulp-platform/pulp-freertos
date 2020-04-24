@@ -1,11 +1,12 @@
-/**************************************************************************//**
- * @file     core_gap.h
- * @brief    CMSIS GAP Core Cluster  Peripheral Access Layer Header File
+/******************************************************************************
+ * @file     core_pulp_cluster.h
+ * @brief    CMSIS PULP Core Cluster  Peripheral Access Layer Header File
  * @version  V0.0.1
- * @date     04. October 2017
+ * @date     04. April 2020
  ******************************************************************************/
 /*
  * Copyright (c) 2017 GreenWaves Technologies SAS. All rights reserved.
+ * Copyright (c) 2020 ETH Zurich
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,12 +22,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef __CLUSTER_GAP_H_GENERIC__
-#define __CLUSTER_GAP_H_GENERIC__
+#ifndef __CLUSTER_PULP_H_GENERIC__
+#define __CLUSTER_PULP_H_GENERIC__
 
 #ifdef FEATURE_CLUSTER
 
-#include "cores/TARGET_RISCV_32/core_gap.h"
+#include "cores/TARGET_RISCV_32/core_pulp.h"
 
 #ifdef __cplusplus
  extern "C" {
@@ -119,4 +120,4 @@ typedef struct {
 
 #endif
 
-#endif /* __CLUSTER_GAP_H_GENERIC */
+#endif /* __CLUSTER_PULP_H_GENERIC */

@@ -1,6 +1,9 @@
 #ifndef __PMSIS_BACKEND_NATIVE_TASK_API_H__
 #define __PMSIS_BACKEND_NATIVE_TASK_API_H__
 
+#include <FreeRTOS.h>
+#include <semphr.h>
+
 #include "pmsis/pmsis_types.h"
 /* #include "FreeRTOS_util.h" */ /* TODO: don't think we need this */
 #include "gap_common.h"

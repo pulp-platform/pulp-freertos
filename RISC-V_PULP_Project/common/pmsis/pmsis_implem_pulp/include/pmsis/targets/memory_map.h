@@ -42,17 +42,50 @@
 #define L2_PRIV0_TS_ADDR                            (0x10100000)
 #endif  /* ARCHI_HAS_CL_L1_TS */
 
-/* ROM memory */
+/* ROM memory (8 KiB)*/
 #define ROM_ADDR                                    (0x1A000000)
+#define ROM_SIZE                                    (0x00002000)
 
-/* Peripherals */
 /* Cluster */
 #define ARCHI_CLUSTER_ADDR                          (0x00000000)
 #define ARCHI_CLUSTER_SIZE                          (0x00400000)
 #define ARCHI_CLUSTER_GLOBAL_ADDR(cid)              (0x10000000 + (cid)*ARCHI_CLUSTER_SIZE)
+#define ARCHI_CLUSTER_PERIPHERALS_OFFSET            (0x00200000)
+
+/* Cluster peripherals */
+#define ARCHI_TIMER_SIZE                            (0x00000800)
+
+#define ARCHI_CLUSTER_CTRL_OFFSET                   (0x00000000)
+#define ARCHI_TIMER_OFFSET                          (0x00000400)
+#define ARCHI_EU_OFFSET                             (0x00000800)
+#define ARCHI_HWCE_OFFSET                           (0x00001000)
+#define ARCHI_ICACHE_CTRL_OFFSET                    (0x00001400)
+#define ARCHI_MCHAN_EXT_OFFSET                      (0x00001800)
+
+#define ARCHI_CLUSTER_PERIPHERALS_ADDR              (ARCHI_CLUSTER_ADDR + ARCHI_CLUSTER_PERIPHERALS_OFFSET)
+#define ARCHI_CLUSTER_PERIPHERALS_GLOBAL_ADDR(cid)  (ARCHI_CLUSTER_GLOBAL_ADDR(cid) + ARCHI_CLUSTER_PERIPHERALS_OFFSET)
+
+#define ARCHI_CLUSTER_CTRL_ADDR                     (ARCHI_CLUSTER_PERIPHERALS_ADDR + ARCHI_CLUSTER_CTRL_OFFSET)
+#define ARCHI_ICACHE_CTRL_ADDR                      (ARCHI_CLUSTER_PERIPHERALS_ADDR + ARCHI_ICACHE_CTRL_OFFSET)
+#define ARCHI_EU_ADDR                               (ARCHI_CLUSTER_PERIPHERALS_ADDR + ARCHI_EU_OFFSET)
+#define ARCHI_HWCE_ADDR                             (ARCHI_CLUSTER_PERIPHERALS_ADDR + ARCHI_HWCE_OFFSET)
+#define ARCHI_MCHAN_EXT_ADDR                        (ARCHI_CLUSTER_PERIPHERALS_ADDR + ARCHI_MCHAN_EXT_OFFSET)
 
 /* SoC peripherals */
 #define SOC_PERIPHERALS_ADDR                        (0x1A100000)
+
+#define SOC_FLL_OFFSET                              (0x00000000)
+#define CL_FLL_OFFSET                               (0x00000800)
+#define GPIO_OFFSET                                 (0x00001000)
+#define UDMA_OFFSET                                 (0x00002000)
+#define APB_SOC_CTRL_OFFSET                         (0x00004000)
+#define ADV_TIMER_OFFSET                            (0x00005000) /* PWM. */
+#define SOC_EU_OFFSET                               (0x00006000)
+#define FC_IRQ_OFFSET                               (0x00009000)
+#define FC_TIMER_OFFSET                             (0x0000B000)
+#define FC_HWPE_OFFSET                              (0x0000C000)
+#define STDOUT_OFFSET                               (0x0000F000)
+#define DEBUG_OFFSET                                (0x00010000)
 
 #define SOC_FLL_ADDR                                (SOC_PERIPHERALS_ADDR + SOC_FLL_OFFSET)
 #define CL_FLL_ADDR                                 (SOC_PERIPHERALS_ADDR + CL_FLL_OFFSET)
@@ -61,10 +94,11 @@
 #define APB_SOC_CTRL_ADDR                           (SOC_PERIPHERALS_ADDR + APB_SOC_CTRL_OFFSET)
 #define ADV_TIMER_ADDR                              (SOC_PERIPHERALS_ADDR + ADV_TIMER_OFFSET)
 #define SOC_EU_ADDR                                 (SOC_PERIPHERALS_ADDR + SOC_EU_OFFSET)
-/* #define DLC_ADDR                                    (SOC_PERIPHERALS_ADDR + DLC_OFFSET) */
-/* #define RTC_ADDR                                    (SOC_PERIPHERALS_ADDR + RTC_BASE_OFFSET) */
-
-/* #define EFUSE_ADDR                                  (SOC_PERIPHERALS_ADDR + EFUSE_OFFSET) */
+#define FC_IRQ_ADDR                                 (SOC_PERIPHERALS_ADDR + FC_IRQ_OFFSET)
+#define FC_TIMER_ADDR                               (SOC_PERIPHERALS_ADDR + FC_TIMER_OFFSET)
+#define FC_HWPE_ADDR                                (SOC_PERIPHERALS_ADDR + FC_HWPE_OFFSET)
+#define STDOUT_ADDR                                 (SOC_PERIPHERALS_ADDR + STDOUT_OFFSET)
+#define DEBUG_ADDR                                  (SOC_PERIPHERALS_ADDR + DEBUG_OFFSET)
 
 /* UDMA peripherals */
 /* #define UDMA_GC_ADDR                                (UDMA_CTRL_ADDR + 0x780) */
