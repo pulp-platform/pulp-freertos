@@ -38,7 +38,9 @@ CFLAGS = \
 	-march=rv32imac -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore \
 	-fsigned-char -ffunction-sections -fdata-sections \
 	-std=gnu11 \
-	-Wall -Wextra -Wshadow -Wformat=2 -Wundef -Wno-unused-parameter
+	-Wall -Wextra -Wshadow -Wformat=2 -Wundef \
+	-Wno-unused-parameter -Wno-unused-variable \
+	-DFEATURE_CLUSTER=0
 
 
 # rtos and pulp sources
