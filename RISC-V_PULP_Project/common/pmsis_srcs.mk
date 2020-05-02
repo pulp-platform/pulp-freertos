@@ -16,12 +16,18 @@ CPPFLAGS += -I"$(PMSIS_API_ROOT)/include"
 CPPFLAGS += -I"$(PMSIS_ROOT)/pmsis_rtos/include"
 
 PULP_SRCS += $(PMSIS_ROOT)/pmsis_rtos/mem_slab/mem_slab.c
+PULP_SRCS += $(PMSIS_ROOT)/pmsis_rtos/event_kernel/event_kernel.c
+PULP_SRCS += $(PMSIS_ROOT)/pmsis_rtos/os/device.c
+PULP_SRCS += $(PMSIS_ROOT)/pmsis_rtos/os/pmsis_task.c
 
 # for weird paths that start with "pmsis/"
 CPPFLAGS += -I"$(COMMON_ROOT)"
 # pmsis.h
 CPPFLAGS += -I"$(PMSIS_ROOT)"
 CPPFLAGS += -I"$(PMSIS_ROOT)/pmsis_implem_pulp/include/cores/TARGET_RISCV_32"
+
+# pmsis backend abstraction layer
+PULP_SRCS += $(PMSIS_ROOT)/backend/pmsis_backend_native_task_api.c
 
 # TOOD: remove gap specific
 CPPFLAGS += -I"$(COMMON_ROOT)/target_pulp/driver"
