@@ -20,12 +20,12 @@
  * SOFTWARE.
  */
 
-/* Description: Register I/O assembly. We don't trust volatile pointers.
+/* Description: Register I/O access
  * Authors: Robert Balas (balasr@iis.ee.ethz.ch)
  */
 
-#ifndef PULP_IO_H
-#define PULP_IO_H
+#ifndef __PULP_IO_H
+#define __PULP_IO_H
 
 #include <stdint.h>
 

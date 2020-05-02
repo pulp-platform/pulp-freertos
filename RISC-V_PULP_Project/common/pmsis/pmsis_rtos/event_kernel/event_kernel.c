@@ -142,9 +142,16 @@ static inline void pmsis_event_pop(struct pmsis_event_kernel *event_kernel,
     DBG_PRINTF("scheduler %p took sem %p\n",event_kernel, event_kernel->event_sched_sem.sem_object);
     int irq = __disable_irq();
     *event = sched->first;
-    sched->first = sched->first->next;
+
+    /* check that this is even a valid task */
+    if (sched->first)
+    {
+        sched->first = sched->first->next;
+    }
+
     if(sched->first == NULL)
-    {// if we're at the end, reset last also
+    {
+        /* if we're at the end, reset last also */
         sched->last=NULL;
     }
     __restore_irq(irq);
