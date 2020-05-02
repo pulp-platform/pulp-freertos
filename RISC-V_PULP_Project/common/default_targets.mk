@@ -73,7 +73,7 @@ $(PROG).hex: $(PROG)
 
 $(PROG).lst: $(PROG)
 	@echo 'Invoking: GNU RISC-V Cross Create Listing'
-	$(OBJDUMP) --source --all-headers --demangle --line-numbers --wide \
+	$(OBJDUMP) --source --all-headers --demangle --line-numbers --wide --prefix-addresses \
 		$(PROG) > $@
 	@echo 'Finished building: $@'
 	@echo ' '
@@ -128,6 +128,14 @@ ifdef gui
 	$(VSIM) -64 -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
 		-do 'source $(VSIM_PATH)/tcl_files/run.tcl; '
 else
+ifdef interactive
+	cd $(SIMDIR) && \
+	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG \
+		-dpicpppath $(CXX) -permit_unmatched_virtual_intf \
+		-gBAUDRATE=115200" && \
+	$(VSIM) -64 -c -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
+		-do 'source $(VSIM_PATH)/tcl_files/run.tcl;'
+else
 	cd $(SIMDIR) && \
 	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG \
 		-dpicpppath $(CXX) -permit_unmatched_virtual_intf \
@@ -135,12 +143,45 @@ else
 	$(VSIM) -64 -c -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
 		-do 'source $(VSIM_PATH)/tcl_files/run.tcl; run_and_exit;'
 endif
+endif
 
 # analysis scripts
 $(SIMDIR)/trace_fc_postproc.log: $(SIMDIR)/trace_core_1f_0.log
 	$(PULPTRACE) $^ $(PROG) -o $@
 
 analyze: $(SIMDIR)/trace_fc_postproc.log
+
+$(SIMDIR)/trace_fc_compress.log: $(SIMDIR)/trace_fc_postproc.log
+	sed -e '/: <_start>/a [...]' -e '1,/: <_start>/d' \
+		-e '/: <malloc+0x[a-f0-9]\+>/d' -e '/: <malloc>/a [...]' \
+		-e '/: <_malloc_r+0x[a-f0-9]\+>/d' -e '/: <_malloc_r>/a [...]' \
+		-e '/: <memset+0x[a-f0-9]\+>/d' -e '/: <memset>/a [...]' \
+		-e '/: <__malloc_lock+0x[a-f0-9]\+>/d' -e '/: <__malloc_lock>/a [...]' \
+		-e '/: <_sbrk+0x[a-f0-9]\+>/d' -e '/: <_sbrk>/a [...]' \
+		-e '/: <_sbrk_r+0x[a-f0-9]\+>/d' -e '/: <_sbrk_r>/a [...]' \
+		-e '/: <__sfp+0x[a-f0-9]\+>/d' -e '/: <__sfp>/a [...]' \
+		-e '/: <__sinit+0x[a-f0-9]\+>/d' -e '/: <__sinit>/a [...]' \
+		-e '/: <std+0x[a-f0-9]\+>/d' -e '/: <std>/a [...]' \
+		-e '/: <puts+0x[a-f0-9]\+>/d' -e '/: <puts>/a [...]' \
+		-e '/: <_puts_r+0x[a-f0-9]\+>/d' -e '/: <_puts_r>/a [...]' \
+		-e '/: <_write+0x[a-f0-9]\+>/d' -e '/: <_write>/a [...]' \
+		-e '/: <_write_r+0x[a-f0-9]\+>/d' -e '/: <_write_r>/a [...]' \
+		-e '/: <__swrite+0x[a-f0-9]\+>/d' -e '/: <__swrite>/a [...]' \
+		-e '/: <__sflush_r+0x[a-f0-9]\+>/d' -e '/: <__sflush_r>/a [...]' \
+		-e '/: <_fflush_r+0x[a-f0-9]\+>/d' -e '/: <_fflush_r>/a [...]' \
+		-e '/: <__swbuf_r+0x[a-f0-9]\+>/d' -e '/: <__swbuf_r>/a [...]' \
+		-e '/: <iprintf+0x[a-f0-9]\+>/d' -e '/: <iprintf>/a [...]' \
+		-e '/: <_vfiprintf_r+0x[a-f0-9]\+>/d' -e '/: <_vfiprintf_r>/a [...]' \
+		-e '/: <_printf_i+0x[a-f0-9]\+>/d' -e '/: <_printf_i>/a [...]' \
+		-e '/: <_printf_common+0x[a-f0-9]\+>/d' -e '/: <_printf_common>/a [...]' \
+		-e '/: <__sfputc_r+0x[a-f0-9]\+>/d' -e '/: <__sfputc_r>/a [...]' \
+		-e '/: <__sfputs_r+0x[a-f0-9]\+>/d' -e '/: <__sfputs_r>/a [...]' \
+		-e '/: <memchr+0x[a-f0-9]\+>/d' -e '/: <memchr>/a [...]' \
+		-e '/: <__smakebuf_r+0x[a-f0-9]\+>/d' -e '/: <__smakebuf_r>/a [...]' \
+		-e '/: <__swsetup_r+0x[a-f0-9]\+>/d' -e '/: <__swsetup_r>/a [...]' \
+		$^ > $@
+
+compress-trace: $(SIMDIR)/trace_fc_compress.log
 
 # backup current simulation folder
 .PHONY: backup
@@ -154,5 +195,5 @@ backup:
 .PHONY: clean
 clean:
 	rm -f $(OBJS) $(PROG) $(DEPS) $(SU) \
-		$(PROG).hex $(PROG).lst $(PROG).siz \
+		$(PROG).hex $(PROG).lst $(PROG).siz $(PROG).map \
 		$(PROG).stim $(SIMDIR)/vectors/stim.txt

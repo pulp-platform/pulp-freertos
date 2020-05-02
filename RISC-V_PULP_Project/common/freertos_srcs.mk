@@ -29,5 +29,7 @@ PULP_SRCS += $(COMMON_ROOT)/crt0.S $(COMMON_ROOT)/vectors.S
 PULP_SRCS += $(addprefix $(COMMON_ROOT)/, \
 		system_pulpissimo_ri5cy.c fll.c timer_irq.c \
 		irq.c soc_eu.c gpio.c pinmux.c)
+CPPFLAGS += -I"$(COMMON_ROOT)/target_pulp/include"
+
 # driver headers
 CPPFLAGS += -I"$(COMMON_ROOT)/include"
