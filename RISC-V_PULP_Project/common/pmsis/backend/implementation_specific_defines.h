@@ -6,10 +6,13 @@
 
 #if defined(__GAP8__)
 #include "system_gap8.h"
-#elseif defined(__GAP9__)
+#elif defined(__GAP9__)
 #include "system_gap9.h"
-#endif  /* __GAP8__ */
-/* TODO: add system_pulp */
+#elif defined(__PULP__)
+#include "system_pulp_ri5cy.h"
+#else
+#error "Target specific macro is not set. Recommended to use __PULP__."
+#endif
 
 #define __INC_TO_STRING(x) #x
 
@@ -18,10 +21,18 @@
 
 // default malloc for driver structs etc (might not be compatible with udma!)
 /* TODO: rereoute to newlib malloc (?)*/
+#ifdef __PULP__
+#define pi_default_malloc(x)  malloc(x)
+#define pi_default_free(x,y)  free(x)
+#define pi_data_malloc(x)     malloc(x)
+#define pi_data_free(x,y)     free(x)
+#else
+#error "__PULP__ not set: malloc not supported"
 #define pi_default_malloc(x)  pmsis_l2_malloc(x)
 #define pi_default_free(x,y)  pmsis_l2_malloc_free(x,y)
 #define pi_data_malloc(x)     pmsis_l2_malloc(x)
 #define pi_data_free(x,y)     pmsis_l2_malloc_free(x,y)
+#endif
 
 #define PI_TASK_IMPLEM                          \
     uint8_t destroy;

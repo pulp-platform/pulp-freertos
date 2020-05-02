@@ -10,10 +10,14 @@ int __os_native_kickoff(void *arg)
     BaseType_t xTask;
     TaskHandle_t xHandler0 = NULL;
 
-    uint32_t stack_size = (uint32_t) MAIN_APP_STACK_SIZE;
-    stack_size /= sizeof(configSTACK_DEPTH_TYPE);
-    xTask = xTaskCreate(arg, "main", stack_size,
+    /* TODO: what is this weird logic ? */
+    /* uint32_t stack_size = (uint32_t) MAIN_APP_STACK_SIZE; */
+    /* stack_size /= sizeof(configSTACK_DEPTH_TYPE); */
+    /* xTask = xTaskCreate(arg, "main", stack_size, */
+    /*                     NULL, tskIDLE_PRIORITY + 1, &xHandler0); */
+    xTask = xTaskCreate(arg, "main", ((unsigned short)configMINIMAL_STACK_SIZE),
                         NULL, tskIDLE_PRIORITY + 1, &xHandler0);
+
     if (xTask != pdPASS)
     {
         printf("main is NULL !\n");
@@ -23,21 +27,31 @@ int __os_native_kickoff(void *arg)
     __enable_irq();
 
     struct pmsis_event_kernel_wrap *wrap;
-    pmsis_event_kernel_init(&wrap, pmsis_event_kernel_main);
+    /* TODO: blocks everything because priority too high */
+    /* pmsis_event_kernel_init(&wrap, pmsis_event_kernel_main); */
 
-    pmsis_event_set_default_scheduler(wrap);
+    /* pmsis_event_set_default_scheduler(wrap); */
 
     hal_compiler_barrier();
+
+
+    /* TODO: this is a quick hack to make the code run. Normally this should be
+     * set in gap_io.c */
+    uint8_t g_freertos_scheduler_started = 0;
+    /* TODO: dito */
+    SemaphoreHandle_t g_printf_mutex = NULL;
+
 
     /*
      * This should be used in case of printf via uart before scheduler has started.
      * Output will be on terminal instead of uart. After scheduler has started, output
      * will be via uart.
      */
-    extern uint8_t g_freertos_scheduler_started;
+    /* extern uint8_t g_freertos_scheduler_started; */
+
     g_freertos_scheduler_started = 1;
 
-    extern SemaphoreHandle_t g_printf_mutex;
+    /* extern SemaphoreHandle_t g_printf_mutex; */
     g_printf_mutex = xSemaphoreCreateMutex();
     if (g_printf_mutex == NULL)
     {
@@ -45,6 +59,7 @@ int __os_native_kickoff(void *arg)
         pmsis_exit(-4322);
     }
 
+    puts("pmsis_kickoff: starting scheduler\n");
     /* Start the kernel.  From here on, only tasks and interrupts will run. */
     vTaskStartScheduler();
 
