@@ -54,8 +54,8 @@
 typedef enum _fll_type
 {
     FLL_SOC     = 0,
-    FLL_PERI    = 0,
-    FLL_CLUSTER = 1
+    FLL_PERI    = 1,
+    FLL_CLUSTER = 2
 } fll_type_t;
 
 /*******************************************************************************

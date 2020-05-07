@@ -183,18 +183,16 @@ typedef enum IRQn {
  */
 
 /** FLL_CTRL - Registers Layout Typedef */
+/* TODO: looks like pulp has 3 fll */
 typedef struct {
-  __IO  uint32_t SOC_FLL_STATUS;            /**< FLL_CTRL Status register, offset: 0x00 */
-  __IO  uint32_t SOC_CONF1;                 /**< FLL_CTRL Configuration1 register, offset: 0x04 */
-  __IO  uint32_t SOC_CONF2;                 /**< FLL_CTRL Configuration2 register, offset: 0x08 */
-  __IO  uint32_t SOC_INTEGRATOR;            /**< FLL_CTRL INTEGRATOR register, offset: 0x0C */
-  __IO  uint32_t CLUSTER_FLL_STATUS;        /**< FLL_CTRL Status register, offset: 0x10 */
-  __IO  uint32_t CLUSTER_CONF1;             /**< FLL_CTRL Configuration1 register, offset: 0x14 */
-  __IO  uint32_t CLUSTER_CONF2;             /**< FLL_CTRL Configuration2 register, offset: 0x18 */
-  __IO  uint32_t CLUSTER_INTEGRATOR;        /**< FLL_CTRL INTEGRATOR register, offset: 0x1C */
-  __IO  uint32_t FLL_CONVERGE;              /**< FLL_CTRL Fll Converge register, offset: 0x20 */
-
+  __IO  uint32_t FLL_STATUS;            /**< FLL_CTRL Status register, offset: 0x00 */
+  __IO  uint32_t FLL_CONF1;                 /**< FLL_CTRL Configuration1 register, offset: 0x04 */
+  __IO  uint32_t FLL_CONF2;                 /**< FLL_CTRL Configuration2 register, offset: 0x08 */
+  __IO  uint32_t FLL_INTEGRATOR;            /**< FLL_CTRL INTEGRATOR register, offset: 0x0C */
 } FLL_CTRL_Type;
+
+/* TODO: removed this register, see if it still exists */
+/* __IO  uint32_t FLL_CONVERGE;*/              /**< FLL_CTRL Fll Converge register, offset: 0x20 */
 
 /* ----------------------------------------------------------------------------
    -- FLL_CTRL Register Masks
@@ -300,9 +298,9 @@ typedef struct {
  */ /* end of group FLL_CTRL_Register_Masks */
 
 /* The number of FLL */
-#define FLL_NUM        2
+#define FLL_NUM       ARCHI_NB_FLL
 /* The FLL reference frequency*/
-#define FLL_REF_CLK    32768
+#define FLL_REF_CLK   ARCHI_REF_CLOCK
 
 
 /* FLL_CTRL - Peripheral instance base addresses */

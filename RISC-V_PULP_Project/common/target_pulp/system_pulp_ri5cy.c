@@ -51,7 +51,8 @@
 #include <FreeRTOS.h>
 #include "FreeRTOSConfig.h"
 
-#include "fll.h"
+/* TODO: weird include */
+#include "pmsis/targets/properties.h"
 #include "irq.h"
 #include "soc_eu.h"
 
@@ -89,8 +90,10 @@ void (*isr_table[32])(void);
  */
 void system_init(void)
 {
-	/* TODO: check this code */
-	pulp_fll_init();
+	/* init flls */
+	for (int i = 0; i < ARCHI_NB_FLL; i++) {
+		pi_fll_init(i, 0);
+	}
 
 	/* make sure irq (itc) is a good state */
 	pulp_irq_init();
