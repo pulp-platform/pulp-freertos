@@ -166,7 +166,9 @@ void pi_fll_init(fll_type_t which_fll, uint32_t ret_state)
 		if (!READ_FLL_CTRL_CONF1_MODE(reg1)) {
 			/* set clock ref lock assert count */
 			uint32_t reg2 = FLL_CTRL[which_fll].FLL_CONF2;
+			reg2 &= ~FLL_CTRL_CONF2_ASSERT_CYCLES_MASK;
 			reg2 |= FLL_CTRL_CONF2_ASSERT_CYCLES(0x6);
+			reg2 &= ~FLL_CTRL_CONF2_LOCK_TOLERANCE_MASK;
 			reg2 |= FLL_CTRL_CONF2_LOCK_TOLERANCE(0x50);
 			FLL_CTRL[which_fll].FLL_CONF2 = reg2;
 
@@ -179,11 +181,14 @@ void pi_fll_init(fll_type_t which_fll, uint32_t ret_state)
 			 * forcing dco input, approx 70 MHz
 			 */
 			uint32_t regint = FLL_CTRL[which_fll].FLL_INTEGRATOR;
+			regint &= ~FLL_CTRL_INTEGRATOR_INT_PART_MASK;
 			regint |= FLL_CTRL_INTEGRATOR_INT_PART(332);
 			FLL_CTRL[which_fll].FLL_INTEGRATOR = regint;
 
 			/* Lock FLL */
+			reg1 &= ~FLL_CTRL_CONF1_OUTPUT_LOCK_EN_MASK;
 			reg1 |= FLL_CTRL_CONF1_OUTPUT_LOCK_EN(1);
+			reg1 &= ~FLL_CTRL_CONF1_MODE_MASK;
 			reg1 |= FLL_CTRL_CONF1_MODE(1);
 			FLL_CTRL[which_fll].FLL_CONF1 = reg1;
 		}
@@ -192,7 +197,6 @@ void pi_fll_init(fll_type_t which_fll, uint32_t ret_state)
 		 * In case the FLL frequency was set while it was off, update it
 		 * immediately
 		 */
-
 		uint32_t freq = flls_frequency[which_fll];
 		if (freq) {
 			if (pi_fll_set_frequency(which_fll, freq, 0))
@@ -231,12 +235,3 @@ void pi_fll_deinit(fll_type_t which_fll)
 {
 	flls_frequency[which_fll] = 0;
 }
-
-/*
-void FLL_Clear()
-{
-	for (int i = 0; i < FLL_NUM; i++) {
-		flls_frequency[i] = 0;
-	}
-}
-*/
