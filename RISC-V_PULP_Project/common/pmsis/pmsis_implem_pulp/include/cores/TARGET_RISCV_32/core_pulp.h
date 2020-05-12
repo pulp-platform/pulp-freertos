@@ -1223,7 +1223,7 @@ typedef struct {
 #define EU_SOC_EVENTS        ((EU_SOC_EVENTS_Type   *)      CORE_EU_SOC_EVENTS_BASE)          /*!< EU_SW_EVENTS_DEMUX configuration struct */
 
 
-#define NVIC                ((NVIC_Type   *)      FC_IRQ_OFFSET)                       /*!< NVIC configuration struct */
+#define NVIC                ((NVIC_Type   *)      FC_IRQ_ADDR)                       /*!< NVIC configuration struct */
 
 #define EU_CORE_DEMUX       ((EU_CORE_DEMUX_Type   *)      CORE_EU_CORE_DEMUX_BASE)         /*!< EU_CORE_DEMUX configuration struct */
 #define EU_SEC_DEMUX        ((EU_SEC_DEMUX_Type   *)       CORE_EU_SEC_DEMUX_BASE)          /*!< EU_SEC_DEMUX configuration struct */
