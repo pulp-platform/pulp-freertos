@@ -9,9 +9,13 @@ CPPFLAGS += -I"$(PMSIS_ROOT)/pmsis_implem_pulp/include/"
 PULP_SRCS += $(PMSIS_ROOT)/pmsis_implem_pulp/malloc/pulp_malloc.c
 
 PULP_SRCS += $(PMSIS_ROOT)/pmsis_implem_pulp/drivers/fll/fll.c
+PULP_SRCS += $(PMSIS_ROOT)/pmsis_implem_pulp/drivers/fc_event/fc_event.c
 
 PULP_SRCS += $(PMSIS_ROOT)/pmsis_implem_pulp/drivers/udma/spi/spi.c
 PULP_SRCS += $(PMSIS_ROOT)/pmsis_implem_pulp/drivers/udma/spi/spi_internal.c
+
+PULP_SRCS += $(PMSIS_ROOT)/pmsis_implem_pulp/drivers/udma/uart/uart.c
+PULP_SRCS += $(PMSIS_ROOT)/pmsis_implem_pulp/drivers/udma/uart/uart_internal.c
 
 # pmsis API
 CPPFLAGS += -I"$(PMSIS_API_ROOT)/include"
@@ -23,6 +27,7 @@ PULP_SRCS += $(PMSIS_ROOT)/pmsis_rtos/mem_slab/mem_slab.c
 PULP_SRCS += $(PMSIS_ROOT)/pmsis_rtos/event_kernel/event_kernel.c
 PULP_SRCS += $(PMSIS_ROOT)/pmsis_rtos/os/device.c
 PULP_SRCS += $(PMSIS_ROOT)/pmsis_rtos/os/pmsis_task.c
+PULP_SRCS += $(PMSIS_ROOT)/pmsis_rtos/pi_log.c
 
 # for weird paths that start with "pmsis/"
 CPPFLAGS += -I"$(COMMON_ROOT)"
