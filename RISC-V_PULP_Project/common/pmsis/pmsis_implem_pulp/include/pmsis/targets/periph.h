@@ -807,17 +807,47 @@ typedef struct {
 /** SOCEU - Register Layout Typedef */
 typedef struct {
   __IO  uint32_t EVENT;                          /**< SOCEU event register, offset: 0x00 */
-  __IO  uint32_t FC_MASK_MSB;                    /**< SOCEU fc mask MSB register, offset: 0x04 */
-  __IO  uint32_t FC_MASK_LSB;                    /**< SOCEU fc mask LSB register, offset: 0x08 */
-  __IO  uint32_t CL_MASK_MSB;                    /**< SOCEU cluster mask MSB register, offset: 0x0C */
-  __IO  uint32_t CL_MASK_LSB;                    /**< SOCEU cluster mask LSB register, offset: 0x10 */
-  __IO  uint32_t PR_MASK_MSB;                    /**< SOCEU propagate mask MSB register, offset: 0x14 */
-  __IO  uint32_t PR_MASK_LSB;                    /**< SOCEU propagate mask LSB register, offset: 0x18 */
-  __IO  uint32_t ERR_MASK_MSB;                   /**< SOCEU error mask MSB register, offset: 0x1C */
-  __IO  uint32_t ERR_MASK_LSB;                   /**< SOCEU error mask LSB register, offset: 0x20 */
-  __IO  uint32_t TIMER_SEL_HI;                   /**< SOCEU timer high register, offset: 0x24 */
-  __IO  uint32_t TIMER_SEL_LO;                   /**< SOCEU timer low register, offset: 0x28 */
+  __IO  uint32_t FC_MASK0;                       /**< SOCEU fc mask 0 register, offset: 0x04 */
+  __IO  uint32_t FC_MASK1;                       /**< SOCEU fc mask 1 register, offset: 0x08 */
+  __IO  uint32_t FC_MASK2;                       /**< SOCEU fc mask 2 register, offset: 0x0c */
+  __IO  uint32_t FC_MASK3;                       /**< SOCEU fc mask 3 register, offset: 0x10 */
+  __IO  uint32_t FC_MASK4;                       /**< SOCEU fc mask 4 register, offset: 0x14 */
+  __IO  uint32_t FC_MASK5;                       /**< SOCEU fc mask 5 register, offset: 0x18 */
+  __IO  uint32_t FC_MASK6;                       /**< SOCEU fc mask 6 register, offset: 0x1c */
+  __IO  uint32_t FC_MASK7;                       /**< SOCEU fc mask 7 register, offset: 0x20 */
+  __IO  uint32_t CL_MASK0;                       /**< SOCEU cluster mask 0 register, offset: 0x24 */
+  __IO  uint32_t CL_MASK1;                       /**< SOCEU cluster mask 1 register, offset: 0x28 */
+  __IO  uint32_t CL_MASK2;                       /**< SOCEU cluster mask 2 register, offset: 0x2C */
+  __IO  uint32_t CL_MASK3;                       /**< SOCEU cluster mask 3 register, offset: 0x30 */
+  __IO  uint32_t CL_MASK4;                       /**< SOCEU cluster mask 4 register, offset: 0x34 */
+  __IO  uint32_t CL_MASK5;                       /**< SOCEU cluster mask 5 register, offset: 0x38 */
+  __IO  uint32_t CL_MASK6;                       /**< SOCEU cluster mask 6 register, offset: 0x3C */
+  __IO  uint32_t CL_MASK7;                       /**< SOCEU cluster mask 7 register, offset: 0x40 */
+  __IO  uint32_t PR_MASK0;                       /**< SOCEU propagate mask MSB register, offset: 0x44 */
+  __IO  uint32_t PR_MASK1;                       /**< SOCEU propagate mask MSB register, offset: 0x48 */
+  __IO  uint32_t PR_MASK2;                       /**< SOCEU propagate mask MSB register, offset: 0x4c */
+  __IO  uint32_t PR_MASK3;                       /**< SOCEU propagate mask MSB register, offset: 0x50 */
+  __IO  uint32_t PR_MASK4;                       /**< SOCEU propagate mask MSB register, offset: 0x54 */
+  __IO  uint32_t PR_MASK5;                       /**< SOCEU propagate mask MSB register, offset: 0x58 */
+  __IO  uint32_t PR_MASK6;                       /**< SOCEU propagate mask MSB register, offset: 0x5c */
+  __IO  uint32_t PR_MASK7;                       /**< SOCEU propagate mask MSB register, offset: 0x60 */
+  __IO  uint32_t ERR_MASK0;                      /**< SOCEU error mask MSB register, offset: 0x64 */
+  __IO  uint32_t ERR_MASK1;                      /**< SOCEU error mask MSB register, offset: 0x68 */
+  __IO  uint32_t ERR_MASK2;                      /**< SOCEU error mask MSB register, offset: 0x6c */
+  __IO  uint32_t ERR_MASK3;                      /**< SOCEU error mask MSB register, offset: 0x70 */
+  __IO  uint32_t ERR_MASK4;                      /**< SOCEU error mask MSB register, offset: 0x74 */
+  __IO  uint32_t ERR_MASK5;                      /**< SOCEU error mask MSB register, offset: 0x78 */
+  __IO  uint32_t ERR_MASK6;                      /**< SOCEU error mask MSB register, offset: 0x7c */
+  __IO  uint32_t ERR_MASK7;                      /**< SOCEU error mask MSB register, offset: 0x80 */
+  __IO  uint32_t TIMER_SEL_HI;                   /**< SOCEU timer high register, offset: 0x84 */
+  __IO  uint32_t TIMER_SEL_LO;                   /**< SOCEU timer low register, offset: 0x88 */
 } SOCEU_Type;
+
+#define SOC_EVENT_OFFSET 0x00
+#define SOC_FC_MASK0_OFFSET 0x04
+#define SOC_CL_MASK0_OFFSET 0x24
+#define SOC_PR_MASK0_OFFSET 0x44
+#define SOC_ERR_MASK0_OFFSET 0x64
 
 /* ----------------------------------------------------------------------------
    -- SOCEU Register Masks
