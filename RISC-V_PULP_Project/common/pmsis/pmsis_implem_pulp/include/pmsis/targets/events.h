@@ -56,7 +56,7 @@
 
 /*! @name SoC events  */
 /*! @brief Number of FC_Events. */
-/* #define SOC_EU_NB_FC_EVENTS             (57) */
+#define SOC_EU_NB_FC_EVENTS             (168)
 
 /*! @brief UDMA events */
 /* SPIM */
@@ -90,12 +90,14 @@
 /* #define SOC_EVENT_PMU_DLC_BRIDGE_PICL   (36) */
 /* #define SOC_EVENT_PMU_DLC_BRIDGE_SCU    (37) */
 /* #define SOC_EVENT_PWM(id)               (38 + id) */
-#define SOC_EVENT_GPIO                  (42)
+#define SOC_EVENT_GPIO                  (139)
+#define SOC_EVENT_HWPE0                 (140)
+#define SOC_EVENT_HWPE1                 (141)
 /* #define SOC_EVENT_RTC_APB               (43) */
 /* #define SOC_EVENT_RTC                   (44) */
 
-#define SOC_EVENT_SW(id)                (48 + (id & (NB_SW_EVENTS - 1)))
-#define SOC_EVENT_REF32K_CLK_RISE       (56)
+#define SOC_EVENT_SW(id)                (160 + (id & (NB_SW_EVENTS - 1)))
+#define SOC_EVENT_REF32K_CLK_RISE       (168)
 
 /* @brief Cluster events */
 #define CL_EVENT_SW(id)                 (id & (NB_SW_EVENTS - 1))
