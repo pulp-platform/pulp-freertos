@@ -86,21 +86,29 @@ typedef enum IRQn {
   SYSTICK_IRQN                 = 10,               /**< PULP U -> M System Tick Interrupt */
   FC_TIMER1_IRQN               = 11,               /**< FC timer1 interrupt */
 
-  EU_HWCE_EVENT                = 12,              /**< PULP HWCE SW Event */
-  EU_HW_BARRIER_EVENT          = 16,              /**< PULP Hardware Barrier SW Event */
-  EU_MUTEX_EVENT               = 17,              /**< PULP Mutex SW Event */
-  EU_DISPATCH_EVENT            = 18,              /**< PULP Dispatch SW Event */
-  EU_LOOP_EVENT                = 19,              /**< PULP Loop SW Event */
+  /* misc */
+  FC_CLK_REF_EVENT             = 14,              /**< Reference clock edge event */
+  FC_GPIO_EVENT                = 15,              /**< GPIO event */
 
-  /* Fault interrupts */
-  FC_SOC_EVENT_IRQN            = 27,              /**< PULP SoC Event Interrupt */
-  MPU_ERROR_IRQN               = 28,              /**< PULP MPU Error Interrupt */
-  ERR_EVENT_IRQN               = 29,              /**< PULP Event Error Interrupt */
+  /* advanced timer events */
+  FC_ADV_TIMER0_EVENT          = 17,              /**< Advanced Timer 0 event */
+  FC_ADV_TIMER1_EVENT          = 18,              /**< Advanced Timer 1 event */
+  FC_ADV_TIMER2_EVENT          = 19,              /**< Advanced Timer 2 event */
+  FC_ADV_TIMER3_EVENT          = 20,              /**< Advanced Timer 3 event */
 
-  /* Core interrupts */
-  RST_HANDLER_IRQN             = 32,              /**< PULP Reset handler Interrupt */
-  ILL_INS_IRQN                 = 33,              /**< PULP Usage Fault Interrupt */
-  SVCALL_IRQN                  = 34               /**< PULP SV Call Interrupt */
+  /* CLUSTER_NOT_BUSY_EVENT       = 21, */
+  /* CLUSTER_POK_EVENT            = 22, */
+  /* CLUSTER_CG_OK_EVENT          = 23, */
+
+  /* PICL_OK_EVENT                = 24, */
+  /* SCU_OK_EVENT                 = 25, */
+
+  FC_SOC_EVENT                 = 26,              /**< Event unit new event */
+
+  FC_QUEUE_ERROR_EVENT         = 29,              /**< Event unit queue overflow event */
+
+  FC_HP_EVENT1                 = 30,
+  FC_HP_EVENT0                 = 31
 } IRQn_Type;
 
 /*!
