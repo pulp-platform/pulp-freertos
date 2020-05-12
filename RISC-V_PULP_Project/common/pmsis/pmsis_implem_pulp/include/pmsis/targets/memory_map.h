@@ -103,7 +103,7 @@
 /* UDMA peripherals */
 /* #define UDMA_GC_ADDR                                (UDMA_CTRL_ADDR + 0x780) */
 /* UDMA base peripheral addr = UDMA base address + UDMA ctrl. */
-#define UDMA_PERIPH_BASE_ADDR                       (UDMA_CTRL_ADDR)
+#define UDMA_PERIPH_BASE_ADDR                       (UDMA_CTRL_ADDR + 0x80)
 #define UDMA_SPIM(id)                               (UDMA_PERIPH_BASE_ADDR + (UDMA_SPIM_ID(id) << UDMA_PERIPH_SIZE_LOG2))
 #define UDMA_HYPER(id)                              (UDMA_PERIPH_BASE_ADDR + (UDMA_HYPER_ID(id) << UDMA_PERIPH_SIZE_LOG2))
 #define UDMA_UART(id)                               (UDMA_PERIPH_BASE_ADDR + (UDMA_UART_ID(id) << UDMA_PERIPH_SIZE_LOG2))
