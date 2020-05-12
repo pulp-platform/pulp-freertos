@@ -1457,14 +1457,24 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __is_M_Mode()
   #endif
   #include CMSIS_NVIC_VIRTUAL_HEADER_FILE
 #else
-  #define NVIC_EnableIRQ              __NVIC_EnableIRQ
-  #define NVIC_GetEnableIRQ           __NVIC_GetEnableIRQ
-  #define NVIC_DisableIRQ             __NVIC_DisableIRQ
-  #define NVIC_GetPendingIRQ          __NVIC_GetPendingIRQ
-  #define NVIC_SetPendingIRQ          __NVIC_SetPendingIRQ
-  #define NVIC_ClearPendingIRQ        __NVIC_ClearPendingIRQ
-  #define NVIC_GetActive              __NVIC_GetActive
-  #define NVIC_SystemReset            __NVIC_SystemReset
+/* keeps this for backwards compatibility */
+  #define NVIC_EnableIRQ              __irq_enable
+  #define NVIC_GetEnableIRQ           __irq_get_enable
+  #define NVIC_DisableIRQ             __irq_disable
+  #define NVIC_GetPendingIRQ          __irq_get_pending
+  #define NVIC_SetPendingIRQ          __irq_set_pending
+  #define NVIC_ClearPendingIRQ        __irq_clear_pending
+  #define NVIC_GetActive              __irq_get_active
+  #define NVIC_SystemReset            __irq_system_reset
+/* saner names for irqs */
+  #define irqn_enable                 __irq_enable
+  #define irqn_get_enable             __irq_get_enable
+  #define irqn_disable                __irq_disable
+  #define irqn_get_pending            __irq_get_pending
+  #define irqn_set_pending            __irq_set_pending
+  #define irqn_clear_pending          __irq_clear_pending
+  #define irqn_get_active             __irq_get_active
+  #define irqn_system_reset           __irq_system_reset
 #endif /* CMSIS_NVIC_VIRTUAL */
 
 #ifdef CMSIS_VECTAB_VIRTUAL
@@ -1473,8 +1483,8 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __is_M_Mode()
   #endif
   #include CMSIS_VECTAB_VIRTUAL_HEADER_FILE
 #else
-  #define NVIC_SetVector              __NVIC_SetVector
-  #define NVIC_GetVector              __NVIC_GetVector
+  #define NVIC_SetVector              __irq_set_vector
+  #define NVIC_GetVector              __irq_get_vector
 #endif  /* (CMSIS_VECTAB_VIRTUAL) */
 
 #define NVIC_USER_IRQ_OFFSET          0
@@ -1487,7 +1497,7 @@ __attribute__((always_inline)) __STATIC_INLINE uint32_t __is_M_Mode()
   \param [in]      IRQn  Device specific interrupt number.
   \note    IRQn must not be negative.
  */
-__STATIC_INLINE void __NVIC_EnableIRQ(IRQn_Type IRQn)
+__STATIC_INLINE void __irq_enable(IRQn_Type IRQn)
 {
   /* U mode does not has the right */
   /* NVIC->MASK_SET = (1UL << IRQn); */
@@ -1502,7 +1512,7 @@ __STATIC_INLINE void __NVIC_EnableIRQ(IRQn_Type IRQn)
   \return             1  Interrupt is enabled.
   \note    IRQn must not be negative.
  */
-__STATIC_INLINE uint32_t __NVIC_GetEnableIRQ(IRQn_Type IRQn)
+__STATIC_INLINE uint32_t __irq_get_enable(IRQn_Type IRQn)
 {
   /* U mode does not has the right */
   /* return ((uint32_t)((NVIC->MASK_IRQ & (1UL << IRQn)) ? 1UL : 0UL)); */
@@ -1517,7 +1527,7 @@ __STATIC_INLINE uint32_t __NVIC_GetEnableIRQ(IRQn_Type IRQn)
   \param [in]      IRQn  Device specific interrupt number.
   \note    IRQn must not be negative.
  */
-__STATIC_INLINE void __NVIC_DisableIRQ(IRQn_Type IRQn)
+__STATIC_INLINE void __irq_disable(IRQn_Type IRQn)
 {
   /* U mode does not has the right */
   /* NVIC->MASK_IRQ_AND = (1UL << IRQn); */
@@ -1533,7 +1543,7 @@ __STATIC_INLINE void __NVIC_DisableIRQ(IRQn_Type IRQn)
   \return             1  Interrupt status is pending.
   \note    IRQn must not be negative.
  */
-__STATIC_INLINE uint32_t __NVIC_GetPendingIRQ(IRQn_Type IRQn)
+__STATIC_INLINE uint32_t __irq_get_pending(IRQn_Type IRQn)
 {
     /* return(0U); */
     uint32_t pending = readw((uintptr_t)(FC_IRQ_ADDR + IRQ_REG_INT_OFFSET));
@@ -1547,7 +1557,7 @@ __STATIC_INLINE uint32_t __NVIC_GetPendingIRQ(IRQn_Type IRQn)
   \param [in]      IRQn  Device specific interrupt number.
   \note    IRQn must not be negative.
  */
-__STATIC_INLINE void __NVIC_SetPendingIRQ(IRQn_Type IRQn)
+__STATIC_INLINE void __irq_set_pending(IRQn_Type IRQn)
 {
   writew(1UL << IRQn,(uintptr_t)(FC_IRQ_ADDR + IRQ_REG_INT_SET_OFFSET));
 }
@@ -1559,7 +1569,7 @@ __STATIC_INLINE void __NVIC_SetPendingIRQ(IRQn_Type IRQn)
   \param [in]      IRQn  Device specific interrupt number.
   \note    IRQn must not be negative.
  */
-__STATIC_INLINE void __NVIC_ClearPendingIRQ(IRQn_Type IRQn)
+__STATIC_INLINE void __irq_clear_pending(IRQn_Type IRQn)
 {
   writew(1UL << IRQn,(uintptr_t)(FC_IRQ_ADDR + IRQ_REG_INT_CLEAR_OFFSET));
 }
@@ -1573,7 +1583,7 @@ __STATIC_INLINE void __NVIC_ClearPendingIRQ(IRQn_Type IRQn)
   \return             1  Interrupt status is active.
   \note    IRQn must not be negative.
  */
-__STATIC_INLINE uint32_t __NVIC_GetActive(IRQn_Type IRQn)
+__STATIC_INLINE uint32_t __irq_get_active(IRQn_Type IRQn)
 {
   assert(0);
   /* U mode does not has the right */
@@ -1582,7 +1592,7 @@ __STATIC_INLINE uint32_t __NVIC_GetActive(IRQn_Type IRQn)
   return -1;
 }
 
-__STATIC_INLINE uint32_t __NVIC_ForgeItVect(uint32_t ItBaseAddr, uint32_t ItIndex, uint32_t ItHandler)
+__STATIC_INLINE uint32_t __irq_forge_it_vect(uint32_t ItBaseAddr, uint32_t ItIndex, uint32_t ItHandler)
 
 {
   assert(0);
@@ -1614,7 +1624,7 @@ __STATIC_INLINE uint32_t __NVIC_ForgeItVect(uint32_t ItBaseAddr, uint32_t ItInde
   \param [in]   IRQn      Interrupt number
   \param [in]   vector    Address of interrupt handler function
  */
-__STATIC_INLINE void __NVIC_SetVector(IRQn_Type IRQn, uint32_t vector)
+__STATIC_INLINE void __irq_set_vector(IRQn_Type IRQn, uint32_t vector)
 {
   assert(0);
   /*
@@ -1637,7 +1647,7 @@ __STATIC_INLINE void __NVIC_SetVector(IRQn_Type IRQn, uint32_t vector)
   \param [in]   IRQn      Interrupt number.
   \return                 Address of interrupt handler function
  */
-__STATIC_INLINE uint32_t __NVIC_GetVector(IRQn_Type IRQn)
+__STATIC_INLINE uint32_t __irq_get_vector(IRQn_Type IRQn)
 {
   assert(0);
   /*
@@ -1656,8 +1666,9 @@ __STATIC_INLINE uint32_t __NVIC_GetVector(IRQn_Type IRQn)
   \brief   System Reset
   \details Initiates a system reset request to reset the MCU.
  */
-__STATIC_INLINE void __NVIC_SystemReset(void)
+__STATIC_INLINE void __irq_system_reset(void)
 {
+  assert(0);
 }
 
 /*@} end of CMSIS_Core_NVICFunctions */
