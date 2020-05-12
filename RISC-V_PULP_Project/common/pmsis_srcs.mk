@@ -6,6 +6,8 @@ PMSIS_API_ROOT = $(COMMON_ROOT)/pmsis_api
 
 CPPFLAGS += -I"$(PMSIS_ROOT)/pmsis_implem_pulp/include/"
 
+PULP_SRCS += $(PMSIS_ROOT)/pmsis_implem_pulp/malloc/pulp_malloc.c
+
 PULP_SRCS += $(PMSIS_ROOT)/pmsis_implem_pulp/drivers/fll/fll.c
 
 PULP_SRCS += $(PMSIS_ROOT)/pmsis_implem_pulp/drivers/udma/spi/spi.c
