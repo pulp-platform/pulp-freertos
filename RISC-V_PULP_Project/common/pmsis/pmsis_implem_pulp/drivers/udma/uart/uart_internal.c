@@ -32,6 +32,7 @@
 #include "pmsis/implem/drivers/udma/uart/uart_internal.h"
 #include "pmsis/rtos/event_kernel/event_kernel.h"
 #include "pmsis/rtos/os_frontend_api/os.h"
+#include "pmsis/rtos/malloc/l2_malloc.h"
 #include "pmsis/implem/drivers/fc_event/fc_event.h"
 #include "pmsis/implem/hal/hal.h"
 
