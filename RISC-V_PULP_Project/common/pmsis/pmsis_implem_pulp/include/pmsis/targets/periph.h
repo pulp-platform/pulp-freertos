@@ -313,7 +313,7 @@ typedef struct {
 
 /* FLL_CTRL - Peripheral instance base addresses */
 /** Peripheral FLL_CTRL base address */
-#define FLL_CTRL_BASE                                (SOC_PERI_BASE)
+#define FLL_CTRL_BASE                                (SOC_PERIPHERALS_ADDR)
 /** Peripheral FLL_CTRL base pointer */
 #define FLL_CTRL                                     ((FLL_CTRL_Type *)FLL_CTRL_BASE)
 /** Array initializer of FLL_CTRL base addresses */
@@ -399,9 +399,10 @@ typedef struct {
 
 
 /* UDMA - Peripheral instance base addresses */
-/** Peripheral UDMA base address 0x1A102000 */
-#define UDMA_BASE                                (SOC_PERI_BASE + 0x02000u)
+/** Peripheral UDMA base address 0x1A102080 */
+#define UDMA_BASE                                UDMA_PERIPH_BASE_ADDR
 /** Peripheral UDMA events number */
+/* TODO: check those */
 #define UDMA_EVENTS_NUM                          19
 /** Peripheral UDMA channel number */
 #define UDMA_CHANNEL_NUM                         10
@@ -463,7 +464,7 @@ typedef struct {
 
 /* UDMA Global configuration - instance base addresses */
 /** Global configuration UDMA base address */
-#define UDMA_GC_BASE                              (UDMA_BASE + 0x780u)
+#define UDMA_GC_BASE                              (UDMA_CTRL_ADDR)
 #define UDMA_GC                            ((UDMA_GC_Type *)UDMA_GC_BASE)
 
 /*!
@@ -536,7 +537,7 @@ typedef struct {
 /* TODO: Remove this instance.  */
 /* SOC_CTRL - Peripheral instance base addresses */
 /** Peripheral SOC_CTRL base address */
-#define SOC_CTRL_BASE                                (SOC_PERI_BASE + 0x4000u)
+#define SOC_CTRL_BASE                                (SOC_PERIPHERALS_ADDR + 0x4000u)
 
 
 /* ----------------------------------------------------------------------------
@@ -874,7 +875,7 @@ typedef struct {
 
 /* SOCEU - Peripheral instance base addresses */
 /** Peripheral SOCEU base address */
-#define SOCEU_BASE                               (SOC_PERI_BASE + 0x06000u)
+#define SOCEU_BASE                               SOC_EU_ADDR
 /** Peripheral SOCEU base pointer */
 #define SOCEU                                    ((SOCEU_Type *)SOCEU_BASE)
 /** Array initializer of SOCEU base addresses */
@@ -1048,7 +1049,7 @@ typedef struct {
 
 /* PMU DLC- Peripheral instance base addresses */
 /** Peripheral PMU DLC base address */
-#define PMU_DLC_BASE                                (SOC_PERI_BASE + 0x7000u)
+#define PMU_DLC_BASE                                (SOC_PERIPHERALS_ADDR + 0x7000u)
 /** Peripheral PMU_DLC base pointer */
 #define PMU_DLC                                     ((PMU_DLC_Type *)PMU_DLC_BASE)
 /** Array initializer of PMU_DLC base addresses */
@@ -1083,7 +1084,7 @@ typedef struct {
 
 /* EFUSE_CTRL - Peripheral instance base addresses */
 /** Peripheral EFUSE_CTRL base address */
-#define EFUSE_CTRL_BASE                               (SOC_PERI_BASE + 0x09000u)
+#define EFUSE_CTRL_BASE                               (SOC_PERIPHERALS_ADDR + 0x09000u)
 /** Peripheral EFUSE_CTRL base pointer */
 #define efuse_ctrl                                    ((efuse_ctrl_t *)EFUSE_CTRL_BASE)
 /** Array initializer of EFUSE_CTRL base addresses */
@@ -1098,7 +1099,7 @@ typedef struct {
 
 /* EFUSE_REGS - Peripheral instance base addresses */
 /** Peripheral EFUSE_REGS base address */
-#define EFUSE_REGS_BASE                                (SOC_PERI_BASE + 0x09200u)
+#define EFUSE_REGS_BASE                                (SOC_PERIPHERALS_ADDR + 0x09200u)
 /** Peripheral EFUSE_REGS base pointer */
 #define efuse_regs                                     ((efuse_regs_t *)EFUSE_REGS_BASE)
 #define efuse_regs_array                               ((int32_t*)EFUSE_REGS_BASE)
@@ -1171,7 +1172,7 @@ typedef struct {
 
 /* EFUSE_REGS - Peripheral instance base addresses */
 /** Peripheral EFUSE_REGS base address */
-#define EFUSE_REGS_BASE                                (SOC_PERI_BASE + 0x09200u)
+#define EFUSE_REGS_BASE                                (SOC_PERIPHERALS_ADDR + 0x09200u)
 /** Peripheral EFUSE_REGS base pointer */
 #define EFUSE_REGS                                     ((EFUSE_REGS_Type *)EFUSE_REGS_BASE)
 /** Array initializer of EFUSE_REGS base addresses */
@@ -1216,7 +1217,7 @@ typedef struct {
 
 /* FC_STDOUT - Peripheral instance base addresses */
 /** Peripheral FC_STDOUT base address */
-#define FC_STDOUT_BASE                                (SOC_PERI_BASE + 0x10000u + (FC_CLUSTER_ID << 7))
+#define FC_STDOUT_BASE                                (SOC_PERIPHERALS_ADDR + 0x10000u + (FC_CLUSTER_ID << 7))
 /** Peripheral FC_STDOUT base pointer */
 #define FC_STDOUT                                     ((FC_STDOUT_Type *)FC_STDOUT_BASE)
 /** Array initializer of FC_STDOUT base addresses */
@@ -1261,7 +1262,7 @@ typedef struct {
 
 /* CLUSTER_STDOUT - Peripheral instance base addresses */
 /** Peripheral CLUSTER_STDOUT base address */
-#define CLUSTER_STDOUT_BASE                                (SOC_PERI_BASE + 0x10000u)
+#define CLUSTER_STDOUT_BASE                                (SOC_PERIPHERALS_ADDR + 0x10000u)
 /** Peripheral CLUSTER_STDOUT base pointer */
 #define CLUSTER_STDOUT                                     ((CLUSTER_STDOUT_Type *)CLUSTER_STDOUT_BASE)
 /** Array initializer of CLUSTER_STDOUT base addresses */

@@ -1162,7 +1162,8 @@ typedef struct {
 #define FC_BASE             (0x1B000000UL)                             /*!< FC Base Address */
 
 #define SOC_ROM_BASE        ROM_ADDR                                   /*!< SOC ROM Base Address */
-#define SOC_PERI_BASE       SOC_PERIPHERALS_ADDR                       /*!< SOC Peripherals Base Address */
+// phasing out
+//#define SOC_PERI_BASE       SOC_PERIPHERALS_ADDR                       /*!< SOC Peripherals Base Address */
 
 #define CORE_PERI_BASE      (0x00200000UL)                             /*!< RISC Core Peripheral Base Address */
 #define CORE_SCB_BASE       (CORE_PERI_BASE)                           /*!< RISC Core System Control Block Base Address */
