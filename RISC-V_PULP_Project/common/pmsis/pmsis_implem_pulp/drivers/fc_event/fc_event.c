@@ -46,48 +46,43 @@ static volatile pi_fc_event_handler_t fc_event_handlers[NB_SOC_EVENTS];
 
 static void fc_event_null_event(void *arg)
 {
-   return;
-} 
+	return;
+}
 
 void pi_fc_event_handler_init(uint32_t fc_event_irq)
 {
-    // open the mask for fc_soc_event irq
-    for(int i=0; i<NB_SOC_EVENTS; i++)
-    {
-      pi_fc_event_handler_clear(i);
-    }
-    //NVIC_SetVector(fc_event_irq, (uint32_t)__handler_wrapper_light_fc_event_handler);
-    NVIC_EnableIRQ(fc_event_irq);
+	/* TODO: fix this mess, that should be 8 32-bit writes */
+	/* open the mask for fc_soc_event irq */
+	for (int i = 0; i < NB_SOC_EVENTS; i++) {
+		pi_fc_event_handler_clear(i);
+	}
+	/* NVIC_SetVector(fc_event_irq, (uint32_t)__handler_wrapper_light_fc_event_handler);*/
+	irqn_enable(fc_event_irq);
 }
 
-void pi_fc_event_handler_set(uint32_t event_id, pi_fc_event_handler_t event_handler)
+void pi_fc_event_handler_set(uint32_t event_id,
+			     pi_fc_event_handler_t event_handler)
 {
-    fc_event_handlers[event_id] = event_handler;
+	fc_event_handlers[event_id] = event_handler;
 }
 
 void pi_fc_event_handler_clear(uint32_t event_id)
 {
-    fc_event_handlers[event_id] = (pi_fc_event_handler_t)fc_event_null_event;
+	fc_event_handlers[event_id] =
+		(pi_fc_event_handler_t)fc_event_null_event;
 }
 
-// TODO: Use Eric's FIRQ ABI
-__attribute__((section(".text")))
-void fc_soc_event_handler(void)
+/* TODO: Use Eric's FIRQ ABI */
+__attribute__((section(".text"))) void fc_soc_event_handler(void)
 {
-    /* Pop one event element from the FIFO */
-    uint32_t event = EU_SOC_EVENTS->CURRENT_EVENT;
+	/* Pop one event element from the FIFO */
+	/* TODO: don't use it like this */
+	uint32_t event = NVIC->FIFO;
 
-    hal_eu_fc_evt_demux_trig_set(FC_SW_NOTIFY_EVENT, 0);
-    /* Trigger an event in case someone is waiting for it
-       it will check the termination using the pending variable */
-    /* Now that we popped the element, we can clear the soc event FIFO event as the FIFO is
-       generating an event as soon as the FIFO is not empty */
-    EU_CORE_DEMUX->BUFFER_CLEAR = (1 << FC_SOC_EVENT_IRQN);
+	event &= 0xFF;
 
-    // TODO: USE builtins
-    event &= 0xFF;
-    if (fc_event_handlers[event] != NULL)
-    {
-        fc_event_handlers[event]((void*)event);
-    }
+	/* redirect to handler with jump table */
+	if (fc_event_handlers[event] != NULL) {
+		fc_event_handlers[event]((void *)event);
+	}
 }

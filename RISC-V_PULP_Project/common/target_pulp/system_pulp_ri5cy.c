@@ -51,6 +51,7 @@
 #include <FreeRTOS.h>
 #include "FreeRTOSConfig.h"
 
+#include "pmsis/implem/drivers/fc_event/fc_event.h"
 /* TODO: weird include */
 #include "pmsis/targets/properties.h"
 #include "irq.h"
@@ -102,11 +103,15 @@ void system_init(void)
 	 * do proper vectored interrupts.
 	 */
 	isr_table[0xa] = timer_irq_handler;
+	isr_table[0x1a] = fc_soc_event_handler; // 26
 
 	/* mtvec is set in crt0.S */
 
 	/* deactivate all soc events as they are enabled by default */
 	pulp_soc_eu_event_init();
+
+	/* Setup soc events handler. */
+	pi_fc_event_handler_init(FC_SOC_EVENT);
 
 	/* TODO: I$ enable*/
 	/* enable core level interrupt (mie) */
