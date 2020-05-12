@@ -24,6 +24,7 @@ DEPS = $(addsuffix .d, $(basename $(SRCS)))
 SU  = $(addsuffix .su, $(basename $(SRCS)))
 
 
+## Compile and link executable. Obeys standard GNU variables used by implicit rules.
 all: $(PROG) $(PROG).stim misc-info
 
 # %.d: %.c
@@ -112,6 +113,7 @@ $(SIMDIR)/fs:
 	mkdir -p -- $@
 
 .PHONY: run
+## Run simulation. Append gui=1 or interactive=1 for vsim gui or vsim shell respectively
 run: $(SIMDIR)/modelsim.ini $(SIMDIR)/boot $(SIMDIR)/tcl_files \
 	$(SIMDIR)/waves $(SIMDIR)/vectors/stim.txt \
 	$(SIMDIR)/stdout $(SIMDIR)/fs
@@ -149,7 +151,8 @@ endif
 $(SIMDIR)/trace_fc_postproc.log: $(SIMDIR)/trace_core_1f_0.log
 	$(PULPTRACE) $^ $(PROG) -o $@
 
-analyze: $(SIMDIR)/trace_fc_postproc.log
+## Symbolize simulation instruction trace log using the the original executable
+trace-symbolize: $(SIMDIR)/trace_fc_postproc.log
 
 $(SIMDIR)/trace_fc_compress.log: $(SIMDIR)/trace_fc_postproc.log
 	sed -e '/: <_start>/a [...]' -e '1,/: <_start>/d' \
@@ -180,20 +183,33 @@ $(SIMDIR)/trace_fc_compress.log: $(SIMDIR)/trace_fc_postproc.log
 		-e '/: <__smakebuf_r+0x[a-f0-9]\+>/d' -e '/: <__smakebuf_r>/a [...]' \
 		-e '/: <__swsetup_r+0x[a-f0-9]\+>/d' -e '/: <__swsetup_r>/a [...]' \
 		$^ > $@
+## Simplify simulation instruction trace log. This collapses some function calls.
+trace-simplify: $(SIMDIR)/trace_fc_compress.log
 
-compress-trace: $(SIMDIR)/trace_fc_compress.log
-
-# backup current simulation folder
 .PHONY: backup
+## Backup current simulation folder
 backup:
 	@STAMP=sim-$$(git rev-parse --short HEAD)-$$(date +"%Y-%m-%d-%H-%M-%S"); \
 	cp -r $(SIMDIR) $$STAMP; \
 	cp $(PROG) $(PROG).lst $$STAMP; \
 	echo "generated backup $$STAMP";
 
-
 .PHONY: clean
+## Clean object files
 clean:
 	rm -f $(OBJS) $(PROG) $(DEPS) $(SU) \
 		$(PROG).hex $(PROG).lst $(PROG).siz $(PROG).map \
 		$(PROG).stim $(SIMDIR)/vectors/stim.txt
+
+## Generate help overview
+help : Makefile
+	@printf "Available targets\n\n"
+	@awk '/^[a-zA-Z\-\_0-9]+:/ { \
+		helpMessage = match(lastLine, /^## (.*)/); \
+		if (helpMessage) { \
+			helpCommand = substr($$1, 0, index($$1, ":")-1); \
+			helpMessage = substr(lastLine, RSTART + 3, RLENGTH); \
+			printf "%-15s %s\n", helpCommand, helpMessage; \
+		} \
+	} \
+	{ lastLine = $$0 }' $(MAKEFILE_LIST)
