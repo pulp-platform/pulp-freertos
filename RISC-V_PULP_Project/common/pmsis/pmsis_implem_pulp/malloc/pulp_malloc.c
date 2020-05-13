@@ -8,7 +8,7 @@
 
 void *pi_l2_malloc(int size)
 {
-	malloc(size);
+	return malloc(size);
 }
 
 void pi_l2_free(void *chunk, int size)
