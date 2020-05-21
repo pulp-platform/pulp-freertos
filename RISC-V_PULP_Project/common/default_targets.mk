@@ -14,6 +14,10 @@ ifeq ($(strip $(PROG)),)
 $(error "PROG is invalid or empty. Won't be able to compile.")
 endif
 
+# dpi specific build targets
+ifeq ($(DPI),yes)
+include $(SUPPORT_ROOT)/support.mk
+endif
 
 # derived variables for compiling
 SRCS = $(RTOS_SRCS) $(PULP_SRCS) $(USER_SRCS)
@@ -112,11 +116,23 @@ $(SIMDIR)/stdout:
 $(SIMDIR)/fs:
 	mkdir -p -- $@
 
+# vsim argument to enable dpi
+ifeq ($(DPI),yes)
+  VSIM_DPI = $(addprefix -sv_lib ,$(basename $(DPI_LIBS)))
+  ifeq ($(strip $(DPI_CONFIG)),)
+  $(warning "DPI_CONFIG is unset, but requested DPI sim. Using default rtl_config.json")
+  DPI_CONFIG = "rtl_config.json"
+  endif
+else
+  DPI_CONFIG = "NONE"
+endif
+
 .PHONY: run
 ## Run simulation. Append gui=1 or interactive=1 for vsim gui or vsim shell respectively
 run: $(SIMDIR)/modelsim.ini $(SIMDIR)/boot $(SIMDIR)/tcl_files \
 	$(SIMDIR)/waves $(SIMDIR)/vectors/stim.txt \
-	$(SIMDIR)/stdout $(SIMDIR)/fs
+	$(SIMDIR)/stdout $(SIMDIR)/fs \
+	$(DPI_LIBS)
 ifndef VSIM_PATH
 	$(error "VSIM_PATH is not set. Make sure your ran `source setup/vsim.sh` \
 	in your PULP/PULPissimo repository")
@@ -125,7 +141,7 @@ ifdef gui
 	cd $(SIMDIR) && \
 	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG \
 		-dpicpppath $(CXX) -permit_unmatched_virtual_intf \
-		-gBAUDRATE=115200" && \
+		-gBAUDRATE=115200 -gCONFIG_FILE=$(DPI_CONFIG) $(VSIM_DPI)" && \
 	export VOPT_ACC_ENA="YES" && \
 	$(VSIM) -64 -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
 		-do 'source $(VSIM_PATH)/tcl_files/run.tcl; '
@@ -134,14 +150,14 @@ ifdef interactive
 	cd $(SIMDIR) && \
 	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG \
 		-dpicpppath $(CXX) -permit_unmatched_virtual_intf \
-		-gBAUDRATE=115200" && \
+		-gBAUDRATE=115200 -gCONFIG_FILE=$(DPI_CONFIG) $(VSIM_DPI)" && \
 	$(VSIM) -64 -c -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
 		-do 'source $(VSIM_PATH)/tcl_files/run.tcl;'
 else
 	cd $(SIMDIR) && \
 	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG \
 		-dpicpppath $(CXX) -permit_unmatched_virtual_intf \
-		-gBAUDRATE=115200" && \
+		-gBAUDRATE=115200 -gCONFIG_FILE=$(DPI_CONFIG) $(VSIM_DPI)" && \
 	$(VSIM) -64 -c -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
 		-do 'source $(VSIM_PATH)/tcl_files/run.tcl; run_and_exit;'
 endif

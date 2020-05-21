@@ -18,12 +18,13 @@ SIZE		= $(RISCV_PREFIX)size
 
 # set some project specific path variables
 ifndef PROJ_ROOT
-$error("PROJ_ROOT is unset. Point it to this project's root directory.")
+$(error "PROJ_ROOT is unset. Point it to this project's root directory.")
 endif
 
 RTOS_ROOT    = $(PROJ_ROOT)/FreeRTOS
 COMMON_ROOT  = $(PROJ_ROOT)/RISC-V_PULP_Project/common
 SCRIPTS_ROOT = $(PROJ_ROOT)/RISC-V_PULP_Project/scripts
+SUPPORT_ROOT = $(PROJ_ROOT)/RISC-V_PULP_Project/support
 
 # CFLAGS defaults explained
 #
@@ -141,6 +142,11 @@ endif
 # CFLAGS in the linker target
 ifeq ($(LTO),yes)
 CFLAGS += -flto
+endif
+
+# use dpi during simulation
+ifeq ($(DPI),yes)
+DPI_LIBS += $(SUPPORT_ROOT)/install/lib/libpulpdpi.so
 endif
 
 # script paths
