@@ -4,3 +4,12 @@
 [submodule "RISC-V_PULP_Project/common/pmsis_api"]
 	path = RISC-V_PULP_Project/common/pmsis_api
 	url = https://github.com/GreenWaves-Technologies/pmsis_api/
+[submodule "RISC-V_PULP_Project/support/dpi-models"]
+	path = RISC-V_PULP_Project/support/dpi-models
+	url = https://github.com/pulp-platform/dpi-models
+[submodule "RISC-V_PULP_Project/support/json-tools"]
+	path = RISC-V_PULP_Project/support/json-tools
+	url = https://github.com/pulp-platform/json-tools
+[submodule "RISC-V_PULP_Project/support/pulp-debug-bridge"]
+	path = RISC-V_PULP_Project/support/pulp-debug-bridge
+	url = https://github.com/pulp-platform/pulp-debug-bridge
