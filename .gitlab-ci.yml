@@ -113,3 +113,16 @@ test_hello_world_pmsis:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
     paths:
       - RISC-V_PULP_Project/tests/hello_world_pmsis
+
+test_spi:
+  stage: test
+  tags:
+    - dolent1
+  script:
+    - source pulp/setup/vsim.sh
+    - cd RISC-V_PULP_Project/tests/spi
+    - make clean all run DPI=yes
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - RISC-V_PULP_Project/tests/spi
