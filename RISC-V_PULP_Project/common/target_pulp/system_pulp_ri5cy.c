@@ -75,7 +75,7 @@ __attribute__((section(".heap"), used)) uint8_t ucHeap[configTOTAL_HEAP_SIZE];
  */
 uint32_t __heap_size = configTOTAL_HEAP_SIZE;
 
-uint32_t system_core_clock = DEFAULT_SYSTEM_CLOCK;
+volatile uint32_t system_core_clock = DEFAULT_SYSTEM_CLOCK;
 
 /* FreeRTOS task handling */
 BaseType_t xTaskIncrementTick(void);
@@ -120,9 +120,15 @@ void system_init(void)
 	/* TODO: enable uart */
 }
 
-void system_core_clock_update()
+void system_core_clock_update(void)
 {
-	/* TODO */
+	system_core_clock = pi_fll_get_frequency(FLL_SOC, 0);
+}
+
+void system_core_clock_get(void)
+{
+	system_core_clock_update();
+	return system_core_clock;
 }
 
 void timer_irq_handler(void)
