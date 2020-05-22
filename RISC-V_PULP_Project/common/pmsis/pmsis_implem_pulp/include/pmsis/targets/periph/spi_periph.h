@@ -20,56 +20,235 @@
 
 #include "udma_core_periph.h"
 
-
 /* ----------------------------------------------------------------------------
    -- SPI Peripheral Access Layer --
    ---------------------------------------------------------------------------- */
 
 /** SPI_Type Register Layout Typedef */
-typedef struct
-{
-    udma_core_t udma; /**< UDMA channels struct. */
+typedef struct {
+	udma_core_t udma; /**< UDMA channels struct. */
 } spi_t;
-
 
 /* ----------------------------------------------------------------------------
    -- SPI Register Bitfield Access --
    ---------------------------------------------------------------------------- */
 
+/* SPI command fields offset, mask, value definition */
+/* SPI commands fields offsets */
+#define SPI_CMD_ID_OFFSET 28
+
+/* COMMON definitions */
+#define SPI_CMD_QPI_ENA		  1
+#define SPI_CMD_QPI_DIS		  0
+#define SPI_CMD_LSB_FIRST	  1
+#define SPI_CMD_MSB_FIRST	  0
+#define SPI_CMD_4_WORD_PER_TRANSF 2
+#define SPI_CMD_2_WORD_PER_TRANSF 1
+#define SPI_CMD_1_WORD_PER_TRANSF 0
+#define SPI_CMD_DATA_WITDH(val)	  (val)
+#define SPI_CMD_CMD_SIZE(val)	  (val)
+
+/* CFG */
+#define SPI_CMD_CFG_CLK_DIV_OFFSET 0
+#define SPI_CMD_CFG_CLK_DIV_WIDTH  8
+#define SPI_CMD_CFG_CPHA_OFFSET	   8
+#define SPI_CMD_CFG_CPOL_OFFSET	   9
+
+#define SPI_CMD_CFG_CLKDIV(val) (val)
+#define SPI_CMD_CFG_CPOL_POS	1
+#define SPI_CMD_CFG_CPOL_NEG	0
+#define SPI_CMD_CFG_CPHA_STD	1
+#define SPI_CMD_CFG_CPHA_OPP	0
+
+/* SOT */
+#define SPI_CMD_SOT_CS_OFFSET 0
+#define SPI_CMD_SOT_CS_WIDTH  2
+
+#define SPI_CMD_SOT_CS0 0
+#define SPI_CMD_SOT_CS1 1
+#define SPI_CMD_SOT_CS2 2
+#define SPI_CMD_SOT_CS3 3
+
+/* SEND_CMD */
+#define SPI_CMD_SEND_CMD_CMD_OFFSET  0
+#define SPI_CMD_SEND_CMD_CMD_WIDTH   16
+#define SPI_CMD_SEND_CMD_SIZE_OFFSET 16
+#define SPI_CMD_SEND_CMD_SIZE_WIDTH  4
+#define SPI_CMD_SEND_CMD_QPI_OFFSET  27
+
+/* SEND_CMD */
+#define SPI_CMD_SEND_BITS_BITS_OFFSET 0
+#define SPI_CMD_SEND_BITS_BITS_WIDTH  16
+#define SPI_CMD_SEND_BITS_SIZE_OFFSET 16
+#define SPI_CMD_SEND_BITS_SIZE_WIDTH  4
+#define SPI_CMD_SEND_BITS_QPI_OFFSET  27
+
+/* SEND_ADDR */
+#define SPI_CMD_SEND_ADDR_SIZE_OFFSET 16
+#define SPI_CMD_SEND_ADDR_SIZE_WIDTH  5
+#define SPI_CMD_SEND_ADDR_QPI_OFFSET  27
+
+#define SPI_CMD_SEND_ADDR_VALUE(value) (value)
+
+/* SEND_DUMMY */
+#define SPI_CMD_DUMMY_CYCLE_OFFSET 16
+#define SPI_CMD_DUMMY_CYCLE_WIDTH  5
+
+/* TX_DATA */
+#define SPI_CMD_TX_DATA_SIZE_OFFSET	 0
+#define SPI_CMD_TX_DATA_SIZE_WIDTH	 16
+#define SPI_CMD_TX_DATA_QPI_OFFSET	 27
+#define SPI_CMD_TX_DATA_WORDTRANS_OFFSET 21
+#define SPI_CMD_TX_DATA_WORDTRANS_WIDTH	 2
+#define SPI_CMD_TX_DATA_LSBFIRST_OFFSET	 26
+#define SPI_CMD_TX_DATA_BITSWORD_OFFSET	 16
+#define SPI_CMD_TX_DATA_BITSWORD_WIDTH	 5
+
+/* RX_DATA */
+#define SPI_CMD_RX_DATA_SIZE_OFFSET	 0
+#define SPI_CMD_RX_DATA_SIZE_WIDTH	 16
+#define SPI_CMD_RX_DATA_QPI_OFFSET	 27
+#define SPI_CMD_RX_DATA_WORDTRANS_OFFSET 21
+#define SPI_CMD_RX_DATA_WORDTRANS_WIDTH	 2
+#define SPI_CMD_RX_DATA_LSBFIRST_OFFSET	 26
+#define SPI_CMD_RX_DATA_BITSWORD_OFFSET	 16
+#define SPI_CMD_RX_DATA_BITSWORD_WIDTH	 5
+
+/* RPT */
+#define SPI_CMD_RPT_NB_OFFSET 0
+#define SPI_CMD_RPT_NB_WIDTH  16
+
+/* EOT */
+#define SPI_CMD_EOT_GEN_EVT_OFFSET 0
+#define SPI_CMD_EOT_CS_KEEP_OFFSET 1
+
+#define SPI_CMD_EOT_EVENT_ENA 1
+#define SPI_CMD_EOT_EVENT_DIS 0
+
+/* WAIT */
+#define SPI_CMD_WAIT_EVENT_OFFSET 0
+#define SPI_CMD_WAIT_EVENT_WIDTH  2
+
+/* RX_CHECK */
+#define SPI_CMD_RX_CHECK_VALUE_OFFSET 0
+#define SPI_CMD_RX_CHECK_VALUE_WIDTH  16
+
+#define SPI_CMD_RX_CHECK_SIZE_OFFSET 16
+#define SPI_CMD_RX_CHECK_SIZE_WIDTH  4
+
+#define SPI_CMD_RX_CHECK_MODE_OFFSET 24
+#define SPI_CMD_RX_CHECK_MODE_WIDTH  2
+
+#define SPI_CMD_RX_CHECK_BYTE_ALIGN_OFFSET 26
+
+#define SPI_CMD_RX_CHECK_QPI_OFFSET 27
+
+#define SPI_CMD_RX_CHECK_MODE_MATCH 0
+#define SPI_CMD_RX_CHECK_MODE_ONES  1
+#define SPI_CMD_RX_CHECK_MODE_ZEROS 2
+#define SPI_CMD_RX_CHECK_MODE_MASK  3
+
+/* FULL DUPLEX */
+#define SPI_CMD_FUL_SIZE_OFFSET	     0
+#define SPI_CMD_FUL_SIZE_WIDTH	     16
+#define SPI_CMD_FUL_WORDTRANS_OFFSET 21
+#define SPI_CMD_FUL_WORDTRANS_WIDTH  2
+#define SPI_CMD_FUL_LSBFIRST_OFFSET  26
+#define SPI_CMD_FUL_BITSWORD_OFFSET  16
+#define SPI_CMD_FUL_BITSWORD_WIDTH   5
+
+#define SPI_CMD_SETUP_UC_TXRXEN_OFFSET 27
+#define SPI_CMD_SETUP_UC_DS_OFFSET     25
 
 /* ----------------------------------------------------------------------------
    -- SPI CMD IDs and macros --
    ---------------------------------------------------------------------------- */
 
-#define SPI_CMD_CFG_ID          0x0 /* Sets the configuration for the SPI Master IP. */
-#define SPI_CMD_SOT_ID          0x1 /* Sets the Chip Select (CS). */
-#define SPI_CMD_SEND_CMD_ID     0x2 /* Transmits a configurable size command. */
-#define SPI_CMD_SEND_ADDR_ID    0x3 /* Transmits a configurable size address. */
-#define SPI_CMD_DUMMY_ID        0x4 /* Receives a number of dummy bits (not sent to the rx interface). */
-#define SPI_CMD_WAIT_ID         0x5 /* Waits an external event to move to the next instruction. */
-#define SPI_CMD_TX_DATA_ID      0x6 /* Sends data (max 64Kbits). */
-#define SPI_CMD_RX_DATA_ID      0x7 /* Receives data (max 64Kbits). */
-#define SPI_CMD_RPT_ID          0x8 /* Repeat the next transfer N times. */
-#define SPI_CMD_EOT_ID          0x9 /* Clears the Chip Select (CS). */
-#define SPI_CMD_RPT_END_ID      0xA /* End of the repeat loop command. */
-#define SPI_CMD_RX_CHECK_ID     0xB /* Check up ot 16 bits of data against an expected value. */
-#define SPI_CMD_FULL_DUPL_ID    0xC /* Activate full duplex mode. */
+#define SPI_CMD_CFG_ID	     0x0 /* Sets the configuration for the SPI Master IP. */
+#define SPI_CMD_SOT_ID	     0x1 /* Sets the Chip Select (CS). */
+#define SPI_CMD_SEND_CMD_ID  0x2 /* Transmits a configurable size command. */
+#define SPI_CMD_SEND_BITS_ID 0x2 /* Transmits a configurable size command. */
+#define SPI_CMD_SEND_ADDR_ID 0x3 /* Transmits a configurable size address. */
+#define SPI_CMD_DUMMY_ID                                                       \
+	0x4 /* Receives a number of dummy bits (not sent to the rx interface). */
+#define SPI_CMD_WAIT_ID                                                        \
+	0x5 /* Waits an external event to move to the next instruction. */
+#define SPI_CMD_TX_DATA_ID 0x6 /* Sends data (max 64Kbits). */
+#define SPI_CMD_RX_DATA_ID 0x7 /* Receives data (max 64Kbits). */
+#define SPI_CMD_RPT_ID	   0x8 /* Repeat the next transfer N times. */
+#define SPI_CMD_EOT_ID	   0x9 /* Clears the Chip Select (CS). */
+#define SPI_CMD_RPT_END_ID 0xA /* End of the repeat loop command. */
+#define SPI_CMD_RX_CHECK_ID                                                    \
+	0xB /* Check up ot 16 bits of data against an expected value. */
+#define SPI_CMD_FULL_DUPL_ID 0xC /* Activate full duplex mode. */
 
-#define SPI_CMD_ID_OFFSET       28
+#define SPI_CMD_CFG(clockDiv, cpol, cpha)                                      \
+	((SPI_CMD_CFG_ID << SPI_CMD_ID_OFFSET) |                               \
+	 ((cpol) << SPI_CMD_CFG_CPOL_OFFSET) |                                 \
+	 ((cpha) << SPI_CMD_CFG_CPHA_OFFSET) |                                 \
+	 ((clockDiv) << SPI_CMD_CFG_CLK_DIV_OFFSET))
+#define SPI_CMD_SOT(cs)                                                        \
+	((SPI_CMD_SOT_ID << SPI_CMD_ID_OFFSET) |                               \
+	 ((cs) << SPI_CMD_SOT_CS_OFFSET))
+#define SPI_CMD_SEND_CMD(cmd, bits, qpi)                                       \
+	((SPI_CMD_SEND_CMD_ID << SPI_CMD_ID_OFFSET) |                          \
+	 ((qpi) << SPI_CMD_SEND_CMD_QPI_OFFSET) |                              \
+	 (((bits)-1) << SPI_CMD_SEND_CMD_SIZE_OFFSET) | (cmd & 0xFFFF))
+#define SPI_CMD_SEND_BITS(data, bits, qpi)                                     \
+	((SPI_CMD_SEND_CMD_ID << SPI_CMD_ID_OFFSET) |                          \
+	 ((qpi) << SPI_CMD_SEND_CMD_QPI_OFFSET) |                              \
+	 (((bits)-1) << SPI_CMD_SEND_CMD_SIZE_OFFSET) | (data & 0xFFFF))
+#define SPI_CMD_DUMMY(cycles)                                                  \
+	((SPI_CMD_DUMMY_ID << SPI_CMD_ID_OFFSET) |                             \
+	 (((cycles)-1) << SPI_CMD_DUMMY_CYCLE_OFFSET))
 
-#define SPI_CMD_CFG(clkdiv,cpha,cpol)                                      ((clkdiv << 0)|(cpha << 8)|(cpol << 9)|(SPI_CMD_CFG_ID << SPI_CMD_ID_OFFSET))
-#define SPI_CMD_SOT(cs)                                                    ((cs << 0)|(SPI_CMD_SOT_ID << SPI_CMD_ID_OFFSET))
-#define SPI_CMD_SEND_CMD(cmd_value,cmd_size,qpi)                           ((cmd_value << 0)|((cmd_size-1) << 16)|(qpi << 27)|(SPI_CMD_SEND_CMD_ID << SPI_CMD_ID_OFFSET))
-#define SPI_CMD_SEND_ADDR(cmd_size,qpi)                                    (((cmd_size-1) << 16)|(qpi << 27)|(SPI_CMD_SEND_ADDR_ID << SPI_CMD_ID_OFFSET))
-#define SPI_CMD_DUMMY(dummy_cycle)                                         (((dummy_cycle-1) << 16)|(SPI_CMD_DUMMY_ID << SPI_CMD_ID_OFFSET))
-#define SPI_CMD_WAIT(event_id)                                             ((event_id << 0)|(SPI_CMD_WAIT_ID << SPI_CMD_ID_OFFSET))
-#define SPI_CMD_TX_DATA(data_size,qpi,byte_align)                          (((data_size-1) << 0)|(byte_align << 26)|(qpi << 27)|(SPI_CMD_TX_DATA_ID << SPI_CMD_ID_OFFSET))
-#define SPI_CMD_RX_DATA(data_size,qpi,byte_align)                          (((data_size-1) << 0)|(byte_align << 26)|(qpi << 27)|(SPI_CMD_RX_DATA_ID << SPI_CMD_ID_OFFSET))
-#define SPI_CMD_RPT(rpt_cnt)                                               ((rpt_cnt << 0)|(SPI_CMD_RPT_ID << SPI_CMD_ID_OFFSET))
-#define SPI_CMD_EOT(event_gen)                                             ((event_gen << 0)|(SPI_CMD_EOT_ID << SPI_CMD_ID_OFFSET))
-#define SPI_CMD_RPT_END()                                                  ((SPI_CMD_RPT_END_ID << SPI_CMD_ID_OFFSET))
-#define SPI_CMD_RX_CHECK(comp_data,status_size,check_type,byte_align,qpi)  ((comp_data << 0)|(status_size << 16)|(check_type << 24)|(byte_align << 26)|(qpi << 27)|(SPI_CMD_RX_CHECK_ID << SPI_CMD_ID_OFFSET))
-#define SPI_CMD_FULL_DUPL(data_size,byte_align)                            (((data_size-1) << 0)|(byte_align << 26)|(SPI_CMD_FULL_DUPL_ID << SPI_CMD_ID_OFFSET))
+#define SPI_CMD_SETUP_UCA(txrxen, ds, addr)                                    \
+	((SPI_CMD_SETUP_UCA_ID << SPI_CMD_ID_OFFSET) |                         \
+	 ((txrxen) << SPI_CMD_SETUP_UC_TXRXEN_OFFSET) | ((int)addr & 0xFFFFF))
+#define SPI_CMD_SETUP_UCS(txrxen, ds, size)                                    \
+	((SPI_CMD_SETUP_UCS_ID << SPI_CMD_ID_OFFSET) |                         \
+	 ((txrxen) << SPI_CMD_SETUP_UC_TXRXEN_OFFSET) |                        \
+	 ((ds) << SPI_CMD_SETUP_UC_DS_OFFSET) | (size & 0xFFFF))
 
+#define SPI_CMD_TX_DATA(words, wordstrans, bitsword, qpi, lsbfirst)            \
+	((SPI_CMD_TX_DATA_ID << SPI_CMD_ID_OFFSET) |                           \
+	 ((qpi) << SPI_CMD_TX_DATA_QPI_OFFSET) |                               \
+	 ((wordstrans) << SPI_CMD_TX_DATA_WORDTRANS_OFFSET) |                  \
+	 ((bitsword - 1) << SPI_CMD_TX_DATA_BITSWORD_OFFSET) |                 \
+	 (((words)-1) << SPI_CMD_TX_DATA_SIZE_OFFSET) |                        \
+	 ((lsbfirst) << SPI_CMD_TX_DATA_LSBFIRST_OFFSET))
+#define SPI_CMD_RX_DATA(words, wordstrans, bitsword, qpi, lsbfirst)            \
+	((SPI_CMD_RX_DATA_ID << SPI_CMD_ID_OFFSET) |                           \
+	 ((qpi) << SPI_CMD_RX_DATA_QPI_OFFSET) |                               \
+	 ((wordstrans) << SPI_CMD_RX_DATA_WORDTRANS_OFFSET) |                  \
+	 ((bitsword - 1) << SPI_CMD_RX_DATA_BITSWORD_OFFSET) |                 \
+	 (((words)-1) << SPI_CMD_RX_DATA_SIZE_OFFSET) |                        \
+	 ((lsbfirst) << SPI_CMD_RX_DATA_LSBFIRST_OFFSET))
+#define SPI_CMD_RPT(iter)                                                      \
+	((SPI_CMD_RPT_ID << SPI_CMD_ID_OFFSET) |                               \
+	 ((iter) << SPI_CMD_RPT_NB_OFFSET))
+#define SPI_CMD_EOT(evt, cs_keep)                                              \
+	((SPI_CMD_EOT_ID << SPI_CMD_ID_OFFSET) |                               \
+	 ((evt) << SPI_CMD_EOT_GEN_EVT_OFFSET) |                               \
+	 ((cs_keep) << SPI_CMD_EOT_CS_KEEP_OFFSET))
+
+#define SPI_CMD_RX_CHECK(mode, bits, value, qpi, byte_align)                   \
+	((SPI_CMD_RX_CHECK_ID << SPI_CMD_ID_OFFSET) |                          \
+	 ((value) << SPI_CMD_RX_CHECK_VALUE_OFFSET) |                          \
+	 ((mode) << SPI_CMD_RX_CHECK_MODE_OFFSET) |                            \
+	 (((bits)-1) << SPI_CMD_RX_CHECK_SIZE_OFFSET) |                        \
+	 ((byte_align) << SPI_CMD_RX_CHECK_BYTE_ALIGN_OFFSET) |                \
+	 ((qpi) << SPI_CMD_RX_CHECK_QPI_OFFSET))
+
+#define SPI_CMD_WAIT(event)                                                    \
+	((SPI_CMD_WAIT_ID << SPI_CMD_ID_OFFSET) |                              \
+	 ((event) << SPI_CMD_WAIT_EVENT_OFFSET))
+#define SPI_CMD_RPT_END() ((SPI_CMD_RPT_END_ID << SPI_CMD_ID_OFFSET))
+#define SPI_CMD_FUL(words, wordstrans, bitsword, lsbfirst)                     \
+	((SPI_CMD_FUL_ID << SPI_CMD_ID_OFFSET) |                               \
+	 ((wordstrans) << SPI_CMD_FUL_WORDTRANS_OFFSET) |                      \
+	 ((bitsword - 1) << SPI_CMD_FUL_BITSWORD_OFFSET) |                     \
+	 (((words)-1) << SPI_CMD_FUL_SIZE_OFFSET) |                            \
+	 ((lsbfirst) << SPI_CMD_FUL_LSBFIRST_OFFSET))
 
 #endif /* __SPI_PERIPH_H__ */

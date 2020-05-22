@@ -23,8 +23,11 @@
 #define UDMA_EVENT_OFFSET_RX            (0)
 #define UDMA_EVENT_OFFSET_TX            (1)
 
+#define UDMA_EVENT_OFFSET_SPI_CMD       (2)
+#define UDMA_EVENT_OFFSET_SPI_EOT       (3)
+
 /* Number of events per peripheral. */
-#define UDMA_CHANNEL_NB_EVENTS_LOG2     (1)
+#define UDMA_CHANNEL_NB_EVENTS_LOG2     (2)
 #define UDMA_CHANNEL_NB_EVENTS          (1 << UDMA_CHANNEL_NB_EVENTS_LOG2)
 
 /* Number of SW events. */
@@ -62,6 +65,8 @@
 /* SPIM */
 #define SOC_EVENT_UDMA_SPIM_RX(id)      ((UDMA_SPIM_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_RX)
 #define SOC_EVENT_UDMA_SPIM_TX(id)      ((UDMA_SPIM_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_TX)
+#define SOC_EVENT_UDMA_SPIM_CMD(id)     ((UDMA_SPIM_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_SPI_CMD)
+#define SOC_EVENT_UDMA_SPIM_EOT(id)     ((UDMA_SPIM_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_SPI_EOT)
 /* HYPER */
 /* #define SOC_EVENT_UDMA_HYPER_RX(id)     ((UDMA_HYPER_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_RX) */
 /* #define SOC_EVENT_UDMA_HYPER_TX(id)     ((UDMA_HYPER_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_TX) */
@@ -81,7 +86,6 @@
 #define SOC_EVENT_UDMA_CPI_RX(id)       ((UDMA_CPI_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_RX)
 
 /* UDMA EOT & error events. */
-#define SOC_EVENT_UDMA_SPIM_EOT(id)     (22 + id)
 //#define SOC_EVENT_UDMA_I2C_ERROR(id)  (26 + id)
 
 /*! @brief PMU events, no pmu*/

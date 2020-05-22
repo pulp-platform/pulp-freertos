@@ -24,6 +24,7 @@
    ---------------------------------------------------------------------------- */
 
 /** UDMA_CORE_Type Register Layout Typedef */
+/* TODO: refactor this really not good code */
 typedef struct
 {
     volatile uint32_t rx_saddr; /**< RX Channel uDMA transfer address of associated buffer */
@@ -34,6 +35,10 @@ typedef struct
     volatile uint32_t tx_size; /**<  TX Channel uDMA transfer size of buffer */
     volatile uint32_t tx_cfg; /**<  TX Channel uDMA transfer configuration */
     volatile uint32_t tx_initcfg; /**< Not used. */
+    volatile uint32_t cmd_saddr; /**<  CMD Channel uDMA transfer address of associated buffer */
+    volatile uint32_t cmd_size; /**<  CMD Channel uDMA transfer size of buffer */
+    volatile uint32_t cmd_cfg; /**<  CMD Channel uDMA transfer configuration */
+    volatile uint32_t cmd_initcfg; /**< Not used. */
 } udma_core_t;
 
 
@@ -211,6 +216,64 @@ typedef struct
 #define UDMA_CORE_TX_INITCFG_RESERVED_0_MASK                         (0xffffffff)
 #define UDMA_CORE_TX_INITCFG_RESERVED_0_SHIFT                        (0)
 #define UDMA_CORE_TX_INITCFG_RESERVED_0(val)                         (((uint32_t)(((uint32_t)(val)) << UDMA_CORE_TX_INITCFG_RESERVED_0_SHIFT)) & UDMA_CORE_TX_INITCFG_RESERVED_0_MASK)
+
+
+/*! @name CMD_CFG */
+/* Channel continuous mode:
+  - 1'b0: disable
+  - 1'b1: enable
+  At the end of the buffer the uDMA reloads the address and size and starts a new transfer. */
+#define UDMA_CORE_CMD_CFG_CONTINOUS_MASK                              (0x1)
+#define UDMA_CORE_CMD_CFG_CONTINOUS_SHIFT                             (0)
+#define UDMA_CORE_CMD_CFG_CONTINOUS(val)                              (((uint32_t)(((uint32_t)(val)) << UDMA_CORE_CMD_CFG_CONTINOUS_SHIFT)) & UDMA_CORE_CMD_CFG_CONTINOUS_MASK)
+
+/* Channel transfer size used to increment uDMA buffer address pointer:
+  - 2'b00: +1 (8 bits)
+  - 2'b01: +2 (16 bits)
+  - 2'b10: +4 (32 bits)
+  - 2'b11: +0 */
+#define UDMA_CORE_CMD_CFG_DATASIZE_MASK                               (0x6)
+#define UDMA_CORE_CMD_CFG_DATASIZE_SHIFT                              (1)
+#define UDMA_CORE_CMD_CFG_DATASIZE(val)                               (((uint32_t)(((uint32_t)(val)) << UDMA_CORE_CMD_CFG_DATASIZE_SHIFT)) & UDMA_CORE_CMD_CFG_DATASIZE_MASK)
+
+/* Reserved/Not used. */
+#define UDMA_CORE_CMD_CFG_RESERVED_0_MASK                             (0x8)
+#define UDMA_CORE_CMD_CFG_RESERVED_0_SHIFT                            (3)
+#define UDMA_CORE_CMD_CFG_RESERVED_0(val)                             (((uint32_t)(((uint32_t)(val)) << UDMA_CORE_CMD_CFG_RESERVED_0_SHIFT)) & UDMA_CORE_CMD_CFG_RESERVED_0_MASK)
+
+/* Channel enable and start transfer:
+  - 1'b0: disable
+  - 1'b1: enable
+  This signal is used also to queue a transfer if one is already ongoing. */
+#define UDMA_CORE_CMD_CFG_EN_MASK                                     (0x10)
+#define UDMA_CORE_CMD_CFG_EN_SHIFT                                    (4)
+#define UDMA_CORE_CMD_CFG_EN(val)                                     (((uint32_t)(((uint32_t)(val)) << UDMA_CORE_CMD_CFG_EN_SHIFT)) & UDMA_CORE_CMD_CFG_EN_MASK)
+
+/* Transfer pending in queue status flag:
+  - 1'b0: no pending transfer in the queue
+  - 1'b1: pending transfer in the queue */
+#define UDMA_CORE_CMD_CFG_PENDING_MASK                                (0x20)
+#define UDMA_CORE_CMD_CFG_PENDING_SHIFT                               (5)
+#define UDMA_CORE_CMD_CFG_PENDING(val)                                (((uint32_t)(((uint32_t)(val)) << UDMA_CORE_CMD_CFG_PENDING_SHIFT)) & UDMA_CORE_CMD_CFG_PENDING_MASK)
+
+/* Channel clear and stop transfer:
+  - 1'b0: disable
+  - 1'b1: stop and clear the on-going transfer */
+#define UDMA_CORE_CMD_CFG_CLR_MASK                                    (0x20)
+#define UDMA_CORE_CMD_CFG_CLR_SHIFT                                   (5)
+#define UDMA_CORE_CMD_CFG_CLR(val)                                    (((uint32_t)(((uint32_t)(val)) << UDMA_CORE_CMD_CFG_CLR_SHIFT)) & UDMA_CORE_CMD_CFG_CLR_MASK)
+
+/* Reserved/Not used. */
+#define UDMA_CORE_CMD_CFG_RESERVED_1_MASK                             (0xffffff80)
+#define UDMA_CORE_CMD_CFG_RESERVED_1_SHIFT                            (7)
+#define UDMA_CORE_CMD_CFG_RESERVED_1(val)                             (((uint32_t)(((uint32_t)(val)) << UDMA_CORE_CMD_CFG_RESERVED_1_SHIFT)) & UDMA_CORE_CMD_CFG_RESERVED_1_MASK)
+
+
+/*! @name CMD_INITCFG */
+/* Reserved/Not used. */
+#define UDMA_CORE_CMD_INITCFG_RESERVED_0_MASK                         (0xffffffff)
+#define UDMA_CORE_CMD_INITCFG_RESERVED_0_SHIFT                        (0)
+#define UDMA_CORE_CMD_INITCFG_RESERVED_0(val)                         (((uint32_t)(((uint32_t)(val)) << UDMA_CORE_CMD_INITCFG_RESERVED_0_SHIFT)) & UDMA_CORE_CMD_INITCFG_RESERVED_0_MASK)
 
 
 /*! @name RX_SADDR */

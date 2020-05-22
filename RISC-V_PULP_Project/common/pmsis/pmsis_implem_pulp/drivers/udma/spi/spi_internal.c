@@ -74,10 +74,12 @@ void __pi_spim_exec_next_transfer(pi_task_t *task)
 }
 
 extern struct pmsis_event_kernel_wrap *default_sched;
+
 void spim_eot_handler(void *arg)
 {
     uint32_t event = (uint32_t) arg;
     uint32_t channel = event & 0x1;
+    /* TODO: remove is garbage */
     // EOT is simply 22 + id in GAP8
     uint32_t periph_id = (event - SOC_EVENT_UDMA_SPIM_EOT(0));
 
@@ -124,6 +126,7 @@ void spim_eot_handler(void *arg)
     }
 }
 
+/* TODO: REMOVE THOSE */
 void spim_tx_handler(void *arg)
 { // if we're here, it's cs keep related
     uint32_t event = (uint32_t) arg;
@@ -136,6 +139,7 @@ void spim_tx_handler(void *arg)
     DBG_PRINTF("%s:%d\n",__func__,__LINE__);
 }
 
+/* TODO: REMOVE THOSE and the handler */
 void spim_rx_handler(void *arg)
 { // if we're here, it's cs keep related
     uint32_t event = (uint32_t) arg;
@@ -218,7 +222,7 @@ int __pi_spi_close(struct spim_cs_data *cs_data)
     drv_data->nb_open--;
     if(drv_data->nb_open == 0)
     {
-        // disable clock gating for said device
+	/* reactivate clock gating for said device */
         udma_ctrl_cg_enable(UDMA_SPIM_ID(drv_data->device_id));
         hal_soc_eu_clear_fc_mask(SOC_EVENT_UDMA_SPIM_EOT(drv_data->device_id));
         pi_fc_event_handler_clear(SOC_EVENT_UDMA_SPIM_EOT(drv_data->device_id));
@@ -235,7 +239,7 @@ void __pi_spi_receive_async(struct spim_cs_data *cs_data, void *data, size_t len
         pi_spi_flags_e flags, pi_task_t *task)
 {
     struct spim_driver_data *drv_data = SPIM_CS_DATA_GET_DRV_DATA(cs_data);
-    int qspi    = ((flags >> 2) & 0x3) == ((PI_SPI_LINES_QUAD>>2)&0x3);
+    int qspi    = (flags & (0x3 << 2)) == PI_SPI_LINES_QUAD;
     int cs_mode = (flags >> 0) & 0x3;
 
     int device_id = drv_data->device_id;
@@ -245,34 +249,43 @@ void __pi_spi_receive_async(struct spim_cs_data *cs_data, void *data, size_t len
             system_core_clock_get() / cs_data->max_baudrate,cfg, qspi);
     uint32_t byte_align = (cs_data->wordsize == PI_SPI_WORDSIZE_32)
         && cs_data->big_endian;
-    int size = (len + 7) >> 3;
+    int buffer_size = (len + 7) >> 3;
 
-    int cmd_id = 0;
+    if (len > 8192*8) {
+	    DBG_PRINTF("%s:%d: Transaction splitting unimplemented, too large", __func__, __LINE__);
+	    abort(); /* TODO: unimplemented transaction splitting */
+    }
 
     int irq = __disable_irq();
-    if(!drv_data->end_of_transfer)
-    {
-        cs_data->udma_cmd[cmd_id++] = cfg;
-        cs_data->udma_cmd[cmd_id++] = SPI_CMD_SOT(cs_data->cs);
-        cs_data->udma_cmd[cmd_id++] = SPI_CMD_RX_DATA(len, qspi, byte_align);
+
+    if(!drv_data->end_of_transfer) {
+        cs_data->udma_cmd[0] = cfg;
+        cs_data->udma_cmd[1] = SPI_CMD_SOT(cs_data->cs);
+        cs_data->udma_cmd[2] = SPI_CMD_RX_DATA(len/32, SPI_CMD_1_WORD_PER_TRANSF, 32, qspi, SPI_CMD_MSB_FIRST);
+        cs_data->udma_cmd[3] = SPI_CMD_EOT(1, cs_mode == PI_SPI_CS_KEEP);
         drv_data->end_of_transfer = task;
         drv_data->repeat_transfer = NULL;
-        if(cs_mode == PI_SPI_CS_AUTO)
-        {
-            cs_data->udma_cmd[cmd_id++] = SPI_CMD_EOT(1);
-        }
-        else
-        {
-            hal_soc_eu_set_fc_mask(SOC_EVENT_UDMA_SPIM_RX(device_id));
-        }
 
-        spim_enqueue_channel(SPIM(device_id), (uint32_t)data, size,
-                UDMA_CORE_RX_CFG_EN(1) | (2<<1), RX_CHANNEL);
-        spim_enqueue_channel(SPIM(device_id), (uint32_t)cs_data->udma_cmd,
-                cmd_id*(sizeof(uint32_t)), UDMA_CORE_TX_CFG_EN(1), TX_CHANNEL);
-    }
-    else
-    {
+
+	uint32_t rx_conf = UDMA_CORE_TX_CFG_EN(1) |
+		UDMA_CORE_TX_CFG_DATASIZE(UDMA_CORE_CFG_DATASIZE_32);
+
+	/* receive data stream with 32-bit data size */
+	spim_enqueue_channel(SPIM(device_id),
+			     (uint32_t)data,
+			     buffer_size,
+			     rx_conf,
+			     RX_CHANNEL);
+
+	uint32_t cmd_conf = UDMA_CORE_TX_CFG_EN(1) |
+		UDMA_CORE_TX_CFG_DATASIZE(UDMA_CORE_CFG_DATASIZE_32);
+	/* send command stream with 32-bit data size */
+	spim_enqueue_channel(SPIM(device_id),
+			     (uint32_t)cs_data->udma_cmd,
+			     4*sizeof(uint32_t),
+			     cmd_conf,
+			     COMMAND_CHANNEL);
+    } else {
         struct spim_transfer transfer;
         transfer.data = data;
         transfer.flags = flags;
@@ -289,6 +302,9 @@ void __pi_spi_receive_async_with_ucode(struct spim_cs_data *cs_data, void *data,
         pi_spi_flags_e flags, int ucode_size,
         void *ucode, pi_task_t *task)
 {
+/* TODO: port spi_async with ucode */
+	abort();
+#if 0
     struct spim_driver_data *drv_data = SPIM_CS_DATA_GET_DRV_DATA(cs_data);
     int qspi    = ((flags >> 2) & 0x3) == ((PI_SPI_LINES_QUAD>>2) & 0x03);
     int cs_mode = (flags >> 0) & 0x3;
@@ -343,12 +359,16 @@ void __pi_spi_receive_async_with_ucode(struct spim_cs_data *cs_data, void *data,
 #endif
     }
     restore_irq(irq);
+#endif
 }
 
 void __pi_spi_send_async_with_ucode(struct spim_cs_data *cs_data, void *data, size_t len,
         pi_spi_flags_e flags, int ucode_size,
         void *ucode, pi_task_t *task)
 {
+/* TODO: port spi_async with ucode */
+	abort();
+#if 0
     struct spim_driver_data *drv_data = SPIM_CS_DATA_GET_DRV_DATA(cs_data);
     int qspi    = ((flags >> 2) & 0x3) == ((PI_SPI_LINES_QUAD>>2) & 0x03);
     int cs_mode = (flags >> 0) & 0x3;
@@ -409,13 +429,14 @@ void __pi_spi_send_async_with_ucode(struct spim_cs_data *cs_data, void *data, si
 #endif
     }
     restore_irq(irq);
+#endif
 }
 
 void __pi_spi_send_async(struct spim_cs_data *cs_data, void *data, size_t len,
         pi_spi_flags_e flags, pi_task_t *task)
 {
     struct spim_driver_data *drv_data = SPIM_CS_DATA_GET_DRV_DATA(cs_data);
-    int qspi = ((flags >> 2) & 0x3) == ((PI_SPI_LINES_QUAD>>2)&0x3);
+    int qspi = (flags & (0x3 << 2)) == PI_SPI_LINES_QUAD;
     int cs_mode = (flags >> 0) & 0x3;
 
     int device_id = drv_data->device_id;
@@ -425,67 +446,50 @@ void __pi_spi_send_async(struct spim_cs_data *cs_data, void *data, size_t len,
             system_core_clock_get() / cs_data->max_baudrate,cfg, qspi);
     uint32_t byte_align = (cs_data->wordsize == PI_SPI_WORDSIZE_32)
         && cs_data->big_endian;
-    int size = (len + 7) >> 3;
+
+    /* buffer size */
+    int buffer_size = (len + 7) >> 3;
+
+    if (len > 8192*8) {
+	    DBG_PRINTF("%s:%d: Transaction splitting unimplemented, too large", __func__, __LINE__);
+	    abort(); /* TODO: unimplemented transaction splitting */
+    }
 
     DBG_PRINTF("%s:%d: udma_cmd=%p\n",__func__,__LINE__, &(cs_data->udma_cmd[0]));
     int irq = disable_irq();
-    if(!drv_data->end_of_transfer)
-    {// enqueue the transfer
+    /* check if we already have a transfer ongoing */
+    if(!drv_data->end_of_transfer) {/* enqueue the transfer */
         cs_data->udma_cmd[0] = cfg;
         cs_data->udma_cmd[1] = SPI_CMD_SOT(cs_data->cs);
-        cs_data->udma_cmd[2] = SPI_CMD_TX_DATA(len, qspi, byte_align);
+        cs_data->udma_cmd[2] = SPI_CMD_TX_DATA(len/32, SPI_CMD_1_WORD_PER_TRANSF, 32, qspi, SPI_CMD_MSB_FIRST);
+        cs_data->udma_cmd[3] = SPI_CMD_EOT(1, cs_mode == PI_SPI_CS_KEEP);
         DBG_PRINTF("%s:%d\n",__func__,__LINE__);
-        if(cs_mode == PI_SPI_CS_AUTO)
-        {
-            drv_data->end_of_transfer = task;
-            drv_data->repeat_transfer = NULL;
+        drv_data->end_of_transfer = task;
+        drv_data->repeat_transfer = NULL;
 
-            // enqueue header first
-            spim_enqueue_channel(SPIM(device_id), (uint32_t)cs_data->udma_cmd,
-                    3*(sizeof(uint32_t)),
-                    UDMA_CORE_TX_CFG_EN(1), TX_CHANNEL);
-            // enqueue user data
-            spim_enqueue_channel(SPIM(device_id), (uint32_t)data, size,
-                    UDMA_CORE_TX_CFG_EN(1),
-                    TX_CHANNEL);
-            #if defined(DEBUG)
-            DBG_PRINTF("%s:%d: udma_cmd: %x %x %x\n", __func__, __LINE__,
-                       cs_data->udma_cmd[0], cs_data->udma_cmd[1], cs_data->udma_cmd[2]);
-            DBG_PRINTF("%s:%d: data: %p size: %d\n", __func__, __LINE__, data, size);
-            #endif  /* DEBUG */
-            // wait until channel is free
-            while((hal_read32((void*)&(SPIM(device_id)->udma.tx_cfg))
-                        & (1<<5))>>5)
-            {
-                DBG_PRINTF("%s:%d\n",__func__,__LINE__);
-            }
+	/* First enqueue the header with SPI config, cs, and send command.
+	 * The rest will be sent by the assembly code.
+	 * First the user data and finally an epilogue with the EOT command.
+	 */
+	uint32_t cmd_conf = UDMA_CORE_TX_CFG_EN(1) |
+		UDMA_CORE_TX_CFG_DATASIZE(UDMA_CORE_CFG_DATASIZE_32);
+	/* send command stream with 32-bit data size */
+	spim_enqueue_channel(SPIM(device_id),
+			     (uint32_t)cs_data->udma_cmd,
+			     4*sizeof(uint32_t),
+			     cmd_conf,
+			     COMMAND_CHANNEL);
 
-            // enqueue EOT
-            cs_data->udma_cmd[0] = SPI_CMD_EOT(1);
-            DBG_PRINTF("%s:%d: %lx\n",__func__,__LINE__,cs_data->udma_cmd[0]);
-            spim_enqueue_channel(SPIM(device_id),
-                    (uint32_t)&cs_data->udma_cmd[0], 1*(sizeof(uint32_t)),
-                    UDMA_CORE_TX_CFG_EN(1), TX_CHANNEL);
-        }
-        else
-        {// cs keep, has to use tx event
-            drv_data->end_of_transfer = task;
-            drv_data->repeat_transfer = NULL;
-            spim_enqueue_channel(SPIM(device_id),
-                    (uint32_t)cs_data->udma_cmd, 3*(sizeof(uint32_t)),
-                    UDMA_CORE_TX_CFG_EN(1), TX_CHANNEL);
-            // wait for it to clear
-            while((hal_read32((void*)&(SPIM(device_id)->udma.tx_cfg))
-                        & (1<<5))>>5);
-            // enqueue user data & enable tx event (EOT can't be used with cs keep)
-            hal_soc_eu_set_fc_mask(SOC_EVENT_UDMA_SPIM_TX(device_id));
-            spim_enqueue_channel(SPIM(device_id), (uint32_t)data,
-                    size, UDMA_CORE_TX_CFG_EN(1),
-                    TX_CHANNEL);
-        }
-    }
-    else
-    {
+	uint32_t tx_conf = UDMA_CORE_TX_CFG_EN(1) |
+		UDMA_CORE_TX_CFG_DATASIZE(UDMA_CORE_CFG_DATASIZE_32);
+
+	/* send data stream with 32-bit data size */
+	spim_enqueue_channel(SPIM(device_id),
+			     (uint32_t)data,
+			     buffer_size,
+			     tx_conf,
+			     TX_CHANNEL);
+    } else { /* a transfer is running, append to pending transfers queue */
         struct spim_transfer transfer;
         transfer.data = data;
         transfer.flags = flags;
@@ -501,8 +505,11 @@ void __pi_spi_send_async(struct spim_cs_data *cs_data, void *data, size_t len,
 void __pi_spi_xfer_async(struct spim_cs_data *cs_data, void *tx_data,
         void *rx_data, size_t len, pi_spi_flags_e flags, pi_task_t *task)
 {
+/* TODO: port spi_xfer async */
+	abort();
+#if 0
     struct spim_driver_data *drv_data = SPIM_CS_DATA_GET_DRV_DATA(cs_data);
-    int qspi    = ((flags >> 2) & 0x3) == ((PI_SPI_LINES_QUAD>>2) & 0x3);
+    int qspi    = (flags & (0x3 << 2)) == PI_SPI_LINES_QUAD;
     int cs_mode = (flags >> 0) & 0x3;
 
     int device_id = drv_data->device_id;
@@ -581,5 +588,6 @@ void __pi_spi_xfer_async(struct spim_cs_data *cs_data, void *tx_data,
         __pi_spim_drv_fifo_enqueue(cs_data, &transfer, task);
     }
     restore_irq(irq);
+#endif
 }
 

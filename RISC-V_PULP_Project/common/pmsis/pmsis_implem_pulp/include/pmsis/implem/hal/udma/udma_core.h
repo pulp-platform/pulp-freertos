@@ -48,6 +48,13 @@ static inline void udma_enqueue_channel(udma_core_t *udma_struct, uint32_t addr,
                 hal_write32(&udma_struct->tx_cfg,config);
             }
             break;
+        case (COMMAND_CHANNEL):
+           {
+                hal_write32(&udma_struct->cmd_saddr,addr);
+                hal_write32(&udma_struct->cmd_size,size);
+                hal_write32(&udma_struct->cmd_cfg,config);
+           }
+           break;
         default:
             break;
     }
