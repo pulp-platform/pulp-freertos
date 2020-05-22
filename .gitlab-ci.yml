@@ -29,6 +29,7 @@ fetch_pulp:
      # latest "stable" version
      - git checkout 75cc0947d85cd86e63b499f5465fd054fa795e5a
      - ./update-ips
+     - ./generate-scripts --rt-dpi
      - make build
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
