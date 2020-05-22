@@ -64,19 +64,19 @@
 #define configTICK_RATE_HZ	 ((TickType_t)1000)
 #define configMAX_PRIORITIES	 (5)
 /* Can be as low as 60 but some of the demo tasks that use this constant require it to be higher. */
-#define configMINIMAL_STACK_SIZE ((unsigned short)200)
+#define configMINIMAL_STACK_SIZE ((unsigned short)400)
 /* we want to put the heap into special section */
 #define configAPPLICATION_ALLOCATED_HEAP 1
-#define configTOTAL_HEAP_SIZE		 ((size_t)(16 * 1024))
+#define configTOTAL_HEAP_SIZE		 ((size_t)(64 * 1024))
 #define configMAX_TASK_NAME_LEN		 (16)
 #define configUSE_TRACE_FACILITY	 1 /* TODO: 0 */
 #define configUSE_16_BIT_TICKS		 0
 #define configIDLE_SHOULD_YIELD		 0
 #define configUSE_MUTEXES		 1
 #define configQUEUE_REGISTRY_SIZE	 8
-#define configCHECK_FOR_STACK_OVERFLOW	 0
+#define configCHECK_FOR_STACK_OVERFLOW	 2
 #define configUSE_RECURSIVE_MUTEXES	 1
-#define configUSE_MALLOC_FAILED_HOOK	 0
+#define configUSE_MALLOC_FAILED_HOOK	 1
 #define configUSE_APPLICATION_TASK_TAG	 0
 #define configUSE_COUNTING_SEMAPHORES	 1
 #define configGENERATE_RUN_TIME_STATS	 0
@@ -133,7 +133,7 @@ header file. */
 	} while (0)
 #endif
 
-#define configUSE_PORT_OPTIMISED_TASK_SELECTION 0
+#define configUSE_PORT_OPTIMISED_TASK_SELECTION 1
 #define configKERNEL_INTERRUPT_PRIORITY		7
 
 #endif /* FREERTOS_CONFIG_H */
