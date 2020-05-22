@@ -40,14 +40,25 @@ CFLAGS = \
 	-std=gnu11 \
 	-Wall -Wextra -Wshadow -Wformat=2 -Wundef \
 	-Wno-unused-parameter -Wno-unused-variable \
-	-DFEATURE_CLUSTER=0
+	-Os -g3 \
+	-DFEATURE_CLUSTER=0 -D__PULP__=1 -DASYNC=0 \
+	-DSPIM_ITF=0 -DSPIM_CS=1
 
+# CFLAGS += -fstack-usage -Wstack-usage=1024
+# CFLAGS += -DTRACE_SPI -DPI_LOG_LOCAL_LEVEL=5 -DDEBUG
+
+ifneq ($(DPI),yes)
+$(error spi_test requires DPI=yes to work properly)
+endif
+# testbench configuration for spim_verif dpi
+DPI_CONFIG=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))rtl_config.json
 
 # rtos and pulp sources
-include $(PROJ_ROOT)/RISC-V_PULP_Project/common/freertos_srcs.mk
+include $(PROJ_ROOT)/RISC-V_PULP_Project/common/freertos_srcs2.mk
 
 # pmsis drivers
 include $(PROJ_ROOT)/RISC-V_PULP_Project/common/pmsis_srcs.mk
+
 
 # application name
 PROG = spi_test
@@ -58,7 +69,7 @@ USER_SRCS = spi_test.c
 # FreeRTOS.h
 CPPFLAGS += $(addprefix -I, ".")
 
-CPPFLAGS += -DportasmHANDLE_INTERRUPT=undefined_handler
+CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
 
 # compile, simulation and analysis targets
 include $(PROJ_ROOT)/RISC-V_PULP_Project/common/default_targets.mk
