@@ -17,5 +17,3 @@ $(SUPPORT_LIB_DIR)/libjson.a $(SUPPORT_LIB_DIR)/libpulpdebugbridge.so \
 $(shell find "$(SUPPORT_ROOT)/dpi-models" -name '*.cpp' -o -name '*.hpp')
 	INSTALL_DIR="$(SUPPORT_ROOT)/install" make -C "$(SUPPORT_ROOT)/dpi-models" build
 
-# we need this hack to make vsim find the dpi libraries
-export LD_LIBRARY_PATH += $(SUPPORT_LIB_DIR)

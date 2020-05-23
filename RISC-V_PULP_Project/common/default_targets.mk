@@ -139,6 +139,7 @@ ifndef VSIM_PATH
 endif
 ifdef gui
 	cd $(SIMDIR) && \
+	export LD_LIBRARY_PATH="$(SUPPORT_LIB_DIR)" && \
 	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG \
 		-dpicpppath $(CXX) -permit_unmatched_virtual_intf \
 		-gBAUDRATE=115200 -gCONFIG_FILE=$(DPI_CONFIG) $(VSIM_DPI)" && \
@@ -148,6 +149,7 @@ ifdef gui
 else
 ifdef interactive
 	cd $(SIMDIR) && \
+	export LD_LIBRARY_PATH="$(SUPPORT_LIB_DIR)" && \
 	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG \
 		-dpicpppath $(CXX) -permit_unmatched_virtual_intf \
 		-gBAUDRATE=115200 -gCONFIG_FILE=$(DPI_CONFIG) $(VSIM_DPI)" && \
@@ -155,6 +157,7 @@ ifdef interactive
 		-do 'source $(VSIM_PATH)/tcl_files/run.tcl;'
 else
 	cd $(SIMDIR) && \
+	export LD_LIBRARY_PATH="$(SUPPORT_LIB_DIR)" && \
 	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG \
 		-dpicpppath $(CXX) -permit_unmatched_virtual_intf \
 		-gBAUDRATE=115200 -gCONFIG_FILE=$(DPI_CONFIG) $(VSIM_DPI)" && \
