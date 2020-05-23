@@ -142,27 +142,27 @@ ifdef gui
 	export LD_LIBRARY_PATH="$(SUPPORT_LIB_DIR)" && \
 	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG \
 		-dpicpppath $(CXX) -permit_unmatched_virtual_intf \
-		-gBAUDRATE=115200 -gCONFIG_FILE=$(DPI_CONFIG) $(VSIM_DPI)" && \
+		-gBAUDRATE=115200 -gCONFIG_FILE=$(DPI_CONFIG) $(VSIM_DPI) $(VSIM_ARGS)" && \
 	export VOPT_ACC_ENA="YES" && \
 	$(VSIM) -64 -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
-		-do 'source $(VSIM_PATH)/tcl_files/run.tcl; '
+		-do 'source $(VSIM_PATH)/tcl_files/run.tcl; ' $(VSIM_ARGS)
 else
 ifdef interactive
 	cd $(SIMDIR) && \
 	export LD_LIBRARY_PATH="$(SUPPORT_LIB_DIR)" && \
 	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG \
 		-dpicpppath $(CXX) -permit_unmatched_virtual_intf \
-		-gBAUDRATE=115200 -gCONFIG_FILE=$(DPI_CONFIG) $(VSIM_DPI)" && \
+		-gBAUDRATE=115200 -gCONFIG_FILE=$(DPI_CONFIG) $(VSIM_DPI) $(VSIM_ARGS)" && \
 	$(VSIM) -64 -c -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
-		-do 'source $(VSIM_PATH)/tcl_files/run.tcl;'
+		-do 'source $(VSIM_PATH)/tcl_files/run.tcl;' $(VSIM_ARGS)
 else
 	cd $(SIMDIR) && \
 	export LD_LIBRARY_PATH="$(SUPPORT_LIB_DIR)" && \
 	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG \
 		-dpicpppath $(CXX) -permit_unmatched_virtual_intf \
-		-gBAUDRATE=115200 -gCONFIG_FILE=$(DPI_CONFIG) $(VSIM_DPI)" && \
+		-gBAUDRATE=115200 -gCONFIG_FILE=$(DPI_CONFIG) $(VSIM_DPI) $(VSIM_ARGS)" && \
 	$(VSIM) -64 -c -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
-		-do 'source $(VSIM_PATH)/tcl_files/run.tcl; run_and_exit;'
+		-do 'source $(VSIM_PATH)/tcl_files/run.tcl; run_and_exit;' $(VSIM_ARGS)
 endif
 endif
 
