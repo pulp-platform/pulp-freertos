@@ -483,7 +483,7 @@ typedef struct {
    ---------------------------------------------------------------------------- */
 #include "memory_map.h"
 #include "events.h"
-#include "periph/hyper_periph.h"
+/* #include "periph/hyper_periph.h" */
 #define hyperbus(id) ((hyperbus_t *) UDMA_HYPER(id))
 
 
@@ -504,7 +504,7 @@ typedef struct {
 /* ----------------------------------------------------------------------------
    -- DMACPY Peripheral Access Layer
    ---------------------------------------------------------------------------- */
-#include "periph/dmacpy_periph.h"
+/* #include "periph/dmacpy_periph.h" */
 #define dmacpy(id) ((dmacpy_t *) UDMA_DMACPY(id))
 
 
@@ -518,7 +518,7 @@ typedef struct {
 /* ----------------------------------------------------------------------------
    -- CPI Peripheral
    ---------------------------------------------------------------------------- */
-#include "periph/cpi_periph.h"
+/* #include "periph/cpi_periph.h" */
 #define cpi(id) ((cpi_t *) UDMA_CPI(id))
 
 

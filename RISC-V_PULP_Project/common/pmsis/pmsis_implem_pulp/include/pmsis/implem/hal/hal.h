@@ -59,10 +59,10 @@
 
 /* UDMA. */
 #include "udma/udma_core.h"
-#include "udma/udma_cpi.h"
+/* #include "udma/udma_cpi.h" */
 #include "udma/udma_ctrl.h"
-#include "udma/udma_dmacpy.h"
-#include "udma/udma_hyper.h"
+/* #include "udma/udma_dmacpy.h" */
+/* #include "udma/udma_hyper.h" */
 #include "udma/udma_i2c.h"
 #include "udma/udma_i2s.h"
 #include "udma/udma_spim.h"
