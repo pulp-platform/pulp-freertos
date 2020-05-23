@@ -40,7 +40,17 @@ static inline void uart_udma_channel_set(uint32_t device_id, uint32_t l2_buf,
                                          uint32_t size, uint32_t cfg,
                                          udma_channel_e channel)
 {
-    udma_enqueue_channel(&(uart(device_id)->udma), l2_buf, size, cfg, channel);
+	switch(channel)
+	{
+        case(RX_CHANNEL):
+		udma_enqueue_channel(&(uart(device_id)->rx), l2_buf, size, cfg);
+		break;
+        case(TX_CHANNEL):
+		udma_enqueue_channel(&(uart(device_id)->tx), l2_buf, size, cfg);
+		break;
+        default:
+		break;
+	}
 }
 
 /*! Status Register. */
@@ -159,12 +169,12 @@ static inline void hal_uart_enqueue(uint32_t device_id, uint32_t l2_buf,
 
 static inline void hal_uart_rx_clear(uint32_t device_id)
 {
-    udma_channel_clear(&(uart(device_id)->udma), RX_CHANNEL);
+    udma_channel_clear(&(uart(device_id)->rx));
 }
 
 static inline void hal_uart_tx_clear(uint32_t device_id)
 {
-    udma_channel_clear(&(uart(device_id)->udma), TX_CHANNEL);
+    udma_channel_clear(&(uart(device_id)->tx));
 }
 
 #endif

@@ -29,9 +29,10 @@
 /** UART_Type Register Layout Typedef */
 typedef struct
 {
-    udma_core_t udma; /**< UDMA channels struct. */
-    volatile uint32_t status; /**< Status register */
-    volatile uint32_t setup; /**< Configuration register */
+	udma_channel_t rx; /**< UDMA RX channels struct. */
+	udma_channel_t tx; /**< UDMA TX channels struct. */
+	volatile uint32_t status; /**< Status register */
+	volatile uint32_t setup; /**< Configuration register */
 } uart_t;
 
 

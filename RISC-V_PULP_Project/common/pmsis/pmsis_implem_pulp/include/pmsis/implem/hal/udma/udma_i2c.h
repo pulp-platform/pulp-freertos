@@ -39,7 +39,20 @@
 static inline void i2c_udma_channel_set(uint32_t device_id, udma_channel_e channel,
                                         uint32_t l2buf, uint32_t size, uint32_t cfg)
 {
-    udma_enqueue_channel(&(i2c(device_id)->udma), l2buf, size, cfg, channel);
+	switch(channel)
+	{
+        case(RX_CHANNEL):
+		udma_enqueue_channel(&(i2c(device_id)->rx), l2buf, size, cfg);
+		break;
+        case(TX_CHANNEL):
+		udma_enqueue_channel(&(i2c(device_id)->tx), l2buf, size, cfg);
+		break;
+        case(COMMAND_CHANNEL):
+		udma_enqueue_channel(&(i2c(device_id)->cmd), l2buf, size, cfg);
+		break;
+        default:
+		break;
+	}
 }
 
 

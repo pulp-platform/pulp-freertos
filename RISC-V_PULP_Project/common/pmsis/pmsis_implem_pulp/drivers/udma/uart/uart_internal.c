@@ -184,15 +184,15 @@ static void __pi_uart_rx_abort(struct uart_itf_data_s *data)
     UART_TRACE("uart->setup %lx uart->status %lx\n"
                "uart->udma_rx_saddr %lx uart->udma_rx_size %lx uart->udma_rx_cfg %lx\n",
                uart(device_id)->setup, uart(device_id)->status,
-               uart(device_id)->udma.rx_saddr, uart(device_id)->udma.rx_size,
-               uart(device_id)->udma.rx_cfg);
+               uart(device_id)->rx.saddr, uart(device_id)->rx.size,
+               uart(device_id)->rx.cfg);
     hal_uart_rx_disable(device_id);
     hal_uart_rx_clear(device_id);
     UART_TRACE("uart->setup %lx uart->status %lx\n"
                "uart->udma_rx_saddr %lx uart->udma_rx_size %lx uart->udma_rx_cfg %lx\n",
                uart(device_id)->setup, uart(device_id)->status,
-               uart(device_id)->udma.rx_saddr, uart(device_id)->udma.rx_size,
-               uart(device_id)->udma.rx_cfg);
+               uart(device_id)->rx.saddr, uart(device_id)->rx.size,
+               uart(device_id)->rx.cfg);
     data->fifo_head[RX_CHANNEL] = NULL;
     data->fifo_tail[RX_CHANNEL] = NULL;
 }
@@ -203,15 +203,15 @@ static void __pi_uart_tx_abort(struct uart_itf_data_s *data)
     UART_TRACE("uart->setup %lx uart->status %lx\n"
                "uart->udma_tx_saddr %lx uart->udma_tx_size %lx uart->udma_tx_cfg %lx\n",
                uart(device_id)->setup, uart(device_id)->status,
-               uart(device_id)->udma.tx_saddr, uart(device_id)->udma.tx_size,
-               uart(device_id)->udma.tx_cfg);
+               uart(device_id)->tx.saddr, uart(device_id)->tx.size,
+               uart(device_id)->tx.cfg);
     hal_uart_tx_disable(device_id);
     hal_uart_tx_clear(device_id);
     UART_TRACE("uart->setup %lx uart->status %lx\n"
                "uart->udma_tx_saddr %lx uart->udma_tx_size %lx uart->udma_tx_cfg %lx\n",
                uart(device_id)->setup, uart(device_id)->status,
-               uart(device_id)->udma.tx_saddr, uart(device_id)->udma.tx_size,
-               uart(device_id)->udma.tx_cfg);
+               uart(device_id)->tx.saddr, uart(device_id)->tx.size,
+               uart(device_id)->tx.cfg);
     data->fifo_head[TX_CHANNEL] = NULL;
     data->fifo_tail[TX_CHANNEL] = NULL;
 }

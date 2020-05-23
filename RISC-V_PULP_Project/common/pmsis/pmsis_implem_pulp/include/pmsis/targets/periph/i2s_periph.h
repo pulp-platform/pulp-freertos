@@ -29,13 +29,14 @@
 /** I2S_Type Register Layout Typedef */
 typedef struct
 {
-    udma_core_t udma; /**< UDMA channels struct. */
-    volatile uint32_t ext_clk; /**< External clock configuration */
-    volatile uint32_t cfg_clkgen0; /**< Clock/WS generator 0 configuration */
-    volatile uint32_t cfg_clkgen1; /**< Clock/WS generator 1 configuration */
-    volatile uint32_t chmode; /**< Channels mode configuration */
-    volatile uint32_t filt_ch0; /**< Channel 0 filtering configuration */
-    volatile uint32_t filt_ch1; /**< Channel 1 filtering configuration */
+	udma_channel_t rx; /**< UDMA RX channels struct. */
+	udma_channel_t tx; /**< UDMA TX channels struct. */
+	volatile uint32_t ext_clk; /**< External clock configuration */
+	volatile uint32_t cfg_clkgen0; /**< Clock/WS generator 0 configuration */
+	volatile uint32_t cfg_clkgen1; /**< Clock/WS generator 1 configuration */
+	volatile uint32_t chmode; /**< Channels mode configuration */
+	volatile uint32_t filt_ch0; /**< Channel 0 filtering configuration */
+	volatile uint32_t filt_ch1; /**< Channel 1 filtering configuration */
 } i2s_t;
 
 

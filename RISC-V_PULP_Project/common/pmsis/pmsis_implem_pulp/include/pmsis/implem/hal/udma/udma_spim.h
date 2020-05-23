@@ -12,7 +12,20 @@
 static inline void spim_enqueue_channel(spi_t *spim, uint32_t addr,
         uint32_t size, uint32_t config, udma_channel_e channel)
 {
-    udma_enqueue_channel(&spim->udma, addr, size, config, channel);
+	switch(channel)
+	{
+        case(RX_CHANNEL):
+		udma_enqueue_channel(&(spim->rx), addr, size, config);
+		break;
+        case(TX_CHANNEL):
+		udma_enqueue_channel(&(spim->tx), addr, size, config);
+		break;
+        case(COMMAND_CHANNEL):
+		udma_enqueue_channel(&(spim->cmd), addr, size, config);
+		break;
+        default:
+		break;
+	}
 }
 
 #endif

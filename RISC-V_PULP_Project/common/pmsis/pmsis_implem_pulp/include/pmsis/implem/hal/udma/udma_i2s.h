@@ -39,13 +39,32 @@
 static inline void i2s_udma_channel_set(uint32_t device_id, udma_channel_e channel,
                                         uint32_t l2buf, uint32_t size, uint32_t cfg)
 {
-    udma_enqueue_channel(&(i2s(device_id)->udma), l2buf, size, cfg, channel);
-    //printf("I2S: %x %x %x %x %d\n", &(i2s(device_id)->udma), l2buf, size, cfg, channel);
+	switch(channel)
+	{
+        case(RX_CHANNEL):
+		udma_enqueue_channel(&(i2s(device_id)->rx), l2buf, size, cfg);
+		break;
+        case(TX_CHANNEL):
+		udma_enqueue_channel(&(i2s(device_id)->tx), l2buf, size, cfg);
+		break;
+        default:
+		break;
+	}
 }
 
 static inline void i2s_udma_clear(uint32_t device_id, udma_channel_e channel)
 {
-    udma_channel_clear(&(i2s(device_id)->udma), channel);
+	switch(channel)
+	{
+        case(RX_CHANNEL):
+		udma_channel_clear(&(i2s(device_id)->rx));
+		break;
+        case(TX_CHANNEL):
+		udma_channel_clear(&(i2s(device_id)->tx));
+		break;
+        default:
+		break;
+	}
 }
 
 /* EXT_CLK. */

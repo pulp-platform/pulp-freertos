@@ -26,9 +26,11 @@
 /** I2C_Type Register Layout Typedef */
 typedef struct i2c
 {
-    udma_core_t udma; /**< UDMA channels struct. */
-    volatile uint32_t status; /**< Status register. */
-    volatile uint32_t setup; /**< Configuration register. */
+	udma_channel_t rx; /**< UDMA RX channels struct. */
+	udma_channel_t tx; /**< UDMA RX channels struct. */
+	udma_channel_t cmd; /**< UDMA RX channels struct. */
+	volatile uint32_t status; /**< Status register. */
+	volatile uint32_t setup; /**< Configuration register. */
 } i2c_t;
 
 
