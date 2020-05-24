@@ -24,11 +24,11 @@ CPPFLAGS  += -I"$(RTOS_ROOT)/Source/portable/GCC/RISC-V/chip_specific_extensions
 ifneq ($(LIBC),no)
 PULP_SRCS += $(COMMON_ROOT)/libc/syscalls.c # syscall shims / implementation
 endif
-PULP_SRCS += $(COMMON_ROOT)/crt0.S $(COMMON_ROOT)/vectors.S
+PULP_SRCS += $(COMMON_ROOT)/chips/crt0.S $(COMMON_ROOT)/chips/vectors.S \
+		$(COMMON_ROOT)/chips/system_pulpissimo_ri5cy.c
 # drivers and runtime
-PULP_SRCS += $(addprefix $(COMMON_ROOT)/, \
-		system_pulpissimo_ri5cy.c fll.c timer_irq.c \
-		irq.c soc_eu.c gpio.c pinmux.c)
+PULP_SRCS += $(addprefix $(COMMON_ROOT)/metal/, \
+		fll.c timer_irq.c irq.c soc_eu.c gpio.c pinmux.c)
 CPPFLAGS += -I"$(COMMON_ROOT)/target_pulp/include"
 
 # driver headers

@@ -34,7 +34,7 @@ PROJ_ROOT = $(shell git rev-parse --show-toplevel)
 include $(PROJ_ROOT)/RISC-V_PULP_Project/common/default_flags.mk
 
 # rtos and pulp sources
-include $(PROJ_ROOT)/RISC-V_PULP_Project/common/freertos_srcs.mk
+include $(PROJ_ROOT)/RISC-V_PULP_Project/common/freertos_metal_srcs.mk
 
 # application name
 PROG = semaphore

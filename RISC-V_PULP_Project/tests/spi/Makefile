@@ -53,12 +53,8 @@ endif
 # testbench configuration for spim_verif dpi
 DPI_CONFIG=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))rtl_config.json
 
-# rtos and pulp sources
-include $(PROJ_ROOT)/RISC-V_PULP_Project/common/freertos_srcs2.mk
-
-# pmsis drivers
-include $(PROJ_ROOT)/RISC-V_PULP_Project/common/pmsis_srcs.mk
-
+# rtos, pulp and pmsis ources
+include $(PROJ_ROOT)/RISC-V_PULP_Project/common/freertos_pmsis_srcs.mk
 
 # application name
 PROG = spi_test

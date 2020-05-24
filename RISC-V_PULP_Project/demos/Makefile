@@ -44,10 +44,10 @@
 PROJ_ROOT = $(shell git rev-parse --show-toplevel)
 
 # good defaults for many environment variables
-include ../common/default_flags.mk
+include $(PROJ_ROOT)/RISC-V_PULP_Project/common/default_flags.mk
 
 # rtos and pulp sources
-include ../common/freertos_srcs.mk
+include $(PROJ_ROOT)/RISC-V_PULP_Project/common/freertos_metal_srcs.mk
 
 # application name
 PROG = rtosdemo
@@ -71,4 +71,4 @@ CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
 CPPFLAGS += -DmainCREATE_SIMPLE_BLINKY_DEMO_ONLY=1
 
 # compile, simulation and analysis targets
-include ../common/default_targets.mk
+include $(PROJ_ROOT)/RISC-V_PULP_Project/common/default_targets.mk

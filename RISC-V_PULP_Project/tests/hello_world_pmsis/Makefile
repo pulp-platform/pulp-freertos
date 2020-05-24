@@ -44,12 +44,8 @@ CFLAGS = \
 	-DFEATURE_CLUSTER=0 -D__PULP__=1 -DDEBUG \
         -fstack-usage -Wstack-usage=1024
 
-# rtos and pulp sources
-include $(PROJ_ROOT)/RISC-V_PULP_Project/common/freertos_srcs2.mk
-
-# pmsis drivers
-include $(PROJ_ROOT)/RISC-V_PULP_Project/common/pmsis_srcs.mk
-
+# rtos, pulp and pmsis sources
+include $(PROJ_ROOT)/RISC-V_PULP_Project/common/freertos_pmsis_srcs.mk
 
 # application name
 PROG = hello_world_pmsis
