@@ -416,24 +416,3 @@ void vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName)
 void vApplicationTickHook(void)
 {
 }
-
-void vPortSetupTimerInterrupt(void)
-{
-	extern int timer_irq_init(uint32_t ticks);
-
-	/* No CLINT so use the PULP timer to generate the tick interrupt. */
-	/* TODO: configKERNEL_INTERRUPT_PRIORITY - 1 ? */
-	timer_irq_init(ARCHI_REF_CLOCK / configTICK_RATE_HZ);
-	/* TODO: allow setting interrupt priority (to super high(?)) */
-	irq_enable(IRQ_FC_EVT_TIMER0_LO);
-}
-
-/* At the time of writing, interrupt nesting is not supported, so do not use
-the default vSystemIrqHandler() implementation as that enables interrupts.  A
-version that does not enable interrupts is provided below.  THIS INTERRUPT
-HANDLER IS SPECIFIC TO THE VEGA BOARD WHICH DOES NOT INCLUDE A CLINT! */
-void vSystemIrqHandler(uint32_t mcause)
-{
-	extern void (*isr_table[32])(void);
-	isr_table[mcause & 0xf]();
-}
