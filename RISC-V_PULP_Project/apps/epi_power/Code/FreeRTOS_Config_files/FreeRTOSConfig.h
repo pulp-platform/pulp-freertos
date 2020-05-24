@@ -39,16 +39,27 @@
 * See http://www.freertos.org/a00110.html.
 *----------------------------------------------------------*/
 
+ #define DEFAULT_SYSTEM_CLOCK 50000000u /* Default System clock value */
+
 /* Ensure stdint is only used by the compiler, and not the assembler. */
 #if defined( __ICCARM__ ) || defined( __CC_ARM ) || defined( __GNUC__ )
     #include <stdint.h>
 #endif
 
+#ifdef __PULP__
+#include "pmsis/targets/target.h"
+#else
 /* GAP8 specifics. */
 #include "pmsis_targets.h"
+#endif
 
-extern volatile uint32_t SystemCoreClock;
+/* extern volatile uint32_t SystemCoreClock; */
 extern void vPrvAssertFailed( const char *filename, uint32_t line, const char *expr );
+
+#ifdef __PULP__
+/* There is no CLINT so the base address must be set to 0. */
+#define configCLINT_BASE_ADDRESS 0
+#endif
 
 /*
  * Use standard malloc instead of those offered(heap_X).
@@ -89,7 +100,7 @@ extern void vPrvAssertFailed( const char *filename, uint32_t line, const char *e
 #define configUSE_TICK_HOOK                       ( 0 )
 #define configUSE_TICKLESS_IDLE                   ( 0 )
 #define configUSE_DAEMON_TASK_STARTUP_HOOK        ( 0 )
-#define configCPU_CLOCK_HZ                        ( SystemCoreClock )
+#define configCPU_CLOCK_HZ                        ( DEFAULT_SYSTEM_CLOCK )
 #define configTICK_RATE_HZ                        ( ( TickType_t ) 1000 )
 #define configMAX_PRIORITIES                      ( 16 )
 #define configMINIMAL_STACK_SIZE                  ( ( uint16_t ) ( 128 ) )
