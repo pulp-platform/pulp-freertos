@@ -164,5 +164,5 @@ void vPortSetupTimerInterrupt(void)
 void vSystemIrqHandler(uint32_t mcause)
 {
 	extern void (*isr_table[32])(void);
-	isr_table[mcause & 0xf]();
+	isr_table[mcause & 0x1f]();
 }
