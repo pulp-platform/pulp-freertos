@@ -330,7 +330,7 @@ typedef struct {
    -- GPIO Peripheral Access Layer
    ---------------------------------------------------------------------------- */
 #include "periph/gpio_periph.h"
-#define gpio(id) ((gpio_t *) GPIO_ADDR)
+#define gpio(id) (((gpio_t *) GPIO_ADDR) + id)
 
 
 

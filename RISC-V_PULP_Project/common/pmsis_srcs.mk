@@ -17,6 +17,9 @@ PULP_SRCS += $(PMSIS_ROOT)/pmsis_implem_pulp/drivers/udma/spi/spi_internal.c
 PULP_SRCS += $(PMSIS_ROOT)/pmsis_implem_pulp/drivers/udma/uart/uart.c
 PULP_SRCS += $(PMSIS_ROOT)/pmsis_implem_pulp/drivers/udma/uart/uart_internal.c
 
+PULP_SRCS += $(PMSIS_ROOT)/pmsis_implem_pulp/drivers/gpio/gpio.c
+
+PULP_SRCS += $(PMSIS_ROOT)/pmsis_implem_pulp/drivers/pad/pad.c
 # pmsis API
 CPPFLAGS += -I"$(PMSIS_API_ROOT)/include"
 

@@ -33,7 +33,9 @@
 
 #include "pmsis/targets/target.h"
 
-#define ARCHI_GPIO_NB_PADCFG_REG       (0x8)
+#define ARCHI_GPIO_NB_PADCFG_REG       (0x4)
+
+/* TODO: make gpio(1) work */
 
 /* Paddir register. */
 static inline void gpio_paddir_set(uint32_t value)
@@ -163,10 +165,8 @@ static inline void hal_gpio_set_direction(uint32_t gpio_mask, uint8_t dir)
 /* GPIO pad input value. */
 static inline uint32_t hal_gpio_pin_get_input_value(uint8_t gpio_pin)
 {
-    uint32_t mask = 0x1, shift = gpio_pin;
     uint32_t val = gpio_padin_get();
-    val = ((val >> shift) & mask);
-    return val;
+    return ((val >> gpio_pin) & 0x1);
 }
 
 static inline uint32_t hal_gpio_get_input_value()
@@ -188,12 +188,6 @@ static inline void hal_gpio_pin_set_output_value(uint8_t gpio_pin, uint8_t value
 static inline void hal_gpio_set_output_value(uint32_t gpio_mask, uint8_t value)
 {
     uint32_t val = gpio_padout_get();
-    /*
-      Test which one is better ?
-      uint32_t set_mask = 0;
-      value && (set_mask = gpio_mask);
-      val = ((val & ~gpio_mask) | set_mask);
-    */
     if (value)
     {
         val |= gpio_mask;
