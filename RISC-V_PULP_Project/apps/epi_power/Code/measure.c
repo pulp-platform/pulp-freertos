@@ -1,3 +1,6 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 /***************************************************/
 /*
@@ -87,7 +90,7 @@ void measureInitializeNStart ( void )
 
 	/* Configure */
 	/* Cycles */
-	uint32_t maskConfig = (PCER_IMISS_Msk & ~(0x1UL << 17U));
+	uint32_t maskConfig = (PCER_CYCLE_Msk & ~(0x1UL << 17U));
 	/* Instructions */
 	//uint32_t maskConfig = (PCER_INSTR_Msk & ~(0x1UL << 17U));
 	__ASM volatile ("csrw 0x7A0, %0" : "+r" (maskConfig) );
@@ -103,13 +106,13 @@ inline uint32_t measureReadCycle ( void ) {
 	/* Read */
 	uint32_t value = 0;
 	/* Cycles */
-	//__ASM volatile ("csrr %0, 0x780" : "=r" (value));
+	__ASM volatile ("csrr %0, 0x780" : "=r" (value));
 	/* Instructions */
 	//asm volatile ("csrr %0, 0x781" : "=r" (value));
 	/* LD stall */
 	//asm volatile ("csrr %0, 0x782" : "=r" (value));
 	/* Istr Stall */
-	asm volatile ("csrr %0, 0x784" : "=r" (value));
+	//asm volatile ("csrr %0, 0x784" : "=r" (value));
 	/* LD */
 	//asm volatile ("csrr %0, 0x785" : "=r" (value));
 	/* Store */

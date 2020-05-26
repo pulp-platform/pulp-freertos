@@ -12,6 +12,7 @@
 
 //#include "FreeRTOS_util.h"
 #include "EPI_Config.h"
+#include "EPI_types.h"
 
 /* Functions Declaration */
 numValue lEPImathPIDcompute(numValue iTargetPower, numValue iMeasuredTemperature, char iCoreNumber);
@@ -21,7 +22,10 @@ numValue lEPImathPowerCompute(numValue iTargetFrequency, numValue iWorkload, num
 numValue lEPImathFrequencyCompute(numValue iCoreTargetPower, numValue iWorkload, numValue *iFormulaCoeff);
 //pid_parameters_t TablePIDParameters; //TBD: to create a struc for PID parameters
 
-numValue lEPImathLMSrecursive(numValue iError, numValue iInput, numValue iMu);
+numValue lEPImathLMSrecursive(numValue *oParam, numValue *oP_curr, numValue *iPrevParam, numValue *iP_prev, numValue *iInput, numValue iError, numValue iLambda);
+void lEPImathLMSstoreP (numValue *oParam, numValue *iInput);
+
+void MatMul(numValue *O, numValue *iA, numValue *iB, int r1, int col1, int col2);
 
 #ifdef SPI_TEST
 void lEPImathResetPID(void);

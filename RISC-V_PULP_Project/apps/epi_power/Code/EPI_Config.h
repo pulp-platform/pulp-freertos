@@ -24,13 +24,7 @@
 /******************************/
 /** Configuration of EPI CPU **/
 /******************************/
-#define N_EPI_CORE 								9//8//36		// Number of Cores of the EPI processor
-
-//#define EPI_CONFIG_QUADRANTS					// Uncomment to use Quadrants max Power Consumption
-#ifdef EPI_CONFIG_QUADRANTS
-	#define EPI_N_QUADRANTS 					4		// Number of Quadrans
-#endif
-//#define EPI_CONFIG_FREQ_BINDING					// Uncomment to use Frequency Bindings between Cores
+#define N_EPI_CORE 								9 //36		// Number of Cores of the EPI processor
 
 /* Parameters of EPI CPU */
 #define EPI_CORE_CRITICAL_TEMPERATURE			360.0		// Max Temperature for each Core in Kelvin
@@ -43,9 +37,19 @@
 
 /* Initialization Values */
 #define INIT_EPI_CORE_FREQ						1.0
+#define INIT_EPI_CORE_VOLT						0.5
 #define INIT_EPI_CORE_WORKLOAD					0.5333 //1.7777778
-//#define INIT_POWER_FORMULA_COEFF[4]				{1, 1, 1, 1,} //TODO:
 #define INIT_EPI_TOTAL_POWER_BUDGET				22.5 //(36*2.5) //TODO:
+
+/******************************/
+/*** Control Configuration ****/
+/******************************/
+//#define EPI_CONFIG_QUADRANTS					// Uncomment to use Quadrants max Power Consumption
+#ifdef EPI_CONFIG_QUADRANTS
+	#define EPI_N_QUADRANTS 					4		// Number of Quadrans
+#endif
+//#define EPI_CONFIG_FREQ_BINDING					// Uncomment to use Frequency Bindings between Cores
+
 
 /******************************/
 /***** PID Configuration ******/
@@ -58,10 +62,10 @@
 
 /* Initialization Values */
 // They have to be defined even if PID_CONFIG_x is disabled //TODO: fix this?
-#define INIT_PID_KP 							0.8//2
-#define INIT_PID_KI 							0.1
+#define INIT_PID_KP 							2//2
+#define INIT_PID_KI 							0.2
 #define INIT_PID_KD 							3
-#define INIT_PID_DT								0.1
+#define INIT_PID_DT								0.025
 #define PID_ANTI_WINDUP_SAT_COEFF				-0.75
 
 /******************************/
@@ -81,9 +85,8 @@
 /*** Telemetry Configuration **/
 /******************************/
 #define TELEMETRY_POLLING_FREQUENCY				300 //ms
-
 #define FREQUENCY_REDUCTION_MAP					// Uncomment to collect the information on the Frequency Reduction causes
-
+#define ERROR_MAP
 
 
 /****** Private ******/
@@ -92,22 +95,17 @@
 /** Code Configuration **/
 #define DEBUG_ACTIVE
 //#define MEASURE_ACTIVE
-#define MEASURE_N_ITERATION 					40 // This is needed for both debug and Measure
+#define MEASURE_N_ITERATION 					20 // This is needed for both debug and Measure
 
 #define FLOAT_NUMBERS
 
-//
-#ifdef FLOAT_NUMBERS
-	typedef float numValue;
-#else
-	typedef int numValue;
-#endif
-
-#define SPI_TEST
-//#define UART_TEST
+//#define SPI_TEST
 #define GPIO_TEST
+#define ROBERT_TEST
 
 #define SPI_SPEED_MUL							10000 // default: 1500
+
+#define ALPHA_MAX_VALUE							2.0
 
 /** GAP8 Cluster **/
 //#define PULP_USE_CLUSTER
@@ -134,7 +132,8 @@
 #endif
 
 /** Other Parameters **/
-#define LMS_COEFF_NUMBER						4
+#define LMS_COEFF_NUMBER						2
+#define LMS_BATCH_STEPS							(4 + LMS_COEFF_NUMBER * 2)
 
 
 

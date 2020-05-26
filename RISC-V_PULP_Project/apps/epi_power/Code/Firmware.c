@@ -1,3 +1,7 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+
 /********************************************************/
 /*
 * First Base Implementation of PMU Firmware,
@@ -15,6 +19,7 @@
 
 /* Libraries Inclusion */
 #include "EPI_Config.h"
+#include "EPI_types.h"
 #include "EPI_task.h"
 #include "EPI_math.h"
 #ifdef SPI_TEST

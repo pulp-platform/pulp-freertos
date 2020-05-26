@@ -1,0 +1,75 @@
+
+pmsis_exit:
+
+    - -10: Sem Init Failure
+    - -9: exited the for infinite loop of the task
+
+    - -5: error in task creation
+    - -2: error in hardware initialization
+    - -1: error in initial parameters
+
+
+    Measure:
+
+        I: Interrupt
+
+        -------------- Periodic Task
+        P: Periodic
+        S: send, start of SPI write (inside periodic task)
+        s: send end (see above)
+        R: receive, start of SPI receive (inside periodic task)
+        -- Time between s and R is telemetry Managing
+        r: receive end (see above)
+        T: telemetry END. telemetry is once every 2 run
+        C: control part
+        p: end of periodic task
+        -- Time between C and p is dedicated to Shared variable writing
+
+        -------------- TaskOS
+        O: TaskOS
+        U: Start of UI commands exchanging.
+        -- Time Between O and U is needed to read shared variables
+        u: end of UI transmission (see above)
+        A: parameter adaptation
+        o: taskOS end.
+        -- Time between A and o is used to write global var.
+
+
+
+% things to do:
+
+    - insert SPI cs
+
+    short int: 	-32,768 to 32,767
+
+    Temp: need from 0 to 150 with 2 decimals, 0 to 150,00 ------ unsiged short int
+    control: need 4/5 decimals positive and negative
+    frequency: 0 to 2400 (*1.000)                       ------  unsigned short int
+    0 a 2.5
+
+
+
+TODO:
+
+	- change the Global Structures I defined.
+	- Check all TODO and TBD
+
+	- Rename functions, variables, libraries and everything better
+	- Control that every void funct has a return;
+    - remove all char
+    - Watchdogs
+    - USE_TESTS_ON_NUMBERS: check ALL (ALL!!!!!!1) the divisions in the code and do a check to avoid division per 0 BEFORE!
+
+    - Final test with different combinations of define active/inactive, different (or even random) parameters in the config
+        +++ For each test above, test also the input with wrong values!
+
+	/-----------------
+
+	- Check consistency of data after spi transaction (like is the number ok? is similar to previoius ones, etc.
+		Keep in mind that they can be different if we want to simulate error/extreme conditions or if we
+		want to "change initial conditions"
+    - ErrorMap add also inside freertos stuff (inside the hooks function, not sdk)
+    - ErrorMap add also check on index
+    - ErrorMap Failed check on numbers
+    - modify the FreqReductionMap implementation (to avoid definining a null pointer, etc)
+    - finish to fix local/global, and global.h

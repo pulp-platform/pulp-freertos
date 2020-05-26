@@ -1,3 +1,6 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 /***************************************************/
 /*
@@ -15,7 +18,7 @@
 
 /* Other Inclusion */
 #include "EPI_Config.h"
-//#include "FreeRTOS_util.h" //TODO: ??? maybe common instead of this.
+#include "EPI_types.h"
 #include "pmsis.h"
 
 #ifdef MEASURE_ACTIVE
@@ -50,7 +53,14 @@ numValue lEPImathPIDcompute(numValue iTargetPower, numValue iMeasuredTemperature
 	/* Compute Error */
 	numValue error = _TcritPID - iMeasuredTemperature;
 	#ifdef USE_TESTS_ON_NUMBERS
-		configASSERT( (abs(error) - _TcritPID) < 0)
+	if ( (abs(error) - _TcritPID) > 0)
+	{
+		#ifdef ERROR_MAP
+		ErrorMap |= BM_ERROR_NUMBERS_VALUE;
+		#endif
+
+		//error = ?? //TODO
+	}
 	#endif
 	//printf("er: ");
 	//printFloat(error);
@@ -67,6 +77,7 @@ numValue lEPImathPIDcompute(numValue iTargetPower, numValue iMeasuredTemperature
 		// 	printFloat(iTargetPower);
 		// }
 
+		//TODO: this saturation is problematic because it depends on the Target power.
 		#ifdef PID_ANTI_WINDUP_SAT
 			if (_PIDintegralError[iCoreNumber] > 0.4 ) //TBD: Should I parametrize this 0?
 				_PIDintegralError[iCoreNumber] = 0.4;
@@ -104,9 +115,18 @@ numValue lEPImathPIDcompute(numValue iTargetPower, numValue iMeasuredTemperature
 		// }
 	#endif
 
+	/* Do this directly is the main to avoid also var assage bug
 	#ifdef USE_TESTS_ON_NUMBERS
-		configASSERT( (outputPID > 0) && (outputPID <= iTargetPower) )
+	if ( (outputPID <= 0) || (outputPID > iTargetPower) )
+	{
+		#ifdef ERROR_MAP
+		ErrorMap |= BM_ERROR_NUMBERS_VALUE;
+		#endif
+
+		outputPID = EPI_CORE_IDLE_POWER; //TBD: maybe too much conservative in case > ?? (consider still there is an error!)
+	}
 	#endif
+	*/
 	return outputPID;
 }
 
@@ -170,15 +190,99 @@ numValue lEPImathFrequencyCompute(numValue iCoreTargetPower, numValue iWorkload,
 								(V_Fixed * V_Fixed * iFormulaCoeff[0] + iFormulaCoeff[3] * iWorkload);
 	*/
 
-	return ( ((iCoreTargetPower - (Icc*V_Fixed)) / iWorkload / (V_Fixed*V_Fixed)) /* *1000000000.0*/);
+	//return ( ((iCoreTargetPower - (Icc*V_Fixed)) / iWorkload / (V_Fixed*V_Fixed)) /* *1000000000.0*/);
+	float step = 10.0;
+
+	numValue Frequency = ( ((iCoreTargetPower - (Icc*V_Fixed)) / iWorkload / (V_Fixed*V_Fixed)));
+	Frequency *= step;
+	uint32_t StepFreq = (uint32_t) Frequency;
+
+	return ((float) StepFreq / step);
+
+
 }
 
 
-numValue lEPImathLMSrecursive(numValue iError, numValue iInput, numValue iMu){
+numValue lEPImathLMSrecursive(numValue *oParam, numValue *oP_curr, numValue *iPrevParam, numValue *iP_prev, numValue *iInput, numValue iError, numValue iLambda){
 
-	return ( iMu * iError * iInput );
+	// p_est = p_est(prev) + K*error;
+	// error = measured_power - power_computed_with_prev_paramenters;
+	// k = P*[V, VVF]
+	// P = P(prev)/lambda/(t-1) - P(prev)*[V, VVF]*[V, VVF]T*P(prev)/(t-1)/(lambda*(lambda*(t-1) + [V, VVF]T*P(prev)*[V, VVF])))
 
+
+	float T2[LMS_COEFF_NUMBER];
+	float T3[LMS_COEFF_NUMBER*LMS_COEFF_NUMBER];
+	float T4[LMS_COEFF_NUMBER*LMS_COEFF_NUMBER];
+	float K[LMS_COEFF_NUMBER];
+	//float coeff1 = (iPass/(iPass-1))/iLambda;
+	float coeff2 = 0;
+
+	MatMul(T2, iP_prev, iInput, LMS_COEFF_NUMBER, LMS_COEFF_NUMBER, 1);
+	MatMul(T3, T2, iInput, LMS_COEFF_NUMBER, 1, LMS_COEFF_NUMBER); //since the vector is Nx1, no need to do the Transpose since the Matrix is implemented as an array
+	MatMul(T4, T3, iP_prev, LMS_COEFF_NUMBER, LMS_COEFF_NUMBER, LMS_COEFF_NUMBER);
+
+	// is a number, maybe is worth to create its own function
+	//MatMul(coeff2, iInput, T2, 1, iN, 1); //since the vector is Nx1, no need to do the Transpose since the Matrix is implemented as an array
+	for (uint8_t i=0; i < LMS_COEFF_NUMBER; i++)
+	{
+		coeff2 += iInput[i] * T2[i];
+	}
+
+	coeff2 = (coeff2 + iLambda) * iLambda;
+
+	// MatSum, but optimized!
+	for (uint8_t i=0; i < LMS_COEFF_NUMBER*LMS_COEFF_NUMBER; i++)
+	{
+		oP_curr[i] = (iP_prev[i]/iLambda - T4[i]/coeff2);
+	}
+
+	MatMul(K, oP_curr, iInput, LMS_COEFF_NUMBER, LMS_COEFF_NUMBER, 1);
+
+	// MatSum, but optimized!
+	for (uint8_t i=0; i < LMS_COEFF_NUMBER*LMS_COEFF_NUMBER; i++)
+	{
+		oParam[i] = iPrevParam[i] + K[i]*iError;
+	}
+
+
+	return 0.0; //here you should return maybe diff between parameters? a value for errors?
 }
+
+void lEPImathLMSstoreP (numValue *oParam, numValue *iInput)
+{
+	float T2[LMS_COEFF_NUMBER];
+
+	MatMul(T2, iInput, iInput, LMS_COEFF_NUMBER, 1, LMS_COEFF_NUMBER);
+
+	for (uint8_t i=0; i < LMS_COEFF_NUMBER*LMS_COEFF_NUMBER; i++)
+		oParam[i] += T2[i];
+
+	return;
+}
+
+
+
+void MatMul(numValue *O, numValue *iA, numValue *iB, int r1, int col1, int col2)
+{
+	int r2 = col1;
+	float sum = 0;
+
+	for (uint8_t i = 0; i < r1; i++)
+	  for (uint8_t j = 0; j < col2; j++)
+	  {
+		for (uint8_t k = 0; k < r2; k++)
+		{
+		  sum += iA[i*col1 + k] * iB[k*col2 + j];
+		}
+
+		O[i*col2 + j] = sum;
+		sum = 0.0;
+	  }
+
+	 return;
+}
+
 
 #ifdef SPI_TEST
 void vEPImathResetPID(void) {
