@@ -47,6 +47,7 @@
 #           By default 1 KiB but can be changed with MAXSTACKSIZE=your_value
 
 
+# two big pulses: 400'000'000 ns
 # indicate this repository's root folder
 PROJ_ROOT = $(shell git rev-parse --show-toplevel)
 
@@ -61,29 +62,24 @@ CFLAGS = \
 	-Wall -Wextra -Wshadow -Wformat=2 -Wundef \
 	-Wno-unused-parameter -Wno-unused-variable \
 	-Og -g3 \
-	-DFEATURE_CLUSTER=0 -D__PULP__=1 -DDEBUG
+	-DFEATURE_CLUSTER=0 -D__PULP__=1 -DDEBUG -D__PULP_TRACE__
 
-# rtos and pulp sources
-include $(PROJ_ROOT)/RISC-V_PULP_Project/common/freertos_srcs2.mk
-
-# pmsis drivers
-include $(PROJ_ROOT)/RISC-V_PULP_Project/common/pmsis_srcs.mk
-
+# rtos, pulp and pmsis sources
+include $(PROJ_ROOT)/RISC-V_PULP_Project/common/freertos_pmsis_srcs.mk
 
 # application name
 PROG = epi
 
 # application/user specific code
-USER_SRCS = ./Firmware.c ./EPI_task.c ./EPI_math.c ./measure.c ./print_float.c ./model_spi.c  ./simulation.c #./model_uart.c
+USER_SRCS = ./Firmware.c ./EPI_task.c ./EPI_math.c ./measure.c \
+	./print_float.c ./model_spi.c  ./simulation.c \
+	./FreeRTOS_Config/FreeRTOS_util.c  #./model_uart.c
 
 # FreeRTOS.h
 CPPFLAGS += $(addprefix -I, ".")
-CPPFLAGS += $(addprefix -I, "FreeRTOS_Config_files/")
+CPPFLAGS += $(addprefix -I, "FreeRTOS_Config/")
 
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
-CPPFLAGS += -DUSE_STDIO
-## number of error check polls before the tests is conclueded as being successful
-CPPFLAGS += -DSTREAM_CHECK_ITERATIONS=2
 
 # compile, simulation and analysis targets
 include $(PROJ_ROOT)/RISC-V_PULP_Project/common/default_targets.mk

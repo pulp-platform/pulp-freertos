@@ -12,8 +12,12 @@
 /* FreeRTOS Inclusions. */
 #include "pmsis.h"
 
+#ifndef __PULP__
 /* GAP8 Inclusions */
 #include "pmsis_driver/pmsis_drivers.h"
+#else
+#include "pmsis/drivers/gpio.h"
+#endif
 
 /* Libraries Inclusion */
 #include "EPI_task.h"
@@ -75,6 +79,9 @@ int ROBERT_periodicCounter = 0;
 /*** Tasks ***/
 
 void vPeriodicControl( void *parameters ) {
+#ifdef __PULP_TRACE__
+	printf("running periodic control\n");
+#endif
 
 	/*------------------------------------*/
 	/********* Function Variables *********/
@@ -693,7 +700,9 @@ void vPeriodicControl( void *parameters ) {
 }
 
 void vTaskOS( void *parameters ) {
-
+#ifdef __PULP_TRACE__
+	printf("running vTaskOS\n");
+#endif
 	/* Description */
 	/* This task is responsable to be the interpreter and the messenger between the OS of the
 	* EPI CPU server and the firmaware of the PMU. The task will also check the voltage regulator
@@ -1305,6 +1314,13 @@ void vBMC( void *parameters ) {
 
 
 void vInitializationTask( void *parameters){
+#ifdef __PULP__
+	/* for some reason we run initialization code after the scheduler is
+	 * started. So disable timer interrupts (rather everything as critical
+	 * section) until after initialization is done. Super hacky */
+	uint32_t irq = disable_irq();
+	/* irq_disable(IRQ_FC_EVT_TIMER0_LO); */
+#endif
 
 	/* Initialization */
 
@@ -1564,6 +1580,15 @@ void vInitializationTask( void *parameters){
     uint32_t time_us = (uint32_t) TASKS_CONTROL_PERIOD_US;  /* Timer value to be compared here. */
     pi_timer_irq_set(FC_TIMER_1, (time_us), 0);
 
+#ifdef __PULP__
+	irq_enable(IRQ_FC_EVT_TIMER0_HI);
+
+	/* this is the counter part to the disabled timer interrupt. *Note* we use
+	 * timer1 (customized) for unblocking tasks (?) and timer0 for periodic interupts*/
+    restore_irq(irq);
+	/* irq_enable(IRQ_FC_EVT_TIMER0_HI); */
+#endif
+
 
 	/* Task Code */
 
@@ -1574,6 +1599,12 @@ void vInitializationTask( void *parameters){
 	//TBD: for Security
 	vTaskPrioritySet(NULL, (UBaseType_t)tskIDLE_PRIORITY + 1 );
 
+#ifdef __PULP__
+	/* in gap8 we are premanently busy looping on pi_yield (because it always
+	 * yields to this task). This is an init task anyway so we are technically
+	 * fully done, which is why we suspend (or maybe delete?) it*/
+	vTaskSuspend(NULL);
+#else
 	for(;;)
 	{
 		while( ( eTaskGetState(taskHandles[0]) != eSuspended ) ||
@@ -1591,7 +1622,7 @@ void vInitializationTask( void *parameters){
 		#endif
 		//TODO: signal error
 	}
-
+#endif
 	/* Cannot and Shouldn't reach this point, but If so... */
 	#ifdef ERROR_MAP
 	ErrorMap |= BM_ERROR_REACHED_EOT;
@@ -1604,6 +1635,9 @@ void vInitializationTask( void *parameters){
 
 #ifdef MEASURE_ACTIVE
 void vPrintTask (void* parameters){
+#ifdef __PULP_TRACE__
+	printf("running print\n");
+#endif
 
 	/* Description */
 	/* This task is used to print the measure system

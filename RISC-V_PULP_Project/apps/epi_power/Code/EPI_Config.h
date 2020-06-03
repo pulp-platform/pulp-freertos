@@ -100,7 +100,7 @@
 #define FLOAT_NUMBERS
 
 //#define SPI_TEST
-#define GPIO_TEST
+//#define GPIO_TEST
 #define ROBERT_TEST
 
 #define SPI_SPEED_MUL							10000 // default: 1500

@@ -39,11 +39,14 @@
 #include "semphr.h"
 #include "event_groups.h"
 
+#ifdef __PULP__
+#else
 /* GAP8 handler includes. */
 #include "gap8_it.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "printf.h"
+#endif
 
 /****************************************************************************/
 

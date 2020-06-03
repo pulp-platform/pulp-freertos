@@ -14,8 +14,10 @@
 #include "pmsis.h"
 
 /* GAP8 Inclusions */
+#ifndef __PULP__
 #include "pmsis_driver/pmsis_it.h"
 #include "pmsis_hal/GAP8/fll/fll_gap8.h"
+#endif
 
 /* Libraries Inclusion */
 #include "EPI_Config.h"
@@ -75,6 +77,7 @@ int main( void )
 	/*** Initialization  ***/
 	// --------------------------------------------------------------- //
 
+
 	/** Controller (GAP8) Clock **/
 	/*uint32_t voltage = DCDC_DEFAULT_NV, get_frequency;
 	uint32_t frequency = pi_fll_soc_max_freq_at_V(voltage);
@@ -94,13 +97,50 @@ int main( void )
 
 	/* To Print the System Clock */
 	#ifdef DEBUG_ACTIVE
+	#ifndef __PULP__
 	printf("Number of Core: %d,\n System Clock: %u \n", N_EPI_CORE, SystemCoreClock);
+	#else
+	printf("Number of Core: %d,\n System Clock: %u \n", N_EPI_CORE, system_core_clock);
+	#endif
 	#endif
 
 	/** Timer ISR set up **/
 	// This has to be called here otherwise it doesn't work in this SDK
+#ifndef __PULP__
 	NVIC_SetVector( FC_EVENT_TIMER1, (uint32_t)__handler_wrapper_light_TIMER1_IRQ_handler);
 	NVIC_EnableIRQ( FC_EVENT_TIMER1 );
+#else
+	extern void (*isr_table[32])(void);
+	extern void timer_irq_handler(void);
+
+	/* init flls */
+	for (int i = 0; i < ARCHI_NB_FLL; i++) {
+		pi_fll_init(i, 0);
+	}
+
+	/* make sure irq (itc) is a good state */
+	pulp_irq_init();
+
+	/* Hook up isr table. This table is temporary until we figure out how to
+	 * do proper vectored interrupts.
+	 */
+	/* custom isr irq handler */
+	isr_table[0xa] = timer_irq_handler;
+	isr_table[0xb] = TIMER1_IRQ_handler;
+	isr_table[0x1a] = fc_soc_event_handler; // 26
+
+	/* mtvec is set in crt0.S */
+
+	/* deactivate all soc events as they are enabled by default */
+	pulp_soc_eu_event_init();
+
+	/* Setup soc events handler. */
+	pi_fc_event_handler_init(FC_SOC_EVENT);
+
+	/* TODO: I$ enable*/
+	/* enable core level interrupt (mie) */
+	irq_clint_enable();
+#endif
 
 
 	/* Memory Allocation */

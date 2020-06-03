@@ -34,7 +34,9 @@
 
 /* FreeRTOS functions includes. */
 #include "FreeRTOS_util.h"
+#ifndef __PULP__
 #include "pmsis_hal/pmsis_hal.h"
+#endif
 
 /****************************************************************************/
 
@@ -61,7 +63,9 @@ void vApplicationIdleHook( void )
 {
     while(1)
     {
+#ifndef __PULP__
         hal_eu_evt_wait();
+#endif
         //hal_eu_evt_mask_wait(0xFFFFFFFF);
     }
 }
