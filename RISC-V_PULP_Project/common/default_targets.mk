@@ -76,6 +76,12 @@ $(PROG).hex: $(PROG)
 	@echo 'Finished building: $@'
 	@echo ' '
 
+$(PROG).veri: $(PROG)
+	@echo 'Invoking: GNU RISC-V Cross Create Verilog Memory Image'
+	$(OBJCOPY) -O verilog $(PROG) $@
+	@echo 'Finished building: $@'
+	@echo ' '
+
 $(PROG).lst: $(PROG)
 	@echo 'Invoking: GNU RISC-V Cross Create Listing'
 	$(OBJDUMP) --source --all-headers --demangle --line-numbers --wide --prefix-addresses \
@@ -116,15 +122,36 @@ $(SIMDIR)/stdout:
 $(SIMDIR)/fs:
 	mkdir -p -- $@
 
+$(SIMDIR)/preload:
+	mkdir -p -- $@
+
+$(SIMDIR)/preload/private_bank_0 $(SIMDIR)/preload/private_bank_1 \
+$(SIMDIR)/preload/elf.veri &: $(PROG).veri
+	$(MEMCONV) $(PROG).veri $(SIMDIR)/preload
+
+# default vsim flags for simulation
+VSIM_RUN_FLAGS = +ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG \
+		-dpicpppath $(CXX) -permit_unmatched_virtual_intf \
+		-gBAUDRATE=115200
+
+# signal to simulator to preload the binary
+ifdef preload
+  VSIM_RUN_FLAGS += +preload=preload
+  # add to pre-requisites for run target
+  RUN_MORE = $(SIMDIR)/preload/elf.veri
+endif
+
 # vsim argument to enable dpi
 ifeq ($(DPI),yes)
   VSIM_DPI = $(addprefix -sv_lib ,$(basename $(DPI_LIBS)))
   ifeq ($(strip $(DPI_CONFIG)),)
   $(warning "DPI_CONFIG is unset, but requested DPI sim. Using default rtl_config.json")
   DPI_CONFIG = "rtl_config.json"
+  VSIM_RUN_FLAGS += -gCONFIG_FILE=$(DPI_CONFIG)
   endif
 else
   DPI_CONFIG = "NONE"
+  VSIM_RUN_FLAGS += -gCONFIG_FILE=$(DPI_CONFIG)
 endif
 
 .PHONY: run
@@ -132,7 +159,7 @@ endif
 run: $(SIMDIR)/modelsim.ini $(SIMDIR)/boot $(SIMDIR)/tcl_files \
 	$(SIMDIR)/waves $(SIMDIR)/vectors/stim.txt \
 	$(SIMDIR)/stdout $(SIMDIR)/fs \
-	$(DPI_LIBS)
+	$(DPI_LIBS) $(RUN_MORE)
 ifndef VSIM_PATH
 	$(error "VSIM_PATH is not set. Make sure your ran `source setup/vsim.sh` \
 	in your PULP/PULPissimo repository")
@@ -140,9 +167,7 @@ endif
 ifdef gui
 	cd $(SIMDIR) && \
 	export LD_LIBRARY_PATH="$(SUPPORT_LIB_DIR)" && \
-	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG \
-		-dpicpppath $(CXX) -permit_unmatched_virtual_intf \
-		-gBAUDRATE=115200 -gCONFIG_FILE=$(DPI_CONFIG) $(VSIM_DPI) $(VSIM_ARGS)" && \
+	export VSIM_RUNNER_FLAGS="$(VSIM_RUN_FLAGS) $(VSIM_DPI) $(VSIM_ARGS)" && \
 	export VOPT_ACC_ENA="YES" && \
 	$(VSIM) -64 -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
 		-do 'source $(VSIM_PATH)/tcl_files/run.tcl; ' $(VSIM_ARGS)
@@ -150,17 +175,13 @@ else
 ifdef interactive
 	cd $(SIMDIR) && \
 	export LD_LIBRARY_PATH="$(SUPPORT_LIB_DIR)" && \
-	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG \
-		-dpicpppath $(CXX) -permit_unmatched_virtual_intf \
-		-gBAUDRATE=115200 -gCONFIG_FILE=$(DPI_CONFIG) $(VSIM_DPI) $(VSIM_ARGS)" && \
+	export VSIM_RUNNER_FLAGS="$(VSIM_RUN_FLAGS) $(VSIM_DPI) $(VSIM_ARGS)" && \
 	$(VSIM) -64 -c -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
 		-do 'source $(VSIM_PATH)/tcl_files/run.tcl;' $(VSIM_ARGS)
 else
 	cd $(SIMDIR) && \
 	export LD_LIBRARY_PATH="$(SUPPORT_LIB_DIR)" && \
-	export VSIM_RUNNER_FLAGS="+ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG \
-		-dpicpppath $(CXX) -permit_unmatched_virtual_intf \
-		-gBAUDRATE=115200 -gCONFIG_FILE=$(DPI_CONFIG) $(VSIM_DPI) $(VSIM_ARGS)" && \
+	export VSIM_RUNNER_FLAGS="$(VSIM_RUN_FLAGS) $(VSIM_DPI) $(VSIM_ARGS)" && \
 	$(VSIM) -64 -c -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
 		-do 'source $(VSIM_PATH)/tcl_files/run.tcl; run_and_exit;' $(VSIM_ARGS)
 endif
@@ -217,7 +238,7 @@ backup:
 ## Clean object files
 clean:
 	rm -f $(OBJS) $(PROG) $(DEPS) $(SU) \
-		$(PROG).hex $(PROG).lst $(PROG).siz $(PROG).map \
+		$(PROG).hex $(PROG).lst $(PROG).siz $(PROG).map $(PROG).veri \
 		$(PROG).stim $(SIMDIR)/vectors/stim.txt
 
 ## Generate help overview

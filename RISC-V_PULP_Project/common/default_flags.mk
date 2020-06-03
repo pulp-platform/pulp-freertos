@@ -152,6 +152,7 @@ endif
 # script paths
 PLPSTIM   = $(SCRIPTS_ROOT)/pulpstim
 PULPTRACE = $(SCRIPTS_ROOT)/pulptrace
+MEMCONV   = $(SCRIPTS_ROOT)/mem.tcl
 
 # simulation names and paths
 VSIM   = vsim
