@@ -36,7 +36,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #if !defined(configUSE_NEWLIB_REENTRANT) || (configUSE_NEWLIB_REENTRANT != 1)
-#warning "configUSE_NEWLIB_REENTRANT is unset or zero. This settings \
+#error "configUSE_NEWLIB_REENTRANT is unset or zero. This settings \
 is required for thread-safety of newlib sprintf, strtok, etc..."
 #endif
 
