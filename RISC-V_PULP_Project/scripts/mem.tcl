@@ -81,6 +81,13 @@ proc pulp_flatten_mem_dump  {path {name flatten.dump} {base_addr 0x1c000000} {sc
     puts "Number of general memory banks: $num_banks"
     puts "Number of private memory banks: $num_priv_banks"
 
+    # 0x2000 words in private bank0
+    # 0x2000 words in private bank1
+    # 0x7000 words in bank0
+    # 0x7000 words in bank1
+    # 0x7000 words in bank2
+    # 0x7000 words in bank3
+    # total 0x1c000 words which is 512 kiB
     array set private_bank_dump {}
     array set bank_dump {}
 
@@ -95,7 +102,7 @@ proc pulp_flatten_mem_dump  {path {name flatten.dump} {base_addr 0x1c000000} {sc
     # load banked l2
     for {set i 0} {$i < $num_banks} {incr i} { # banks (normally 4)
         set bank {}
-        for {set j 1} {$j < 7} {incr j} { # cuts in bank, NOTE! ignore first cut (pulpissimo/pulp)
+        for {set j 0} {$j < 7} {incr j} { # cuts in bank
             set bank_cut [read_mem_dump [file join $path/ bank_${i}_cut_${j}]]
             # concatenate the cuts, each 4 KiB
             set bank [cat_mem_dump $bank [adjust_addr_mem_dump $bank_cut [expr {$j * 0x1000}]]]
@@ -202,13 +209,13 @@ proc pulp_conv_mem_dump {dump_file out_dir {base_addr 0x1c000000} {end_addr 0x1c
         set slices $banks($i)
 
         # split banks into slices
-        for {set j 1} {$j < 7} {incr j} { # cuts in bank, NOTE! ignore first cut (pulpissimo/pulp)
+        for {set j 0} {$j < 7} {incr j} { # cuts in bank
             # split bank into cuts, each 4 KiB
             set index [expr {$j  + ($i * 7)}]
-            set splitted [split_mem_dump $slices [expr {$j * 0x1000}]]
+            set splitted [split_mem_dump $slices [expr {($j + 1) * 0x1000}]]
             set slices [lindex $splitted 1]
             set bank_cuts($index) [lindex $splitted 0]
-            set bank_cuts($index) [adjust_addr_mem_dump $bank_cuts($index) -[expr {($j - 1) * 0x1000}] 1]
+            set bank_cuts($index) [adjust_addr_mem_dump $bank_cuts($index) -[expr {$j * 0x1000}] 1]
         }
     }
 
