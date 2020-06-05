@@ -139,7 +139,9 @@ proc pulp_flatten_mem_dump  {path {name flatten.dump} {base_addr 0x1c000000} {sc
 
     # adjust base address
     set final_dump [adjust_addr_mem_dump $final_dump $base_addr $scale]
-    write_mem_dump $final_dump $name
+    # don't care about spaced addressing when writing because we went from word
+    # addressing to byte addressing
+    write_mem_dump $final_dump $name 8 true
 
     puts "done"
 }
@@ -323,7 +325,7 @@ proc read_mem_dump {name} {
 
 # write a verilog style memory dump. Opposite of read_mem_dump. Assume that dump
 # is a list of addr/value pair (see read_mem_dump).
-proc write_mem_dump {dump {name out.dump} {words_per_line 8}} {
+proc write_mem_dump {dump {name out.dump} {words_per_line 8} {ignore_addr false}} {
     set fp [open $name "w"]
 
     if {$words_per_line < 1} {
@@ -355,7 +357,7 @@ proc write_mem_dump {dump {name out.dump} {words_per_line 8}} {
             incr word_count
         } else {
             # verify that address is consecutive
-            if {[expr {$old_addr + 1}] != $addr} {
+            if {[expr {$old_addr + 1}] != $addr && !$ignore_addr} {
                 puts [format "warning: old: 0x%llx new: 0x%llx" $old_addr $addr]
                 puts "warning: write_mem_dump: incomplete line, skipping and starting new line"
                 set word_count 0
