@@ -288,7 +288,7 @@ proc read_mem_dump {name} {
                 set has_init_addr 1
                 lappend dump_line 0
             }
-            lappend dump_line $token
+            lappend dump_line [string tolower $token]
         } elseif {$token eq "\n" || $token eq " "} {
             # skip empty or newline tokens
         } else {
