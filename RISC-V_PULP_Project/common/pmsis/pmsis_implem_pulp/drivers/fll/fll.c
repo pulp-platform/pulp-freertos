@@ -99,45 +99,26 @@ static uint32_t fll_get_frequency_from_mult_div(uint32_t mult, uint32_t div)
 
 int pi_fll_set_frequency(fll_type_t which_fll, uint32_t frequency, int check)
 {
-	uint32_t val1, val2;
-	uint32_t mult, div, mult_factor_diff;
+	uint32_t mult, div;
+	uint32_t reg1;
 
 	int irq = __disable_irq();
 
 	/* Frequency calculation from theory */
 	fll_get_mult_div_from_frequency(frequency, &mult, &div);
 
-	/* Gain : 2-1 - 2-10 (0x2-0xB) */
-	/* Return to close loop mode and give gain to feedback loop */
-	val2 = FLL_CTRL_CONF2_LOOPGAIN(0x7) |
-	       FLL_CTRL_CONF2_DEASSERT_CYCLES(0x10) |
-	       FLL_CTRL_CONF2_ASSERT_CYCLES(0x10) |
-	       FLL_CTRL_CONF2_LOCK_TOLERANCE(0x100) |
-	       FLL_CTRL_CONF2_CONF_CLK_SEL(0x0) |
-	       FLL_CTRL_CONF2_OPEN_LOOP(0x0) | FLL_CTRL_CONF2_DITHERING(0x1);
+	/* update mult and div */
+	/* TODO: check if fll is on */
+	reg1 = FLL_CTRL[which_fll].FLL_CONF1;
 
-	FLL_CTRL[which_fll].FLL_CONF2 = val2;
+	reg1 &= ~FLL_CTRL_CONF1_MULTI_FACTOR_MASK;
+	reg1 |= FLL_CTRL_CONF1_MULTI_FACTOR(mult);
+	reg1 &= ~FLL_CTRL_CONF1_CLK_OUT_DIV_MASK;
+	reg1 |= FLL_CTRL_CONF1_CLK_OUT_DIV(div);
 
-	/* Configure register 1 */
-	val1 = FLL_CTRL_CONF1_MODE(1) | FLL_CTRL_CONF1_MULTI_FACTOR(mult) |
-	       FLL_CTRL_CONF1_CLK_OUT_DIV(div);
+	FLL_CTRL[which_fll].FLL_CONF1 = reg1;
 
-	FLL_CTRL[which_fll].FLL_CONF1 = val1;
-
-	/* Check FLL converge by compare status register with multiply factor */
-	do {
-		mult_factor_diff = abs(FLL_CTRL[which_fll].FLL_STATUS - mult);
-	} while (mult_factor_diff > 0x10);
-
-	val2 = FLL_CTRL_CONF2_LOOPGAIN(0xB) |
-	       FLL_CTRL_CONF2_DEASSERT_CYCLES(0x10) |
-	       FLL_CTRL_CONF2_ASSERT_CYCLES(0x10) |
-	       FLL_CTRL_CONF2_LOCK_TOLERANCE(0x100) |
-	       FLL_CTRL_CONF2_CONF_CLK_SEL(0x0) |
-	       FLL_CTRL_CONF2_OPEN_LOOP(0x0) | FLL_CTRL_CONF2_DITHERING(0x1);
-
-	FLL_CTRL[which_fll].FLL_CONF2 = val2;
-
+	/* finalize */
 	if (which_fll == FLL_SOC)
 		system_core_clock_update();
 
