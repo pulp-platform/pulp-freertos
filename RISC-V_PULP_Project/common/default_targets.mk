@@ -167,7 +167,7 @@ endif
 	cp $(PROG) $(SIMDIR)
 	cp $(PROG).lst $(SIMDIR)
 	cp $(PROG).map $(SIMDIR)
-	cp $(PROG).veri $(SIMDIR)
+	if [[ -f $(PROG).veri ]]; then cp $(PROG).veri $(SIMDIR); fi;
 ifdef gui
 	cd $(SIMDIR) && \
 	export LD_LIBRARY_PATH="$(SUPPORT_LIB_DIR)" && \
