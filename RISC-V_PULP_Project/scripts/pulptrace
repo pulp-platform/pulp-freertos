@@ -29,6 +29,7 @@ import os
 import subprocess
 from functools import reduce
 from collections import OrderedDict
+import pprint
 
 parser = argparse.ArgumentParser(prog='pulptrace',
                                  description="""Combine objdump information
@@ -39,6 +40,8 @@ parser.version = '0.1'
 parser.add_argument('trace_file', type=str, help='trace log from a pulp core')
 parser.add_argument('elf_file', type=str,
                     help='elf file that was ran, producing the trace log')
+parser.add_argument('-e,', '--objdump', type=str, help="""use the provided objdump
+executable""")
 parser.add_argument('-o,', '--output', type=str, help="""write to file instead of
 stdout""")
 parser.add_argument('-t', '--truncate', action='store_true',
@@ -51,6 +54,16 @@ parser.add_argument('--cycles', action='store_true',
                     help='show cycle count extracted from log')
 parser.add_argument('--time', action='store_true',
                     help='show passed time extracted from log')
+parser.add_argument('--stats', action='store_true',
+                    help='extract statistics from log')
+parser.add_argument('--range', nargs=2,
+                    help='consider only instructions in the given cycle range')
+parser.add_argument('--json', type=str,
+                    help='record stats results in json file')
+parser.add_argument('--occur', type=str,
+                    help='show occurences of given function')
+parser.add_argument('--occur-json', type=str,
+                    help='store occurences of given function in json')
 
 
 args = parser.parse_args()
@@ -58,6 +71,7 @@ args = parser.parse_args()
 trace_filename = args.trace_file
 elf_filename = args.elf_file
 
+# TODO: eabi
 
 regs_map = [("x0", "zero"), ("x1", "ra"), ("x2", "sp"),
             ("x3", "gp"), ("x4", "tp"), ("x5", "t0"),
@@ -89,7 +103,9 @@ objdump_insns = dict()
 # parse objdump output and generate hashmap of address and insn string
 
 objdump_bin = ''
-if os.getenv('RISCV'):
+if args.objdump:
+    objdump_bin = args.objdump
+elif os.getenv('RISCV'):
     objdump_bin = os.getenv('RISCV') + '/bin/' + 'riscv32-unknown-elf-objdump'
 else:
     objdump_bin = 'riscv32-unknown-elf-objdump'
@@ -103,7 +119,7 @@ with subprocess.Popen([objdump_bin, "--prefix-addresses"]
         line = line.decode("ascii")
         if line == '':
             break
-        match = re.match(r'^\s*([0-9a-f]+)\s+(<[0-9a-zA-Z+_]*>)\s+(.*)', line)
+        match = re.match(r'^\s*([0-9a-f]+)\s+(<[0-9a-zA-Z+_.]*>)\s+(.*)', line)
         if match:
             # group(1) = instruction address
             # group(2) = instruction address symbolic
@@ -122,19 +138,29 @@ sys.stdout = open(args.output, "w") if args.output else sys.stdout
 with open(trace_filename, "r") as f:
     pc = 0
     last_irq = False
+    last_cycles = 0
+    stats = {}
+    occur = []
     # skip trace file "header"
     f.readline()
     # parse instructions
     for line in f:
         insn_line = line.split()
         time = insn_line[0]
-        cycles = insn_line[1]
+        cycles = int(insn_line[1])
         addr = insn_line[2]
         # insn_bytes = insn_line[3]
         # insn_str = insn_line[4]
         # insn_rest = insn_line[5::]
         reg_vals = ""
         insn_only = ""
+
+        # check if we are in the range of interest
+        if args.range:
+            if (cycles < int(args.range[0])) or (cycles >= int(args.range[1])):
+                last_cycles = cycles
+                continue
+
         # this is a dirty heuristic which figures out if we have register
         # values in the trace file TODO: improve
         bound = 80
@@ -155,6 +181,39 @@ with open(trace_filename, "r") as f:
 
         if args.cycles:
             print('%-12d ' % (int(cycles)), end='')
+
+        if args.occur and (insn_addr in objdump_insns):
+            source_location, _ = objdump_insns[insn_addr]
+            # TODO: make sure function name is wrapped with <>
+            if source_location.find(args.occur) != -1:
+                occur.append(cycles)
+
+        if args.stats:
+            function_name = "unknown"
+            is_call = False
+
+            # identify type of function (call, how many insn, how many cycles)
+            if insn_addr in objdump_insns:
+                source_location, _ = objdump_insns[insn_addr]
+                function_name = source_location.split("+")
+                if len(function_name) == 1:
+                    is_call = True
+                    function_name = function_name[0][1:-1]
+                else:
+                    # extract name
+                    function_name = function_name[0][1:]
+
+            delta_cycles = cycles - last_cycles
+
+            if function_name in stats.keys():
+                if is_call:
+                    stats[function_name]['calls'] += 1
+                stats[function_name]['insns'] += 1
+                stats[function_name]['cycles'] += delta_cycles
+            else:
+                stats[function_name] = {'calls': 1,
+                                        'insns': 1,
+                                        'cycles': delta_cycles}
 
         if insn_addr in objdump_insns:
             source_location, objdump_insn_str = objdump_insns[insn_addr]
@@ -178,6 +237,30 @@ with open(trace_filename, "r") as f:
                                                "",  # no objdump info
                                                insn_str,  # insn name
                                                reg_vals))
+
+        # update for measurments
+        last_cycles = cycles
+
+    if args.json:
+        import json
+        with open(args.json, 'w') as jsonf:
+            json.dump(stats, jsonf, indent=4)
+
+    if args.occur_json:
+        import json
+        with open(args.occur_json, 'w') as jsonf:
+            json.dump(occur, jsonf, indent=4)
+
+    pp = pprint.PrettyPrinter(indent=4)
+    if args.stats:
+        pp.pprint("STATS")
+        pp.pprint(stats)
+
+    if args.occur:
+        pp.pprint("Occcurences of " + args.occur)
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(occur)
+
 
 if args.output:
     sys.stdout.close()
