@@ -81,7 +81,12 @@ extern int lPerformanceCheck = 0;
 extern int CSCheck = 0;
 
 int Timerindex = 0;
+#ifdef __PULP__
+Timer_Data_t timerBuffer[15*MEASURE_N_ITERATION+7+2000] = { {'0', 0} };
+#else
 Timer_Data_t timerBuffer[15*MEASURE_N_ITERATION+7] = { {'0', 0} };
+#endif
+
 
 void measureInitializeNStart ( void )
 {
@@ -93,11 +98,18 @@ void measureInitializeNStart ( void )
 	uint32_t maskConfig = (PCER_CYCLE_Msk & ~(0x1UL << 17U));
 	/* Instructions */
 	//uint32_t maskConfig = (PCER_INSTR_Msk & ~(0x1UL << 17U));
+#ifdef __PULP__
+	__ASM volatile ("csrw 0x7E0, %0" : "+r" (maskConfig) );
+#else
 	__ASM volatile ("csrw 0x7A0, %0" : "+r" (maskConfig) );
-
+#endif
 	/* Enable */
 	uint32_t maskEnable = (1 << PCMR_GLBEN_Pos) | (1 << PCMR_SATU_Pos);
+#ifdef __PULP__
+	__ASM volatile ("csrw 0x7E1, %0" :: "r" (maskEnable));
+#else
 	__ASM volatile ("csrw 0x7A1, %0" :: "r" (maskEnable));
+#endif
 }
 
 

@@ -20,7 +20,11 @@ extern inline uint32_t measureReadCycle ( void );
 extern int lPerformanceCheck;
 extern int CSCheck;
 extern int Timerindex;
+#ifdef __PULP__
+extern Timer_Data_t timerBuffer[15*MEASURE_N_ITERATION+7+2000];
+#else
 extern Timer_Data_t timerBuffer[15*MEASURE_N_ITERATION+7];
+#endif
 
 //#define measureReadCycle
 

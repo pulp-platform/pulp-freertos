@@ -100,6 +100,7 @@ int main( void )
 	#ifndef __PULP__
 	printf("Number of Core: %d,\n System Clock: %u \n", N_EPI_CORE, SystemCoreClock);
 	#else
+	/* _impure_ptr = 0; */
 	printf("Number of Core: %d,\n System Clock: %u \n", N_EPI_CORE, system_core_clock);
 	#endif
 	#endif
@@ -117,6 +118,13 @@ int main( void )
 	for (int i = 0; i < ARCHI_NB_FLL; i++) {
 		pi_fll_init(i, 0);
 	}
+
+	/* 250 mhz */
+	if (pi_fll_set_frequency(FLL_SOC, 250000000u, 0) == -1) {
+		exit(-1);
+	}
+
+	system_core_clock_update();
 
 	/* make sure irq (itc) is a good state */
 	pulp_irq_init();

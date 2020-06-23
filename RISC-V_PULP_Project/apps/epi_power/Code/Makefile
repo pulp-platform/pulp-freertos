@@ -55,14 +55,41 @@ PROJ_ROOT = $(shell git rev-parse --show-toplevel)
 include $(PROJ_ROOT)/RISC-V_PULP_Project/common/default_flags.mk
 
 # manually set CFLAGS to disable some warnings (-Wconversion)
+
+# vanilla
 CFLAGS = \
 	-march=rv32imac -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore \
 	-fsigned-char -ffunction-sections -fdata-sections \
 	-std=gnu11 \
 	-Wall -Wextra -Wshadow -Wformat=2 -Wundef \
 	-Wno-unused-parameter -Wno-unused-variable \
-	-Og -g3 \
+	-O3 -g3 \
 	-DFEATURE_CLUSTER=0 -D__PULP__=1 -DDEBUG -D__PULP_TRACE__
+
+ASFLAGS = \
+	-march=rv32imac -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore \
+	-fsigned-char -ffunction-sections -fdata-sections \
+	-x assembler-with-cpp
+
+ifeq ($(opt1),yes)
+# opt1: emac, no hwloop regs
+CFLAGS = \
+	-march=rv32emac -mabi=ilp32e -msmall-data-limit=8 -mno-save-restore \
+	-fsigned-char -ffunction-sections -fdata-sections \
+	-std=gnu11 \
+	-Wall -Wextra -Wshadow -Wformat=2 -Wundef \
+	-Wno-unused-parameter -Wno-unused-variable \
+	-O3 -g3 \
+	-DFEATURE_CLUSTER=0 -D__PULP__=1 -DDEBUG -D__PULP_TRACE__ \
+	-DportasmSKIP_ADDITIONAL_REGISTERS
+
+ASFLAGS = \
+	-march=rv32emac -mabi=ilp32e -msmall-data-limit=8 -mno-save-restore \
+	-fsigned-char -ffunction-sections -fdata-sections \
+	-x assembler-with-cpp \
+	-DportasmSKIP_ADDITIONAL_REGISTERS
+
+endif
 
 # rtos, pulp and pmsis sources
 include $(PROJ_ROOT)/RISC-V_PULP_Project/common/freertos_pmsis_srcs.mk
@@ -80,6 +107,10 @@ CPPFLAGS += $(addprefix -I, ".")
 CPPFLAGS += $(addprefix -I, "FreeRTOS_Config/")
 
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
+CPPFLAGS += -DMEASURE_ACTIVE
+# abort sim after reading perf counters
+CPPFLAGS += -D__PULP_FW_ABORT
+CPPFLAGS += $(CPPEXTRA)
 
 # compile, simulation and analysis targets
 include $(PROJ_ROOT)/RISC-V_PULP_Project/common/default_targets.mk

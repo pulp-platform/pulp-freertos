@@ -11,8 +11,8 @@
 
 /** ----REMEMBER!!!: TO FULLY ENABLE THIS you need to COMMENT "SPI_TEST" and "MEASURE_ACTIVE" and UNcomment "ROBERT_TEST" inside EPI_Config.h. Thanks ---- **/
 
-#define ROBERT_AUTO_RUN             //if enabled the firmware will keep going, if commented the firmware should stop after all output matrixes are filled.
-#define ROBERT_FREQ_COMPARE         //if enabled it will also directly compare the freq.
+//#define ROBERT_AUTO_RUN             //if enabled the firmware will keep going, if commented the firmware should stop after all output matrixes are filled.
+//#define ROBERT_FREQ_COMPARE         //if enabled it will also directly compare the freq.
 
 #define ROBERT_NUMBER_OF_COMMANDS               5			//Number of different input commands
 #define ROBERT_UI_STEPS                         200			//Number of Steps (=activation of TASKOS) before changing commands

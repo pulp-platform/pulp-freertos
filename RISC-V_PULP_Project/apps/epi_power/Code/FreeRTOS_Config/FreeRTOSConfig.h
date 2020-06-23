@@ -60,7 +60,8 @@ extern void vPrvAssertFailed( const char *filename, uint32_t line, const char *e
 /* There is no CLINT so the base address must be set to 0. */
 #define configCLINT_BASE_ADDRESS 0
 /* make newlib routines re-entrant */
-#define configUSE_NEWLIB_REENTRANT 1
+/* TODO: disabled this because of reent bug when calling printf before scheduler start */
+/* #define configUSE_NEWLIB_REENTRANT 1 */
 #endif
 
 /*

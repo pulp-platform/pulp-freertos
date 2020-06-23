@@ -548,9 +548,9 @@ void vPeriodicControl( void *parameters ) {
 		}
 
 		//printFloat(CoreReducedPower[0]);
-		//#ifdef MEASURE_ACTIVE
-		//timerBuffer[Timerindex++] = (Timer_Data_t) {'a', measureReadCycle()}; //2 for Part 2 end.
-		//#endif
+		#ifdef MEASURE_ACTIVE
+		timerBuffer[Timerindex++] = (Timer_Data_t) {'a', measureReadCycle()}; //2 for Part 2 end.
+		#endif
 		//printFloat(CoreReducedPower[0]);
 
 		/*** 3.B: Compute PID Values ***/
@@ -583,9 +583,9 @@ void vPeriodicControl( void *parameters ) {
 		}
 
 		//printFloat(CoreReducedPower[0]);
-		//#ifdef MEASURE_ACTIVE
-		//timerBuffer[Timerindex++] = (Timer_Data_t) {'p', measureReadCycle()}; //2 for Part 2 end.
-		//#endif
+		#ifdef MEASURE_ACTIVE
+		timerBuffer[Timerindex++] = (Timer_Data_t) {'c', measureReadCycle()}; //2 for Part 2 end.
+		#endif
 
 		/*** 3.C: Compute Frequence/Duty Cycle ***/
 		// Frequency from Power. (newton rapton) (vdd is in function of f )
@@ -1657,6 +1657,9 @@ void vPrintTask (void* parameters){
 		ulTaskNotifyTake( pdTRUE, 	// xClearCountOnExit: if pdTRUE = Binary Semaphore; if number = Counting Semaphore (# of times to be called before exit).
 					portMAX_DELAY); // xTicksToWait
 
+#ifdef __PULP__
+		/* TODO: check for timerBuffer overflow */
+#endif
 		// if (lPerformanceCheck)
 		// {
 			printf("Done\n");
@@ -1675,6 +1678,9 @@ void vPrintTask (void* parameters){
 					break;
 			}
 			printf("End.\n");
+#if defined(__PULP__) && defined(__PULP_FW_ABORT)
+			pmsis_exit(0);
+#endif
 			vTaskSuspend(NULL);
 
 		// else

@@ -71,7 +71,15 @@
 /******************************/
 /**** Tasks Configuration *****/
 /******************************/
+#ifdef __PULP__
+
+#ifndef TASKS_CONTROL_PERIOD_US
+/* #define TASKS_CONTROL_PERIOD_US 				(500) // Time in us //when change this also hange TELEMETRY_POLLING_FREQUENCY */
+#endif
+
+#else
 #define TASKS_CONTROL_PERIOD_US 				(100000) // Time in us //when change this also hange TELEMETRY_POLLING_FREQUENCY
+#endif
 #define TASKS_OS_PERIODICITY_MUL_FACTOR			2 //following the rule Tos = m * Tcontrol, where T is the Period and m this value to be defined here.
 
 /******************************/
@@ -95,7 +103,16 @@
 /** Code Configuration **/
 #define DEBUG_ACTIVE
 //#define MEASURE_ACTIVE
-#define MEASURE_N_ITERATION 					20 // This is needed for both debug and Measure
+#ifdef __PULP__
+
+#ifndef MEASURE_N_ITERATION
+/* #define MEASURE_N_ITERATION 					20 // This is needed for both debug and Measure (DEFAULT) */
+#endif
+
+#else
+#define MEASURE_N_ITERATION 					20 // This is needed for both debug and Measure (DEFAULT)
+#endif
+/* #define MEASURE_N_ITERATION 					200 // This is needed for both debug and Measure */
 
 #define FLOAT_NUMBERS
 
