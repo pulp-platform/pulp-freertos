@@ -164,6 +164,10 @@ ifndef VSIM_PATH
 	$(error "VSIM_PATH is not set. Make sure your ran `source setup/vsim.sh` \
 	in your PULP/PULPissimo repository")
 endif
+	cp $(PROG) $(SIMDIR)
+	cp $(PROG).lst $(SIMDIR)
+	cp $(PROG).map $(SIMDIR)
+	cp $(PROG).veri $(SIMDIR)
 ifdef gui
 	cd $(SIMDIR) && \
 	export LD_LIBRARY_PATH="$(SUPPORT_LIB_DIR)" && \
@@ -189,7 +193,7 @@ endif
 
 # analysis scripts
 $(SIMDIR)/trace_%_postproc.log: $(SIMDIR)/trace_core_%.log
-	$(PULPTRACE) $^ $(PROG) -o $@
+	$(PULPTRACE) --stats --cycles $^ $(PROG) -o $@
 
 ## Symbolize simulation instruction trace log using the the original executable
 trace-symbolize: $(SIMDIR)/trace_1f_0_postproc.log
