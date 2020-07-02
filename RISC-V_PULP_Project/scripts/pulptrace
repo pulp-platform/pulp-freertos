@@ -29,6 +29,7 @@ import os
 import subprocess
 from functools import reduce
 from collections import OrderedDict
+import csv
 import pprint
 
 parser = argparse.ArgumentParser(prog='pulptrace',
@@ -64,6 +65,16 @@ parser.add_argument('--occur', type=str,
                     help='show occurences of given function')
 parser.add_argument('--occur-json', type=str,
                     help='store occurences of given function in json')
+parser.add_argument('--analyze-interrupt', type=str, metavar='INTERRUPT_CSV',
+                    help="""use the given interrupt cvs for analyzing interrupt
+                    latencies""")
+parser.add_argument('--interrupt', nargs=2, metavar=('INTERRUPT_ID',
+                                                     'FUNCTION_NAME'),
+                    help="""use the given interrupt cvs for analyzing interrupt
+                    latencies""")
+parser.add_argument('--interrupt-out', type=str,
+                    help="""store collected interrupt statistics to
+                    INTERRUPT_OUT""")
 
 
 args = parser.parse_args()
@@ -135,12 +146,35 @@ def truncate_string(string, length):
 # redirect to stdout to file if desired
 sys.stdout = open(args.output, "w") if args.output else sys.stdout
 
+interrupt_log = []
+# get interrupt information if provided
+if args.analyze_interrupt:
+    with open(args.analyze_interrupt, "r") as csvf:
+        next(csvf, None) # skip header
+        for interrupt in csv.reader(csvf):
+            interrupt = [str.strip(i) for i in interrupt]
+            assert interrupt[0][-2:] == 'ns', "analyze_interrupt: bad time unit"
+            if (interrupt[2]) == '1': # collect only enabled interrupt_log
+                interrupt_log.append([int(interrupt[0][:-2]),
+                                   int(interrupt[1])])
+print(interrupt_log)
+# interupts latencies we are interested in (currently only 1)
+interrupts_lat = []
+if args.interrupt:
+    interrupts_lat = [(int(args.interrupt[0]), args.interrupt[1])]
+    print(interrupts_lat)
+
+
+int_times = []
+
 with open(trace_filename, "r") as f:
     pc = 0
     last_irq = False
     last_cycles = 0
     stats = {}
     occur = []
+    int_log_idx = 0
+    int_trace = False
     # skip trace file "header"
     f.readline()
     # parse instructions
@@ -187,6 +221,19 @@ with open(trace_filename, "r") as f:
             # TODO: make sure function name is wrapped with <>
             if source_location.find(args.occur) != -1:
                 occur.append(cycles)
+
+        # find interrupt handler and trace backwards to figure out latency
+        if args.analyze_interrupt and (insn_addr in objdump_insns):
+            source_location, _ = objdump_insns[insn_addr]
+            # TODO: make sure function name is wrapped with <>
+            gtime = int(time[:-2])
+            assert time[-2:] == 'ns', "analyze_interrupt: bad time unit in log"
+            fun_name = interrupts_lat[0][1]
+            int_id = interrupts_lat[0][0]
+            if source_location.find(fun_name) != -1:
+                int_time = [x[0] for x in reversed(interrupt_log) if x[0] < gtime and x[1] == int_id][0]
+                int_times.append((int_id, fun_name, int_time, gtime, gtime-int_time))
+                print("int_time %d time %d lat %d" % (int_time, gtime, gtime - int_time))
 
         if args.stats:
             function_name = "unknown"
@@ -250,6 +297,11 @@ with open(trace_filename, "r") as f:
         import json
         with open(args.occur_json, 'w') as jsonf:
             json.dump(occur, jsonf, indent=4)
+
+    if args.interrupt_out:
+        with open(args.interrupt_out, 'w') as csvf:
+            writer = csv.writer(csvf)
+            writer.writerows(int_times)
 
     pp = pprint.PrettyPrinter(indent=4)
     if args.stats:
