@@ -19,7 +19,7 @@ set -e
 #  1623360 1748360 1873362 1998362 2123363 2248365 2373365 2498367 2623367 2748369 )
 
 usage () {
-    echo "usage: epi-analyze-perf.sh simdir outdir"
+    echo "usage: $0 simdir outdir"
     exit
 }
 
@@ -32,6 +32,7 @@ outdir=$(realpath -s $2)
 pulptrace=../scripts/pulptrace
 bin="$simdir/epi"
 trace="$simdir/trace_core_1f_0.log"
+interrupts="$simdir/fc_interrupts.log"
 # outdir=stats/vanilla
 # outdir=stats/opt1
 
@@ -51,13 +52,16 @@ echo "info: outdir=$outdir"
 [[ -f $trace ]] || { echo "error: trace does not exist"; exit 1; }
 [[ -d $outdir ]] || { echo "error: outdir does not exist"; exit 1; }
 # generate ranges
-if [[ ! -f "$outdir/occur.json" ]]; then
-echo "$outdir/occur.json does not exists, generating range data"
-$pulptrace --cycles --occur "<TIMER1_IRQ_handler>" \
+if [[ ! -f "$outdir/occur.json" || ! -f "$outdir/interrupt_latency.csv" ]]; then
+echo "$outdir/occur.json or $outdir/interrupt_latency.csv does not exists, generating range and interrupt data"
+$pulptrace --analyze-interrupt "$interrupts" \
+	   --interrupt 11 "<TIMER1_IRQ_handler>" \
+	   --interrupt-out "$outdir/interrupt_latency.csv" \
+	   --cycles --occur "<TIMER1_IRQ_handler>" \
 	   --occur-json "$outdir/occur.json" \
     	   -o "$outdir/occur.log" "$trace" "$bin"
 else
-echo "warning: re-using $outdir/occur.json. Stop if you don't want this"
+echo "warning: re-using $outdir/occur.json and $outdir/interrupt_latency.csv Stop if you don't want this"
 fi
 
 # "parse" ranges from occur.json
