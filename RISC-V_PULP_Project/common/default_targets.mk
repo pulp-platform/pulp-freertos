@@ -147,12 +147,12 @@ ifeq ($(DPI),yes)
   ifeq ($(strip $(DPI_CONFIG)),)
   $(warning "DPI_CONFIG is unset, but requested DPI sim. Using default rtl_config.json")
   DPI_CONFIG = "rtl_config.json"
-  VSIM_RUN_FLAGS += -gCONFIG_FILE=$(DPI_CONFIG)
   endif
 else
   DPI_CONFIG = "NONE"
-  VSIM_RUN_FLAGS += -gCONFIG_FILE=$(DPI_CONFIG)
 endif
+
+VSIM_RUN_FLAGS += -gCONFIG_FILE=$(DPI_CONFIG)
 
 .PHONY: run
 ## Run simulation. Append gui=1 or interactive=1 for vsim gui or vsim shell respectively
