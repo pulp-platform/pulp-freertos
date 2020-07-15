@@ -13,3 +13,15 @@
 [submodule "RISC-V_PULP_Project/support/pulp-debug-bridge"]
 	path = RISC-V_PULP_Project/support/pulp-debug-bridge
 	url = https://github.com/pulp-platform/pulp-debug-bridge
+[submodule "RISC-V_PULP_Project/support/archi"]
+	path = RISC-V_PULP_Project/support/archi
+	url = https://github.com/pulp-platform/archi
+[submodule "RISC-V_PULP_Project/support/gvsoc"]
+	path = RISC-V_PULP_Project/support/gvsoc
+	url = https://github.com/pulp-platform/gvsoc
+[submodule "RISC-V_PULP_Project/support/pulp-configs"]
+	path = RISC-V_PULP_Project/support/pulp-configs
+	url = https://github.com/pulp-platform/pulp-configs
+[submodule "RISC-V_PULP_Project/support/runner"]
+	path = RISC-V_PULP_Project/support/runner
+	url = https://github.com/pulp-platform/runner.git

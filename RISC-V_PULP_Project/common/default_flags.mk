@@ -157,3 +157,5 @@ MEMCONV   = $(SCRIPTS_ROOT)/mem.tcl
 # simulation names and paths
 VSIM   = vsim
 SIMDIR = sim
+GVSIMDIR = gvsim
+PULP_RISCV_GCC_TOOLCHAIN=$(RISCV) # for gvsoc

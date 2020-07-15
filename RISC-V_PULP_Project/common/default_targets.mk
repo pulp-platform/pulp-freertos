@@ -10,14 +10,18 @@ ifndef SIMDIR
 $(error "SIMDIR is empty. Simulation and analysis targets will not work")
 endif
 
+ifndef GVSIMDIR
+$(error "GVSIMDIR is empty. Simulation and analysis targets will not work")
+endif
+
 ifeq ($(strip $(PROG)),)
 $(error "PROG is invalid or empty. Won't be able to compile.")
 endif
 
 # dpi specific build targets
-ifeq ($(DPI),yes)
+# ifeq ($(DPI),yes)
 include $(SUPPORT_ROOT)/support.mk
-endif
+# endif
 
 # derived variables for compiling
 SRCS = $(RTOS_SRCS) $(PULP_SRCS) $(USER_SRCS)
@@ -98,6 +102,8 @@ $(PROG).siz: $(PROG)
 # simulator specific targets
 # make sure we have sim directory
 $(shell mkdir -p $(SIMDIR))
+# make sure we have gvsim directory
+$(shell mkdir -p $(GVSIMDIR))
 
 # creating symlink farm because PULP/PULPissimo relies on hardcoded paths
 $(SIMDIR)/modelsim.ini:
@@ -154,6 +160,9 @@ endif
 
 VSIM_RUN_FLAGS += -gCONFIG_FILE=$(DPI_CONFIG)
 
+.PHONY:
+run-sim: run
+
 .PHONY: run
 ## Run simulation. Append gui=1 or interactive=1 for vsim gui or vsim shell respectively
 run: $(SIMDIR)/modelsim.ini $(SIMDIR)/boot $(SIMDIR)/tcl_files \
@@ -190,6 +199,16 @@ else
 		-do 'source $(VSIM_PATH)/tcl_files/run.tcl; run_and_exit;' $(VSIM_ARGS)
 endif
 endif
+
+GVSOC=$(SUPPORT_ROOT)/egvsoc.sh
+.PHONY: run-gvsoc
+run-gvsoc: $(GVSIMDIR) gvsoc
+	cp $(PROG) $(GVSIMDIR)
+	cp $(PROG).lst $(GVSIMDIR)
+	cp $(PROG).map $(GVSIMDIR)
+	PULP_RISCV_GCC_TOOLCHAIN=$(PULP_RISCV_GCC_TOOLCHAIN) \
+	$(GVSOC) --config-file=pulp@config_file=chips/pulp/pulp.json --platform=gvsoc \
+		--dir=$(CURDIR) --binary=$(GVSIMDIR)/$(PROG) prepare run
 
 # analysis scripts
 $(SIMDIR)/trace_%_postproc.log: $(SIMDIR)/trace_core_%.log
