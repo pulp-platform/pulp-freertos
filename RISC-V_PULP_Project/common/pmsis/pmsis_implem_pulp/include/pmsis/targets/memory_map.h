@@ -91,7 +91,8 @@
 #define APB_SOC_CTRL_OFFSET                         (0x00004000)
 #define ADV_TIMER_OFFSET                            (0x00005000) /* PWM. */
 #define SOC_EU_OFFSET                               (0x00006000)
-#define FC_IRQ_OFFSET                               (0x00009000)
+#define FC_IRQ_OFFSET                               (0x00009800)
+/* #define FC_IRQ_OFFSET                               (0x00009000) */ /* valid mirror address */
 #define FC_TIMER_OFFSET                             (0x0000B000)
 #define FC_HWPE_OFFSET                              (0x0000C000)
 #define STDOUT_OFFSET                               (0x0000F000)
