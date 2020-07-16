@@ -202,13 +202,14 @@ endif
 
 GVSOC=$(SUPPORT_ROOT)/egvsoc.sh
 .PHONY: run-gvsoc
+## Run simulation using gvsoc
 run-gvsoc: $(GVSIMDIR) gvsoc
 	cp $(PROG) $(GVSIMDIR)
 	cp $(PROG).lst $(GVSIMDIR)
 	cp $(PROG).map $(GVSIMDIR)
 	PULP_RISCV_GCC_TOOLCHAIN=$(PULP_RISCV_GCC_TOOLCHAIN) \
 	$(GVSOC) --config-file=pulp@config_file=chips/pulp/pulp.json --platform=gvsoc \
-		--dir=$(CURDIR) --binary=$(GVSIMDIR)/$(PROG) prepare run
+		--dir=$(CURDIR)/$(GVSIMDIR) --binary=$(PROG) prepare run
 
 # analysis scripts
 $(SIMDIR)/trace_%_postproc.log: $(SIMDIR)/trace_core_%.log
