@@ -50,7 +50,7 @@ test_apps:
   script:
     - echo "FIXME add app tests"
 
-test_semaphore:
+vsim_pulp_semaphore:
   stage: test
   tags:
     - dolent1
@@ -63,7 +63,7 @@ test_semaphore:
     paths:
      - RISC-V_PULP_Project/tests/semaphore
 
-test_queue:
+vsim_pulp_queue:
   stage: test
   tags:
     - dolent1
@@ -76,7 +76,7 @@ test_queue:
     paths:
       - RISC-V_PULP_Project/tests/queue
 
-test_streambufferisr:
+vsim_pulp_streambufferisr:
   stage: test
   tags:
     - dolent1
@@ -89,7 +89,7 @@ test_streambufferisr:
     paths:
       - RISC-V_PULP_Project/tests/streambufferisr
 
-test_uart:
+vsim_pulp_uart:
   stage: test
   tags:
     - dolent1
@@ -102,7 +102,7 @@ test_uart:
     paths:
       - RISC-V_PULP_Project/tests/uart
 
-test_hello_world_pmsis:
+vsim_pulp_hello_world_pmsis:
   stage: test
   tags:
     - dolent1
@@ -115,7 +115,7 @@ test_hello_world_pmsis:
     paths:
       - RISC-V_PULP_Project/tests/hello_world_pmsis
 
-test_spi:
+vsim_pulp_spi:
   stage: test
   tags:
     - dolent1
