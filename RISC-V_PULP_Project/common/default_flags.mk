@@ -21,7 +21,7 @@ ifndef PROJ_ROOT
 $(error "PROJ_ROOT is unset. Point it to this project's root directory.")
 endif
 
-RTOS_ROOT    = $(PROJ_ROOT)/FreeRTOS
+RTOS_ROOT    = $(PROJ_ROOT)/kernel
 COMMON_ROOT  = $(PROJ_ROOT)/RISC-V_PULP_Project/common
 SCRIPTS_ROOT = $(PROJ_ROOT)/RISC-V_PULP_Project/scripts
 SUPPORT_ROOT = $(PROJ_ROOT)/RISC-V_PULP_Project/support

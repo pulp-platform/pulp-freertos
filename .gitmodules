@@ -1,5 +1,5 @@
 [submodule "FreeRTOS/Source"]
-	path = FreeRTOS/Source
+	path = kernel
 	url = ../../freertos/freertos-kernel.git
 [submodule "RISC-V_PULP_Project/common/pmsis_api"]
 	path = RISC-V_PULP_Project/common/pmsis_api

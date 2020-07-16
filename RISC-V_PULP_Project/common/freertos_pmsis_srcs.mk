@@ -5,20 +5,20 @@
 # and COMMON_ROOT to the driver folder
 
 # general OS
-RTOS_SRCS = $(addprefix $(RTOS_ROOT)/Source/,\
+RTOS_SRCS = $(addprefix $(RTOS_ROOT)/,\
 		event_groups.c list.c queue.c stream_buffer.c tasks.c timers.c)
 # RISC-V port files
-RTOS_SRCS += $(addprefix $(RTOS_ROOT)/Source/portable/GCC/RISC-V/,\
+RTOS_SRCS += $(addprefix $(RTOS_ROOT)/portable/GCC/RISC-V/,\
 		port.c portASM.S)
 # memory managment
-RTOS_SRCS += $(addprefix $(RTOS_ROOT)/Source/portable/MemMang/,\
+RTOS_SRCS += $(addprefix $(RTOS_ROOT)/portable/MemMang/,\
 		heap_3.c)
 # freertos generic headers
 CPPFLAGS += $(addprefix -I, \
-		"$(RTOS_ROOT)/Source/include" \
-		"$(RTOS_ROOT)/Source/portable/GCC/RISC-V")
+		"$(RTOS_ROOT)/include" \
+		"$(RTOS_ROOT)/portable/GCC/RISC-V")
 # freertos header for assembler
-CPPFLAGS  += -I"$(RTOS_ROOT)/Source/portable/GCC/RISC-V/chip_specific_extensions/PULPissimo"
+CPPFLAGS  += -I"$(RTOS_ROOT)/portable/GCC/RISC-V/chip_specific_extensions/PULPissimo"
 
 # c runtime and init
 ifneq ($(LIBC),no)
