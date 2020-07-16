@@ -20,7 +20,8 @@ while getopts ":o" o; do
 done
 shift $((OPTIND-1))
 
-[[ -d $1 ]] || usage
+parent_sim_dir="$(dirname "$1")"
+[[ -d $parent_sim_dir ]] || usage
 
 # compiler
 export RISCV=$HOME/.riscv32e
@@ -35,16 +36,18 @@ sim_dir="$1"
 # define MEASURE_N_ITERATION 20 // This is needed for both debug and Measure (DEFAULT)
 measure_iterations=20
 # define TASKS_CONTROL_PERIOD_US (500) // Time in us //when change this also hange TELEMETRY_POLLING_FREQUENCY
-periods=(500 450 400 350 300 250 200 150 100 50 40 30 20 10 5)
+periods=(500 450 400 350 300 250 200 180 170 160 150 140 130 120 110 100 90 80 70 60 50 40 30 20 10 5)
 
+systick_rate=50
 
 for p in "${periods[@]}"; do
     m=$measure_iterations
+    t=$systick_rate
     # give it time to compile
     # TODO: opt level
     cd "$epi_dir"
     echo "compiling firmware"
-    make clean all "opt1=$opt" CPPEXTRA="-DMEASURE_N_ITERATION=${m} -DTASKS_CONTROL_PERIOD_US=${p}"
+    make clean all "opt1=$opt" CPPEXTRA="-DMEASURE_N_ITERATION=${m} -DTASKS_CONTROL_PERIOD_US=${p} -DconfigTICK_RATE_HZ=${t}"
 
     # define simulation directory
     this_simdir="${sim_dir}_period_${p}_iter_${m}"
@@ -58,5 +61,5 @@ for p in "${periods[@]}"; do
     cd "$epi_dir"
     make run "$this_simdir/trace_1f_0_postproc.log" \
 	 preload=yes SIMDIR="$this_simdir" \
-	 CPPEXTRA="-DMEASURE_N_ITERATION=${m} -DTASKS_CONTROL_PERIOD_US=${p}" &
+	 CPPEXTRA="-DMEASURE_N_ITERATION=${m} -DTASKS_CONTROL_PERIOD_US=${p} -DconfigTICK_RATE_HZ=${t}" &
 done
