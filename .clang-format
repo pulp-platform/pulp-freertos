@@ -1,8 +1,9 @@
 ---
 BasedOnStyle: LLVM
 IndentWidth: 4
+TabWidth: 4
 UseTab: Always
-BreakBeforeBraces: Linux
+BreakBeforeBraces: Allman
 AlwaysBreakBeforeMultilineStrings: true
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
@@ -19,17 +20,17 @@ BreakBeforeBinaryOperators: NonAssignment
 BreakStringLiterals: false
 SortIncludes: false
 ContinuationIndentWidth: 4
-ColumnLimit: 80
+ColumnLimit: 100
 IndentPPDirectives: AfterHash
 BinPackArguments: true
 BinPackParameters: true
-ForEachMacros:
-	- 'TAILQ_FOREACH'
-	- 'TAILQ_FOREACH_REVERSE'
 BreakBeforeBinaryOperators: None
 MaxEmptyLinesToKeep: 1
 AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
 AlignConsecutiveAssignments: true
+AlignConsecutiveMacros: true
+SpacesInParentheses: true
+SpacesInCStyleCastParentheses: true
 ...
