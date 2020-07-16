@@ -104,7 +104,9 @@ extern void vPrvAssertFailed( const char *filename, uint32_t line, const char *e
 #define configUSE_TICKLESS_IDLE                   ( 0 )
 #define configUSE_DAEMON_TASK_STARTUP_HOOK        ( 0 )
 #define configCPU_CLOCK_HZ                        ( DEFAULT_SYSTEM_CLOCK )
+#ifndef configTICK_RATE_HZ
 #define configTICK_RATE_HZ                        ( ( TickType_t ) 1000 )
+#endif
 #define configMAX_PRIORITIES                      ( 16 )
 #define configMINIMAL_STACK_SIZE                  ( ( uint16_t ) ( 128 ) )
 #define configSTACK_DEPTH_TYPE                    uint32_t
