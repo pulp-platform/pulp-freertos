@@ -114,8 +114,8 @@ typedef enum
 /* Channel clear and stop transfer:
   - 1'b0: disable
   - 1'b1: stop and clear the on-going transfer */
-#define UDMA_CORE_RX_CFG_CLR_MASK                                    (0x20)
-#define UDMA_CORE_RX_CFG_CLR_SHIFT                                   (5)
+#define UDMA_CORE_RX_CFG_CLR_MASK                                    (0x40)
+#define UDMA_CORE_RX_CFG_CLR_SHIFT                                   (6)
 #define UDMA_CORE_RX_CFG_CLR(val)                                    (((uint32_t)(((uint32_t)(val)) << UDMA_CORE_RX_CFG_CLR_SHIFT)) & UDMA_CORE_RX_CFG_CLR_MASK)
 
 /* Reserved/Not used. */
@@ -200,8 +200,8 @@ typedef enum
 /* Channel clear and stop transfer:
   - 1'b0: disable
   - 1'b1: stop and clear the on-going transfer */
-#define UDMA_CORE_TX_CFG_CLR_MASK                                    (0x20)
-#define UDMA_CORE_TX_CFG_CLR_SHIFT                                   (5)
+#define UDMA_CORE_TX_CFG_CLR_MASK                                    (0x40)
+#define UDMA_CORE_TX_CFG_CLR_SHIFT                                   (6)
 #define UDMA_CORE_TX_CFG_CLR(val)                                    (((uint32_t)(((uint32_t)(val)) << UDMA_CORE_TX_CFG_CLR_SHIFT)) & UDMA_CORE_TX_CFG_CLR_MASK)
 
 /* Reserved/Not used. */
