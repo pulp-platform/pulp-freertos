@@ -22,9 +22,9 @@ $(error "PROJ_ROOT is unset. Point it to this project's root directory.")
 endif
 
 RTOS_ROOT    = $(PROJ_ROOT)/kernel
-COMMON_ROOT  = $(PROJ_ROOT)/RISC-V_PULP_Project/common
-SCRIPTS_ROOT = $(PROJ_ROOT)/RISC-V_PULP_Project/scripts
-SUPPORT_ROOT = $(PROJ_ROOT)/RISC-V_PULP_Project/support
+COMMON_ROOT  = $(PROJ_ROOT)/common
+SCRIPTS_ROOT = $(PROJ_ROOT)/scripts
+SUPPORT_ROOT = $(PROJ_ROOT)/support
 
 # CFLAGS defaults explained
 #

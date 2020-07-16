@@ -38,3 +38,6 @@ $(shell find "$(SUPPORT_ROOT)/gvsoc" -name '*.cpp' -o -name '*.hpp' -o -name '*.
 	INSTALL_DIR="$(SUPPORT_ROOT)/install" \
 	$(MAKE) -C "$(SUPPORT_ROOT)/gvsoc" build ARCHI_DIR=$(SUPPORT_ROOT)/archi/include
 
+
+clean-gvsoc:
+	$(MAKE) -C "$(SUPPORT_ROOT)/gvsoc" clean

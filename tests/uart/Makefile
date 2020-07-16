@@ -31,7 +31,7 @@
 PROJ_ROOT = $(shell git rev-parse --show-toplevel)
 
 # good defaults for many environment variables
-include $(PROJ_ROOT)/RISC-V_PULP_Project/common/default_flags.mk
+include $(PROJ_ROOT)/common/default_flags.mk
 
 # manually set CFLAGS to disable some warnings (-Wconversion)
 CFLAGS = \
@@ -45,7 +45,7 @@ CFLAGS = \
         -fstack-usage -Wstack-usage=1024
 
 # rtos, pulp and pmsis sources
-include $(PROJ_ROOT)/RISC-V_PULP_Project/common/freertos_pmsis_srcs.mk
+include $(PROJ_ROOT)/common/freertos_pmsis_srcs.mk
 
 # application name
 PROG = uart_test
@@ -62,4 +62,4 @@ CPPFLAGS += -DUSE_STDIO
 CPPFLAGS += -DSTREAM_CHECK_ITERATIONS=2
 
 # compile, simulation and analysis targets
-include $(PROJ_ROOT)/RISC-V_PULP_Project/common/default_targets.mk
+include $(PROJ_ROOT)/common/default_targets.mk
