@@ -265,6 +265,11 @@ clean:
 		$(PROG).hex $(PROG).lst $(PROG).siz $(PROG).map $(PROG).veri \
 		$(PROG).stim $(SIMDIR)/vectors/stim.txt
 
+.PHONY: distclean
+## Clean object files and all support dependencies
+distclean: clean
+	rm -rf $(SUPPORT_ROOT)/install/*
+
 ## Generate help overview
 help : Makefile
 	@printf "Available targets\n\n"
