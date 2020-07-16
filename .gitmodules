@@ -1,27 +1,27 @@
 [submodule "FreeRTOS/Source"]
-	path = FreeRTOS/Source
+	path = kernel
 	url = ../../freertos/freertos-kernel.git
 [submodule "RISC-V_PULP_Project/common/pmsis_api"]
-	path = RISC-V_PULP_Project/common/pmsis_api
+	path = common/pmsis_api
 	url = https://github.com/GreenWaves-Technologies/pmsis_api/
 [submodule "RISC-V_PULP_Project/support/dpi-models"]
-	path = RISC-V_PULP_Project/support/dpi-models
+	path = support/dpi-models
 	url = https://github.com/pulp-platform/dpi-models
 [submodule "RISC-V_PULP_Project/support/json-tools"]
-	path = RISC-V_PULP_Project/support/json-tools
+	path = support/json-tools
 	url = https://github.com/pulp-platform/json-tools
 [submodule "RISC-V_PULP_Project/support/pulp-debug-bridge"]
-	path = RISC-V_PULP_Project/support/pulp-debug-bridge
+	path = support/pulp-debug-bridge
 	url = https://github.com/pulp-platform/pulp-debug-bridge
 [submodule "RISC-V_PULP_Project/support/archi"]
-	path = RISC-V_PULP_Project/support/archi
+	path = support/archi
 	url = https://github.com/pulp-platform/archi
 [submodule "RISC-V_PULP_Project/support/gvsoc"]
-	path = RISC-V_PULP_Project/support/gvsoc
+	path = support/gvsoc
 	url = https://github.com/pulp-platform/gvsoc
 [submodule "RISC-V_PULP_Project/support/pulp-configs"]
-	path = RISC-V_PULP_Project/support/pulp-configs
+	path = support/pulp-configs
 	url = https://github.com/pulp-platform/pulp-configs
 [submodule "RISC-V_PULP_Project/support/runner"]
-	path = RISC-V_PULP_Project/support/runner
+	path = support/runner
 	url = https://github.com/pulp-platform/runner.git

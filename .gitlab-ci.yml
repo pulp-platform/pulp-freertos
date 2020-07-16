@@ -56,12 +56,12 @@ vsim_pulp_semaphore:
     - dolent1
   script:
     - source pulp/setup/vsim.sh
-    - cd RISC-V_PULP_Project/tests/semaphore
+    - cd tests/semaphore
     - make clean all run
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
     paths:
-     - RISC-V_PULP_Project/tests/semaphore
+     - tests/semaphore
 
 vsim_pulp_queue:
   stage: test
@@ -69,12 +69,12 @@ vsim_pulp_queue:
     - dolent1
   script:
     - source pulp/setup/vsim.sh
-    - cd RISC-V_PULP_Project/tests/queue
+    - cd tests/queue
     - make clean all run
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
     paths:
-      - RISC-V_PULP_Project/tests/queue
+      - tests/queue
 
 vsim_pulp_streambufferisr:
   stage: test
@@ -82,12 +82,12 @@ vsim_pulp_streambufferisr:
     - dolent1
   script:
     - source pulp/setup/vsim.sh
-    - cd RISC-V_PULP_Project/tests/streambufferisr
+    - cd tests/streambufferisr
     - make clean all run
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
     paths:
-      - RISC-V_PULP_Project/tests/streambufferisr
+      - tests/streambufferisr
 
 vsim_pulp_uart:
   stage: test
@@ -95,12 +95,12 @@ vsim_pulp_uart:
     - dolent1
   script:
     - source pulp/setup/vsim.sh
-    - cd RISC-V_PULP_Project/tests/uart
+    - cd tests/uart
     - make clean all run
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
     paths:
-      - RISC-V_PULP_Project/tests/uart
+      - tests/uart
 
 vsim_pulp_hello_world_pmsis:
   stage: test
@@ -108,12 +108,12 @@ vsim_pulp_hello_world_pmsis:
     - dolent1
   script:
     - source pulp/setup/vsim.sh
-    - cd RISC-V_PULP_Project/tests/hello_world_pmsis
+    - cd tests/hello_world_pmsis
     - make clean all run
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
     paths:
-      - RISC-V_PULP_Project/tests/hello_world_pmsis
+      - tests/hello_world_pmsis
 
 vsim_pulp_spi:
   stage: test
@@ -121,81 +121,81 @@ vsim_pulp_spi:
     - dolent1
   script:
     - source pulp/setup/vsim.sh
-    - cd RISC-V_PULP_Project/tests/spi
+    - cd tests/spi
     - make clean all run DPI=yes
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
     paths:
-      - RISC-V_PULP_Project/tests/spi
+      - tests/spi
 
 gvsoc_pulp_hello_world:
   stage: test
   tags:
     - dolent1
   script:
-    - cd RISC-V_PULP_Project/nortos/hello_world
+    - cd nortos/hello_world
     - make clean all run-gvsoc
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
     paths:
-      - RISC-V_PULP_Project/nortos/hello_world
+      - nortos/hello_world
 
 gvsoc_pulp_setjmp:
   stage: test
   tags:
     - dolent1
   script:
-    - cd RISC-V_PULP_Project/nortos/setjmp
+    - cd nortos/setjmp
     - make clean all run-gvsoc
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
     paths:
-      - RISC-V_PULP_Project/nortos/setjmp
+      - nortos/setjmp
 
 gvsoc_pulp_uart:
   stage: test
   tags:
     - dolent1
   script:
-    - cd RISC-V_PULP_Project/tests/uart
+    - cd tests/uart
     - make clean all run-gvsoc
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
     paths:
-      - RISC-V_PULP_Project/tests/uart
+      - tests/uart
 
 gvsoc_pulp_semaphore:
   stage: test
   tags:
     - dolent1
   script:
-    - cd RISC-V_PULP_Project/tests/semaphore
+    - cd tests/semaphore
     - make clean all run-gvsoc
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
     paths:
-     - RISC-V_PULP_Project/tests/semaphore
+     - tests/semaphore
 
 gvsoc_pulp_queue:
   stage: test
   tags:
     - dolent1
   script:
-    - cd RISC-V_PULP_Project/tests/queue
+    - cd tests/queue
     - make clean all run-gvsoc
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
     paths:
-      - RISC-V_PULP_Project/tests/queue
+      - tests/queue
 
 gvsoc_pulp_streambufferisr:
   stage: test
   tags:
     - dolent1
   script:
-    - cd RISC-V_PULP_Project/tests/streambufferisr
+    - cd tests/streambufferisr
     - make clean all run-gvsoc
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
     paths:
-      - RISC-V_PULP_Project/tests/streambufferisr
+      - tests/streambufferisr
