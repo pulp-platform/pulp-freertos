@@ -4,6 +4,9 @@
 *.stim
 *.map
 *.su
+*.veri
 rtosdemo*
+gvsim/
 sim/
+sim-*/
 TAGS
