@@ -18,6 +18,9 @@ ifeq ($(strip $(PROG)),)
 $(error "PROG is invalid or empty. Won't be able to compile.")
 endif
 
+# make sure we compile by default
+.DEFAULT_GOAL := all
+
 # dpi specific build targets
 # ifeq ($(DPI),yes)
 include $(SUPPORT_ROOT)/support.mk
@@ -161,10 +164,10 @@ endif
 VSIM_RUN_FLAGS += -gCONFIG_FILE=$(DPI_CONFIG)
 
 .PHONY:
+## Run RTL simulation. Append gui=1 or interactive=1 for vsim gui or vsim shell respectively
 run-sim: run
 
 .PHONY: run
-## Run simulation. Append gui=1 or interactive=1 for vsim gui or vsim shell respectively
 run: $(SIMDIR)/modelsim.ini $(SIMDIR)/boot $(SIMDIR)/tcl_files \
 	$(SIMDIR)/waves $(SIMDIR)/vectors/stim.txt \
 	$(SIMDIR)/stdout $(SIMDIR)/fs \
