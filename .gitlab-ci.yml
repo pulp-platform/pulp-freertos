@@ -151,3 +151,51 @@ gvsoc_pulp_setjmp:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
     paths:
       - RISC-V_PULP_Project/nortos/setjmp
+
+gvsoc_pulp_uart:
+  stage: test
+  tags:
+    - dolent1
+  script:
+    - cd RISC-V_PULP_Project/tests/uart
+    - make clean all run-gvsoc
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - RISC-V_PULP_Project/tests/uart
+
+gvsoc_pulp_semaphore:
+  stage: test
+  tags:
+    - dolent1
+  script:
+    - cd RISC-V_PULP_Project/tests/semaphore
+    - make clean all run-gvsoc
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
+    paths:
+     - RISC-V_PULP_Project/tests/semaphore
+
+gvsoc_pulp_queue:
+  stage: test
+  tags:
+    - dolent1
+  script:
+    - cd RISC-V_PULP_Project/tests/queue
+    - make clean all run-gvsoc
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - RISC-V_PULP_Project/tests/queue
+
+gvsoc_pulp_streambufferisr:
+  stage: test
+  tags:
+    - dolent1
+  script:
+    - cd RISC-V_PULP_Project/tests/streambufferisr
+    - make clean all run-gvsoc
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - RISC-V_PULP_Project/tests/streambufferisr
