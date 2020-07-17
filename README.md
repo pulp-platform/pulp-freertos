@@ -6,6 +6,28 @@ applications on PULP based systems.
 Programs can be run using RTL simulation (simulating the hardware design) or the
 virtual platform (called gvsoc, software emulation of the hardware design).
 
+A book about FreeRTOs can be found
+[here](https://www.freertos.org/Documentation/RTOS_book.html) and the official
+documentation is available on [this website](https://www.freertos.org/features.html).
+
+## Directory structure
+```
+.
+├── apps               Applications that use this FreeRTOS port
+├── bench              RTOS benchmarks
+├── common             Driver code and build system
+├── CONTRIBUTING.md    How to contribute to this repository
+├── demos              Classic FreeRTOS blinky demo
+├── env                Sourcable configuration files to target the desired platform
+├── kernel             FreeRTOs kernel code with PULP specific patches
+├── nortos             Simple programs that don't need FreeRTOS
+├── README.md          Read this
+├── scripts            Various analysis scripts
+├── support            Support libraries for simulation (gvsoc, dpi, etc.)
+├── template           Template projects to get started
+└── tests              Advanced tests using FreeRTOS primitives
+```
+
 ## Getting Started
 You need the following items to develop and run FreeRTOS programs for PULP
 * A centos7 or ubuntu18 based workstation
@@ -61,7 +83,7 @@ by a pseudo device (i.e. not existing in real-hardware). This is useful for
 debugging purposes, but for a more realistic scenario you can look a the
 `test/uart` program.
 
-1. Copy the `template/helloworld` into a directory of your chosing
+1. Copy `template/helloworld` into a directory of your chosing
 2. Run `source env/your-platform.sh` to target the desired platform and make
    `helloworld` aware where to find the FreeRTOS source files and drivers
 3. Run `make all` to compile the example program
@@ -73,11 +95,20 @@ You should see "hello world" being printed to your terminal.
 ### Setting up and running blinky
 Blinky is the canonical FreeRTOS example program. On hardware (FPGA) it will
 blink a led, in the RTL simulation it will toggle an gpio pad and print "blink"
-to stdout and on the virtual platform we just get the latter.
+to stdout and on the virtual platform we just get the latter. Internally the
+program will instantiate two tasks, a receive and a send tasks, that communicate
+with each other over a queue (a FreeRTOS IPC primitive).
 
-(TODO)
+1. Copy `template/blinky` into a directory of your chosing
+2. Run `source env/your-platform.sh` to target the desired platform and make
+   `blinky` aware where to find the FreeRTOS source files and drivers
+3. Run `make all` to compile the example program
+4. Call `make run-sim` to do an RTL simulation or `make run-gvsoc` to do a
+   virtual platform simulation of the example program
 
-#### Tree of your (typical) project
+You should see a stream of "Blink" being printed to stdout.
+
+### Tree of your (typical) project
 Once you have compiled a program your project's tree will roughly look like this
 (here demonstranted on helloworld).
 
@@ -107,23 +138,19 @@ Once you have compiled a program your project's tree will roughly look like this
    aware of this project source files
 5. `make all run-sim` or `make all run-gvsoc` to compile and simulate
 
-## Directory structure
-```
-.
-├── apps               Applications that use this FreeRTOS port
-├── bench              RTOS benchmarks
-├── common             Driver code and build system
-├── CONTRIBUTING.md    How to contribute to this repository
-├── demos              Classic FreeRTOS blinky demo
-├── env                Sourcable configuration files to target the desired platform
-├── kernel             FreeRTOs kernel code with PULP specific patches
-├── nortos             Simple programs that don't need FreeRTOS
-├── README.md          Read this
-├── scripts            Various analysis scripts
-├── support            Support libraries for simulation (gvsoc, dpi, etc.)
-├── template           Template projects to get started
-└── tests              Advanced tests using FreeRTOS primitives
-```
+## Using the Virtual Platform (gvsoc)
+The environment variable `GVSIM_ARGS` can be used to pass arguments to gvsoc.
+Consult the gvsoc documentation for what kind of arguments are allowed.
+
+Here a few typical and useful invocations
+* `make run-gvsoc GVSIM_ARGS="--trace=insn"` - run program and instruction trace
+  to stdout
+* `make run-gvsoc GVSIM_ARGS="--trace=.*:log.txt` - trace everything to `log.txt`
+* `make run-gvsoc GVSIM_ARGS="--trace=insn:insn.txt --trace=l2:l2.txt"` - trace
+  instructions to `insn.txt` and l2 memory access to `l2.txt`
+
+## Environment Variables
+(TODO)
 
 ## Developer Notes
 `assert()` from `#include <assert.h>` calls `__assert_func`, `fiprintf` then

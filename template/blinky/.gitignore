@@ -1,0 +1,4 @@
+blinky
+sim/
+gvsim/
+*.o
