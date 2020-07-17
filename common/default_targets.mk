@@ -212,7 +212,7 @@ run-gvsoc: $(GVSIMDIR) gvsoc
 	cp $(PROG).map $(GVSIMDIR)
 	PULP_RISCV_GCC_TOOLCHAIN=$(PULP_RISCV_GCC_TOOLCHAIN) \
 	$(GVSOC) --config-file=pulp@config_file=chips/pulp/pulp.json --platform=gvsoc \
-		--dir=$(CURDIR)/$(GVSIMDIR) --binary=$(PROG) prepare run
+		--dir=$(CURDIR)/$(GVSIMDIR) --binary=$(PROG) prepare run $(GVSIM_ARGS)
 
 # analysis scripts
 $(SIMDIR)/trace_%_postproc.log: $(SIMDIR)/trace_core_%.log

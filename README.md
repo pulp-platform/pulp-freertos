@@ -138,6 +138,17 @@ Once you have compiled a program your project's tree will roughly look like this
    aware of this project source files
 5. `make all run-sim` or `make all run-gvsoc` to compile and simulate
 
+## Using the Virtual Platform (gvsoc)
+The environment variable `GVSIM_ARGS` can be used to pass arguments to gvsoc.
+Consult the gvsoc documentation for what kind of arguments are allowed.
+
+Here a few typical and useful invocations
+* `make run-gvsoc GVSIM_ARGS="--trace=insn"` - run program and instruction trace
+  to stdout
+* `make run-gvsoc GVSIM_ARGS="--trace=.*:log.txt` - trace everything to `log.txt`
+* `make run-gvsoc GVSIM_ARGS="--trace=insn:insn.txt --trace=l2:l2.txt"` - trace
+  instructions to `insn.txt` and l2 memory access to `l2.txt`
+
 ## Environment Variables
 (TODO)
 
