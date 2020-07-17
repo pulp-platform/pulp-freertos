@@ -17,14 +17,14 @@ OBJDUMP		= $(RISCV_PREFIX)objdump
 SIZE		= $(RISCV_PREFIX)size
 
 # set some project specific path variables
-ifndef PROJ_ROOT
-$(error "PROJ_ROOT is unset. Point it to this project's root directory.")
+ifndef FREERTOS_PROJ_ROOT
+$(error "FREERTOS_PROJ_ROOT is unset. Point it to this project's root directory.")
 endif
 
-RTOS_ROOT    = $(PROJ_ROOT)/kernel
-COMMON_ROOT  = $(PROJ_ROOT)/common
-SCRIPTS_ROOT = $(PROJ_ROOT)/scripts
-SUPPORT_ROOT = $(PROJ_ROOT)/support
+RTOS_ROOT    = $(FREERTOS_PROJ_ROOT)/kernel
+COMMON_ROOT  = $(FREERTOS_PROJ_ROOT)/common
+SCRIPTS_ROOT = $(FREERTOS_PROJ_ROOT)/scripts
+SUPPORT_ROOT = $(FREERTOS_PROJ_ROOT)/support
 
 # CFLAGS defaults explained
 #
