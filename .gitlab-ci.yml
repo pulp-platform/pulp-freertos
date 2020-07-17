@@ -55,6 +55,7 @@ vsim_pulp_semaphore:
   tags:
     - dolent1
   script:
+    - source env/pulp.sh
     - source pulp/setup/vsim.sh
     - cd tests/semaphore
     - make clean all run
@@ -68,6 +69,7 @@ vsim_pulp_queue:
   tags:
     - dolent1
   script:
+    - source env/pulp.sh
     - source pulp/setup/vsim.sh
     - cd tests/queue
     - make clean all run
@@ -81,6 +83,7 @@ vsim_pulp_streambufferisr:
   tags:
     - dolent1
   script:
+    - source env/pulp.sh
     - source pulp/setup/vsim.sh
     - cd tests/streambufferisr
     - make clean all run
@@ -94,6 +97,7 @@ vsim_pulp_uart:
   tags:
     - dolent1
   script:
+    - source env/pulp.sh
     - source pulp/setup/vsim.sh
     - cd tests/uart
     - make clean all run
@@ -107,6 +111,7 @@ vsim_pulp_hello_world_pmsis:
   tags:
     - dolent1
   script:
+    - source env/pulp.sh
     - source pulp/setup/vsim.sh
     - cd tests/hello_world_pmsis
     - make clean all run
@@ -120,6 +125,7 @@ vsim_pulp_spi:
   tags:
     - dolent1
   script:
+    - source env/pulp.sh
     - source pulp/setup/vsim.sh
     - cd tests/spi
     - make clean all run DPI=yes
@@ -133,6 +139,7 @@ gvsoc_pulp_hello_world:
   tags:
     - dolent1
   script:
+    - source env/pulp.sh
     - cd nortos/hello_world
     - make clean all run-gvsoc
   artifacts:
@@ -145,6 +152,7 @@ gvsoc_pulp_setjmp:
   tags:
     - dolent1
   script:
+    - source env/pulp.sh
     - cd nortos/setjmp
     - make clean all run-gvsoc
   artifacts:
@@ -157,6 +165,7 @@ gvsoc_pulp_uart:
   tags:
     - dolent1
   script:
+    - source env/pulp.sh
     - cd tests/uart
     - make clean all run-gvsoc
   artifacts:
@@ -169,6 +178,7 @@ gvsoc_pulp_semaphore:
   tags:
     - dolent1
   script:
+    - source env/pulp.sh
     - cd tests/semaphore
     - make clean all run-gvsoc
   artifacts:
@@ -181,6 +191,7 @@ gvsoc_pulp_queue:
   tags:
     - dolent1
   script:
+    - source env/pulp.sh
     - cd tests/queue
     - make clean all run-gvsoc
   artifacts:
@@ -193,6 +204,7 @@ gvsoc_pulp_streambufferisr:
   tags:
     - dolent1
   script:
+    - source env/pulp.sh
     - cd tests/streambufferisr
     - make clean all run-gvsoc
   artifacts:

@@ -26,7 +26,7 @@ PULP_SRCS += $(COMMON_ROOT)/libc/syscalls.c # syscall shims / implementation
 endif
 PULP_SRCS += $(COMMON_ROOT)/chips/crt0.S $(COMMON_ROOT)/chips/vectors.S
 
-ifeq ($(FREERTOS_CONFIG),PULP)
+ifeq ($(FREERTOS_CONFIG_FAMILY),PULP)
 PULP_SRCS += $(COMMON_ROOT)/chips/system_pulpissimo_ri5cy.c
 else ifeq ($(FREERTOS_CONFIG),PULPISSIMO)
 PULP_SRCS += $(COMMON_ROOT)/chips/system_pulpissimo_ri5cy.c
@@ -35,7 +35,7 @@ PULP_SRCS += $(COMMON_ROOT)/chips/system_pulpissimo_ri5cy.c
 else ifeq ($(FREERTOS_CONFIG),GAP8)
 $(error "GAP8 is not supported (yet)")
 else
-$(error "FREERTOS_CONFIG is unset. Run `source env/platform-you-want.sh' \
+$(error "FREERTOS_CONFIG_FAMILY is unset. Run `source env/platform-you-want.sh' \
 	from the freertos project's root folder.")
 endif
 # drivers and runtime
