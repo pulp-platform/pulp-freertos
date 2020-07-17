@@ -14,15 +14,11 @@ stages:
 
 fetch_gcc:
   stage: fetch
-  tags:
-    - dolent1
   script:
     - echo "FIXME using balasr hardcoded path"
 
 fetch_pulp:
   stage: fetch
-  tags:
-    - dolent1
   script:
      - git clone https://github.com/pulp-platform/pulp
      - cd pulp
@@ -38,22 +34,16 @@ fetch_pulp:
 
 test_demos:
   stage: test
-  tags:
-    - dolent1
   script:
     - echo "FIXME run demos tests"
 
 test_apps:
   stage: test
-  tags:
-    - dolent1
   script:
     - echo "FIXME add app tests"
 
 vsim_pulp_semaphore:
   stage: test
-  tags:
-    - dolent1
   script:
     - source env/pulp.sh
     - source pulp/setup/vsim.sh
@@ -66,8 +56,6 @@ vsim_pulp_semaphore:
 
 vsim_pulp_queue:
   stage: test
-  tags:
-    - dolent1
   script:
     - source env/pulp.sh
     - source pulp/setup/vsim.sh
@@ -80,8 +68,6 @@ vsim_pulp_queue:
 
 vsim_pulp_streambufferisr:
   stage: test
-  tags:
-    - dolent1
   script:
     - source env/pulp.sh
     - source pulp/setup/vsim.sh
@@ -94,8 +80,6 @@ vsim_pulp_streambufferisr:
 
 vsim_pulp_uart:
   stage: test
-  tags:
-    - dolent1
   script:
     - source env/pulp.sh
     - source pulp/setup/vsim.sh
@@ -108,8 +92,6 @@ vsim_pulp_uart:
 
 vsim_pulp_hello_world_pmsis:
   stage: test
-  tags:
-    - dolent1
   script:
     - source env/pulp.sh
     - source pulp/setup/vsim.sh
@@ -122,8 +104,6 @@ vsim_pulp_hello_world_pmsis:
 
 vsim_pulp_spi:
   stage: test
-  tags:
-    - dolent1
   script:
     - source env/pulp.sh
     - source pulp/setup/vsim.sh
@@ -136,8 +116,6 @@ vsim_pulp_spi:
 
 gvsoc_pulp_hello_world:
   stage: test
-  tags:
-    - dolent1
   script:
     - source env/pulp.sh
     - cd nortos/hello_world
@@ -149,8 +127,6 @@ gvsoc_pulp_hello_world:
 
 gvsoc_pulp_setjmp:
   stage: test
-  tags:
-    - dolent1
   script:
     - source env/pulp.sh
     - cd nortos/setjmp
@@ -162,8 +138,6 @@ gvsoc_pulp_setjmp:
 
 gvsoc_pulp_uart:
   stage: test
-  tags:
-    - dolent1
   script:
     - source env/pulp.sh
     - cd tests/uart
@@ -175,8 +149,6 @@ gvsoc_pulp_uart:
 
 gvsoc_pulp_semaphore:
   stage: test
-  tags:
-    - dolent1
   script:
     - source env/pulp.sh
     - cd tests/semaphore
@@ -188,8 +160,6 @@ gvsoc_pulp_semaphore:
 
 gvsoc_pulp_queue:
   stage: test
-  tags:
-    - dolent1
   script:
     - source env/pulp.sh
     - cd tests/queue
@@ -201,8 +171,6 @@ gvsoc_pulp_queue:
 
 gvsoc_pulp_streambufferisr:
   stage: test
-  tags:
-    - dolent1
   script:
     - source env/pulp.sh
     - cd tests/streambufferisr
