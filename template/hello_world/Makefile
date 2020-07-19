@@ -26,17 +26,17 @@
 
 # indicate this repository's root folder
 # set some project specific path variables
-ifndef PROJ_ROOT
-$(error "PROJ_ROOT is unset. Run source env/platform-you-want.sh \
+ifndef FREERTOS_PROJ_ROOT
+$(error "FREERTOS_PROJ_ROOT is unset. Run source env/platform-you-want.sh \
 	from the freertos project's root folder.")
 endif
 
 
 # good defaults for many environment variables
-include $(PROJ_ROOT)/common/default_flags.mk
+include $(FREERTOS_PROJ_ROOT)/common/default_flags.mk
 
 # rtos and pulp sources, minimal
-include $(PROJ_ROOT)/common/freertos_metal_srcs.mk
+include $(FREERTOS_PROJ_ROOT)/common/freertos_metal_srcs.mk
 
 # application name
 PROG = helloworld
@@ -50,4 +50,4 @@ CPPFLAGS += $(addprefix -I, ".")
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=undefined_handler
 
 # compile, simulation and analysis targets
-include $(PROJ_ROOT)/common/default_targets.mk
+include $(FREERTOS_PROJ_ROOT)/common/default_targets.mk

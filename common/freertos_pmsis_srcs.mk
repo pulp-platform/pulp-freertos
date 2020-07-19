@@ -25,14 +25,13 @@ ifneq ($(LIBC),no)
 PULP_SRCS += $(COMMON_ROOT)/libc/syscalls.c # syscall shims / implementation
 endif
 PULP_SRCS += $(COMMON_ROOT)/chips/crt0.S $(COMMON_ROOT)/chips/vectors.S
-# drivers and runtime
+# metal drivers and runtime
 PULP_SRCS += $(addprefix $(COMMON_ROOT)/metal/, \
 		fll.c timer_irq.c irq.c soc_eu.c gpio.c pinmux.c)
+CPPFLAGS += -I"$(COMMON_ROOT)/metal/include"
 # TODO: hardcoded target_pulp path
 PULP_SRCS += $(addprefix $(COMMON_ROOT)/target_pulp/, \
 		system_pulp_ri5cy.c)
 CPPFLAGS += -I"$(COMMON_ROOT)/target_pulp/include"
-# driver headers
-CPPFLAGS += -I"$(COMMON_ROOT)/include"
 
 include $(COMMON_ROOT)/pmsis_srcs.mk

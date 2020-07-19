@@ -24,12 +24,25 @@ CPPFLAGS  += -I"$(RTOS_ROOT)/portable/GCC/RISC-V/chip_specific_extensions/PULPis
 ifneq ($(LIBC),no)
 PULP_SRCS += $(COMMON_ROOT)/libc/syscalls.c # syscall shims / implementation
 endif
-PULP_SRCS += $(COMMON_ROOT)/chips/crt0.S $(COMMON_ROOT)/chips/vectors.S \
-		$(COMMON_ROOT)/chips/system_pulpissimo_ri5cy.c
+PULP_SRCS += $(COMMON_ROOT)/chips/crt0.S $(COMMON_ROOT)/chips/vectors.S
+
+ifeq ($(FREERTOS_CONFIG_FAMILY),PULP)
+PULP_SRCS += $(COMMON_ROOT)/chips/system_pulpissimo_ri5cy.c
+else ifeq ($(FREERTOS_CONFIG),PULPISSIMO)
+PULP_SRCS += $(COMMON_ROOT)/chips/system_pulpissimo_ri5cy.c
+else ifeq ($(FREERTOS_CONFIG),MRWOLF)
+PULP_SRCS += $(COMMON_ROOT)/chips/system_pulpissimo_ri5cy.c
+else ifeq ($(FREERTOS_CONFIG),GAP8)
+$(error "GAP8 is not supported (yet)")
+else
+$(error "FREERTOS_CONFIG_FAMILY is unset. Run `source env/platform-you-want.sh' \
+	from the freertos project's root folder.")
+endif
 # drivers and runtime
 PULP_SRCS += $(addprefix $(COMMON_ROOT)/metal/, \
 		fll.c timer_irq.c irq.c soc_eu.c gpio.c pinmux.c)
+CPPFLAGS += -I"$(COMMON_ROOT)/metal/include"
+
+# platform specific
 CPPFLAGS += -I"$(COMMON_ROOT)/target_pulp/include"
 
-# driver headers
-CPPFLAGS += -I"$(COMMON_ROOT)/include"

@@ -273,8 +273,29 @@ clean:
 distclean: clean
 	rm -rf $(SUPPORT_ROOT)/install/*
 
+.PHONY: show-config
+## Show current configuration
+show-config:
+	@printf "Project settings:\n"
+	@printf "FREERTOS_PROJ_ROOT=$(FREERTOS_PROJ_ROOT)\n"
+	@printf "FREERTOS_CONFIG_FAMILY=$(FREERTOS_CONFIG)\n"
+	@printf "\n"
+	@printf "Compiler settings:\n"
+	@printf "CC=$(CC)\n"
+	@printf "CFLAGS=\"$(CFLAGS)\"\n"
+	@printf "CPPFLAGS=\"$(CPPFLAGS)\"\n"
+	@printf "\n"
+	@printf "Assembler settings:\n"
+	@printf "AS=$(CC)\n"
+	@printf "ASFLAGS=\"$(ASFLAGS)\"\n"
+	@printf "\n"
+	@printf "Linker settings:\n"
+	@printf "LDFLAGS=\"$(LDFLAGS)\"\n"
+	@printf "LDLIBS=\"$(LDLIBS)\"\n"
+
+.PHONY: help
 ## Generate help overview
-help : Makefile
+help: Makefile
 	@printf "Available targets\n\n"
 	@awk '/^[a-zA-Z\-\_0-9]+:/ { \
 		helpMessage = match(lastLine, /^## (.*)/); \
