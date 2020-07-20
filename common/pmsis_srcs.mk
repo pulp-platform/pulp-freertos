@@ -45,4 +45,4 @@ CPPFLAGS += -I"$(PMSIS_ROOT)/pmsis_implem_pulp/include/cores/TARGET_RISCV_32"
 PULP_SRCS += $(PMSIS_ROOT)/backend/pmsis_backend_native_task_api.c
 
 # TOOD: remove gap specific
-CPPFLAGS += -I"$(COMMON_ROOT)/target_pulp/driver"
+CPPFLAGS += -I"$(COMMON_ROOT)/target/pulp/driver"

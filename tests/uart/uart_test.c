@@ -20,7 +20,7 @@
 #include <inttypes.h>
 
 /* system includes */
-#include "system_pulpissimo_ri5cy.h"
+#include "system_pmsis.h"
 #include "timer_irq.h"
 #include "fll.h"
 #include "irq.h"

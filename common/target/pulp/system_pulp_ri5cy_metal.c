@@ -52,7 +52,7 @@
 #include <FreeRTOS.h>
 #include "FreeRTOSConfig.h"
 
-#include "system_pulpissimo_ri5cy.h"
+#include "system_pulp_ri5cy_metal.h"
 
 #include "fll.h"
 #include "irq.h"

@@ -1,7 +1,7 @@
 /*
 ** ###################################################################
-**     Processors:          PULPissimo_RI5CY
-**                          PULPissimo_RI5CY
+**     Processors:          PULP_RI5CY
+**                          PULP_RI5CY
 **
 **     Compilers:           GNU C Compiler
 **
@@ -34,10 +34,10 @@
 */
 
 /*!
- * @file system_pulpissimo_ri5cy.h
+ * @file system_pulp_ri5cy.h
  * @version 0.1
  * @date 2019-09-09
- * @brief Device specific configuration file for PULPissimo_RI5CY (header
+ * @brief Device specific configuration file for PULP_RI5CY (header
  *        file)
  *
  * Provides a system configuration function and a global variable that contains
@@ -45,8 +45,8 @@
  * (PLL) that is part of the microcontroller device.
  */
 
-#ifndef _SYSTEM_PULPISSIMO_RI5CY_H_
-#define _SYSTEM_PULPISSIMO_RI5CY_H_          /**< Symbol preventing repeated inclusion */
+#ifndef __SYSTEM_PULPISSIMO_RI5CY_H
+#define __SYSTEM_PULPISSIMO_RI5CY_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -57,47 +57,7 @@ extern "C" {
 
 #include "FreeRTOSConfig.h"
 
-/* PULPissimo defs */
-#define PULPISSIMO
-
-#define ARCHI_FPGA_FREQUENCY 5000000
-
-#define ARCHI_REF_CLOCK_LOG2 15
-#define ARCHI_REF_CLOCK	     (1 << ARCHI_REF_CLOCK_LOG2)
-
-/* hardware modules */
-#define ARCHI_NUM_TIMER 1
-#define ARCHI_NUM_FLL 2
-
-/* TODO: clean up those macros */
-#define ARCHI_FPGA_FREQUENCY 5000000
-
-#define ARCHI_REF_CLOCK_LOG2 15
-#define ARCHI_REF_CLOCK	     (1 << ARCHI_REF_CLOCK_LOG2)
-
-#define ARCHI_NB_FLL	  2
-#define RT_FREQ_NB_DOMAIN 2
-
-#define __RT_FLL_CL	2
-#define __RT_FLL_PERIPH 1
-#define __RT_FLL_FC	0
-
-#define __RT_FREQ_DOMAIN_FC	0
-#define __RT_FREQ_DOMAIN_CL	2
-#define __RT_FREQ_DOMAIN_PERIPH 1
-#define RT_FREQ_NB_DOMAIN	2
-
-
-/* Define clock source values */
-// TODO: check
-//#define CPU_XTAL_CLK_HZ                 8000000u            /* Value of the external crystal or oscillator clock frequency in Hz */
-
-/* Low power mode enable */
-/* SMC_PMPROT: AHSRUN=1, AVLP=1,ALLS=1,AVLLS=0x3 */
-// TODO: check
-// #define SYSTEM_SMC_PMPROT_VALUE        0xABu               /* SMC_PMPROT */
-// #define SYSTEM_SMC_PMCTRL_VALUE        0x0u                /* SMC_PMCTRL */
-
+#define DEFAULT_SYSTEM_CLOCK 50000000u /* Default System clock value */
 
 /**
  * @brief System clock frequency (core clock)
@@ -117,7 +77,7 @@ extern volatile uint32_t system_core_clock;
  * microcontroller device. For systems with variable clock speed it also updates
  * the variable SystemCoreClock. SystemInit is called from startup_device file.
  */
-void pulp_sys_init (void);
+void system_init (void);
 
 /**
  * @brief Updates the SystemCoreClock variable.
@@ -199,4 +159,4 @@ void EVENT_SystemReset(void);
 }
 #endif
 
-#endif  /* _SYSTEM_PULPISSIMO_RI5CY_H_ */
+#endif  /* _SYSTEM_PULP_RI5CY_H_ */
