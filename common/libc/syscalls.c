@@ -57,6 +57,8 @@ extern int errno;
 #define _read	read
 #define _fstat	fstat
 #define _isatty isatty
+#define _kill   kill
+#define _getpid getpid
 #endif
 
 ssize_t _write(int file, const void *ptr, size_t len);
