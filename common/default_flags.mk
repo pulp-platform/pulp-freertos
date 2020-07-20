@@ -26,6 +26,9 @@ COMMON_ROOT  = $(FREERTOS_PROJ_ROOT)/common
 SCRIPTS_ROOT = $(FREERTOS_PROJ_ROOT)/scripts
 SUPPORT_ROOT = $(FREERTOS_PROJ_ROOT)/support
 
+# test if gcc is newer than version 8
+GCC_GTEQ_8 = $(shell expr `$(CC) -dumpversion | cut -f1 -d.` \>= 8)
+
 # CFLAGS defaults explained
 #
 # -std=gnu11
@@ -116,8 +119,17 @@ else
 # part it works well; our implementation overwrites the one from libgloss, but
 # when enabling LTO everything breaks apart because of duplicate symbols. So we
 # do it the proper way: link everything by hand.
+
+ifeq ($(GCC_GTEQ_8), 1)
+# newer gcc
 LDFLAGS     += -nolibc -static
 LDLIBS      += -lc_nano -lm_nano
+else
+# legacy link for older gcc (namely pulp-gcc)
+LDFLAGS     += -nostdlib -static
+LDLIBS      += -lgcc -lc -lm -lgcc
+endif
+
 CPPFLAGS    += -D__PULP_USE_LIBC
 endif
 
