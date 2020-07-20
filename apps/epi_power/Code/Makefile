@@ -64,7 +64,7 @@ CFLAGS = \
 	-Wall -Wextra -Wshadow -Wformat=2 -Wundef \
 	-Wno-unused-parameter -Wno-unused-variable \
 	-O3 -g3 \
-	-DFEATURE_CLUSTER=0 -D__PULP__=1 -DDEBUG -D__PULP_TRACE__
+	-DFEATURE_CLUSTER=0 -D__PULP__=1 -DNDEBUG
 
 ASFLAGS = \
 	-march=rv32imac -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore \
@@ -72,7 +72,7 @@ ASFLAGS = \
 	-x assembler-with-cpp
 
 ifeq ($(opt1),yes)
-# opt1: emac, no hwloop regs
+# opt1: emac, no hwloop regs, vectored context switch
 CFLAGS = \
 	-march=rv32emac -mabi=ilp32e -msmall-data-limit=8 -mno-save-restore \
 	-fsigned-char -ffunction-sections -fdata-sections \
@@ -80,15 +80,15 @@ CFLAGS = \
 	-Wall -Wextra -Wshadow -Wformat=2 -Wundef \
 	-Wno-unused-parameter -Wno-unused-variable \
 	-O3 -g3 \
-	-DFEATURE_CLUSTER=0 -D__PULP__=1 -DDEBUG -D__PULP_TRACE__ \
+	-DFEATURE_CLUSTER=0 -D__PULP__=1 -DNDEBUG \
 	-DportasmSKIP_ADDITIONAL_REGISTERS
 
 ASFLAGS = \
 	-march=rv32emac -mabi=ilp32e -msmall-data-limit=8 -mno-save-restore \
 	-fsigned-char -ffunction-sections -fdata-sections \
 	-x assembler-with-cpp \
-	-DportasmSKIP_ADDITIONAL_REGISTERS
-
+	-DportasmSKIP_ADDITIONAL_REGISTERS \
+	-DPULP_FREERTOS_VECTORED_CONTEXT_SWITCH
 endif
 
 # rtos, pulp and pmsis sources
