@@ -64,8 +64,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* PULPissimo includes. */
-#include "system_pulpissimo_ri5cy.h"
+/* driver includes */
+#include "system_pmsis.h"
 #include "timer_irq.h"
 #include "fll.h"
 #include "irq.h"

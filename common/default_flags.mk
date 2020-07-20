@@ -89,7 +89,7 @@ ASFLAGS = \
 CPPFLAGS =
 
 # TODO: ugly path reference
-LDFLAGS	= -T $(COMMON_ROOT)/chips/pulpissimo/link.ld \
+LDFLAGS	= -T $(COMMON_ROOT)/target/$(FREERTOS_CONFIG_FAMILY)/link.ld \
 		-nostartfiles -Wl,--gc-sections -Wl,-Map,$@.map # -Wl,--print-gc-sections
 LDLIBS =
 

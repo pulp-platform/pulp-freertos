@@ -24,15 +24,19 @@ CPPFLAGS  += -I"$(RTOS_ROOT)/portable/GCC/RISC-V/chip_specific_extensions/PULPis
 ifneq ($(LIBC),no)
 PULP_SRCS += $(COMMON_ROOT)/libc/syscalls.c # syscall shims / implementation
 endif
-PULP_SRCS += $(COMMON_ROOT)/chips/crt0.S $(COMMON_ROOT)/chips/vectors.S
+PULP_SRCS += $(COMMON_ROOT)/target/crt0.S $(COMMON_ROOT)/target/vectors.S
 
-ifeq ($(FREERTOS_CONFIG_FAMILY),PULP)
-PULP_SRCS += $(COMMON_ROOT)/chips/system_pulpissimo_ri5cy.c
-else ifeq ($(FREERTOS_CONFIG),PULPISSIMO)
-PULP_SRCS += $(COMMON_ROOT)/chips/system_pulpissimo_ri5cy.c
-else ifeq ($(FREERTOS_CONFIG),MRWOLF)
-PULP_SRCS += $(COMMON_ROOT)/chips/system_pulpissimo_ri5cy.c
-else ifeq ($(FREERTOS_CONFIG),GAP8)
+# target/platform specific includes and srcs
+ifeq ($(FREERTOS_CONFIG_FAMILY),pulp)
+PULP_SRCS += $(COMMON_ROOT)/target/pulp/system_pulp_ri5cy_metal.c
+CPPFLAGS += -I"$(COMMON_ROOT)/target/pulp/include"
+else ifeq ($(FREERTOS_CONFIG_FAMILY),pulpissimo)
+PULP_SRCS += $(COMMON_ROOT)/target/pulpissimo/system_pulpissimo_ri5cy_metal.c
+CPPFLAGS += -I"$(COMMON_ROOT)/target/pulpissimo/include"
+else ifeq ($(FREERTOS_CONFIG_FAMILY),mrwolf)
+PULP_SRCS += $(COMMON_ROOT)/target/mrwolf/system_mrwolf_metal.c
+CPPFLAGS += -I"$(COMMON_ROOT)/target/mrwolf/include"
+else ifeq ($(FREERTOS_CONFIG_FAMILY),gap8)
 $(error "GAP8 is not supported (yet)")
 else
 $(error "FREERTOS_CONFIG_FAMILY is unset. Run `source env/platform-you-want.sh' \
@@ -42,7 +46,4 @@ endif
 PULP_SRCS += $(addprefix $(COMMON_ROOT)/metal/, \
 		fll.c timer_irq.c irq.c soc_eu.c gpio.c pinmux.c)
 CPPFLAGS += -I"$(COMMON_ROOT)/metal/include"
-
-# platform specific
-CPPFLAGS += -I"$(COMMON_ROOT)/target_pulp/include"
 

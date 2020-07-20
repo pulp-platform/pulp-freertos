@@ -23,7 +23,7 @@
 
 #include <stdint.h>
 
-#include "system_pulpissimo_ri5cy.h"
+#include "system_metal.h"
 #include "pulp_mem_map.h"
 #include "pulp_io.h"
 

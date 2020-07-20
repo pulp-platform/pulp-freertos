@@ -39,5 +39,6 @@ $(shell find "$(SUPPORT_ROOT)/gvsoc" -name '*.cpp' -o -name '*.hpp' -o -name '*.
 	$(MAKE) -C "$(SUPPORT_ROOT)/gvsoc" build ARCHI_DIR=$(SUPPORT_ROOT)/archi/include
 
 
+# TODO proper clean targets that are not buggy...
 clean-gvsoc:
 	$(MAKE) -C "$(SUPPORT_ROOT)/gvsoc" clean

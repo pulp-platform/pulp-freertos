@@ -29,7 +29,11 @@ vector_table:
 	j freertos_risc_v_trap_handler
 	j freertos_risc_v_trap_handler
 	j freertos_risc_v_trap_handler
+#ifdef __PULP_FREERTOS_VECTORED_CONTEXT_SWITCH
+	j freertos_risc_v_context_switch_handler
+#else
 	j freertos_risc_v_trap_handler
+#endif
 	j freertos_risc_v_trap_handler
 	j freertos_risc_v_trap_handler
 	j freertos_risc_v_trap_handler
