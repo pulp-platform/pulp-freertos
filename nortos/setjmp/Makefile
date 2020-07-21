@@ -43,7 +43,7 @@ PROG = setjmptest
 USER_SRCS = setjmptest.c
 
 # FreeRTOS.h
-CPPFLAGS += $(addprefix -I, ".")
+CPPFLAGS += $(addprefix -I$(VPATH)/, ".")
 
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=undefined_handler
 

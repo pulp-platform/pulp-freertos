@@ -44,7 +44,7 @@ PROG = blinky
 USER_SRCS = main.c blinky_demo/main_blinky.c
 
 # user headers
-CPPFLAGS += $(addprefix -I, ".")
+CPPFLAGS += $(addprefix -I$(VPATH)/, ".")
 
 # point to irq handler
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler

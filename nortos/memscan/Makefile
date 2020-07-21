@@ -43,7 +43,7 @@ PROG = memscan
 USER_SRCS = memscan.c
 
 # FreeRTOS.h
-CPPFLAGS += $(addprefix -I, ".")
+CPPFLAGS += $(addprefix -I$(VPATH)/, ".")
 
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=undefined_handler
 

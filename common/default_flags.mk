@@ -26,6 +26,10 @@ COMMON_ROOT  = $(FREERTOS_PROJ_ROOT)/common
 SCRIPTS_ROOT = $(FREERTOS_PROJ_ROOT)/scripts
 SUPPORT_ROOT = $(FREERTOS_PROJ_ROOT)/support
 
+# For out tree builds. We set a default for regular builds to make handling
+# simpler
+VPATH = .
+
 # test if gcc is newer than version 8
 GCC_GTEQ_8 = $(shell expr `$(CC) -dumpversion | cut -f1 -d.` \>= 8)
 
