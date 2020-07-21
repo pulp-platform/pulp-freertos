@@ -54,7 +54,7 @@ PROG = hello_world_pmsis
 USER_SRCS = hello_world_pmsis.c
 
 # FreeRTOS.h
-CPPFLAGS += $(addprefix -I, ".")
+CPPFLAGS += $(addprefix -I$(VPATH)/, ".")
 
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
 CPPFLAGS += -DUSE_STDIO

@@ -43,7 +43,7 @@ PROG = helloworld
 USER_SRCS = helloworld.c
 
 # FreeRTOS.h
-CPPFLAGS += $(addprefix -I, ".")
+CPPFLAGS += $(addprefix -I$(VPATH)/, ".")
 
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=undefined_handler
 

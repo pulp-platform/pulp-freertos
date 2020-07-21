@@ -54,7 +54,7 @@ PROG = uart_test
 USER_SRCS = uart_test.c
 
 # FreeRTOS.h
-CPPFLAGS += $(addprefix -I, ".")
+CPPFLAGS += $(addprefix -I$(VPATH)/, ".")
 
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
 CPPFLAGS += -DUSE_STDIO

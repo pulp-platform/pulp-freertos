@@ -64,7 +64,7 @@ USER_SRCS = main.c blinky_demo/main_blinky.c full_demo/RegTest.S \
 	shared/Minimal/MessageBufferDemo.c
 
 # user headers
-CPPFLAGS += $(addprefix -I, "shared/include" ".")
+CPPFLAGS += $(addprefix -I$(VPATH)/, "shared/include" ".")
 
 # point to irq handler
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler

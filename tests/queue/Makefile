@@ -43,7 +43,7 @@ PROG = queue
 USER_SRCS = queue.c
 
 # FreeRTOS.h
-CPPFLAGS += $(addprefix -I, ".")
+CPPFLAGS += $(addprefix -I$(VPATH)/, ".")
 
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
 CPPFLAGS += -DUSE_STDIO

@@ -152,6 +152,21 @@ Here a few typical and useful invocations
 ## Environment Variables
 (TODO)
 
+## Custom Build Directory and Out-Of-Tree Builds
+Out-of-Tree builds and by extension custom build directories are supported using
+GNU Make's `VPATH` feature, though a bit unwieldy. You need to cd into the
+desired build directory and invoke `make` from there pointing to the program's
+Makefile with by providing an appropriate argument to the `-f` switch and
+setting `VPATH` to point to the program's source directory.
+
+Example of using a custom build directory:
+```bash
+cd nortos/hello_world
+mkdir build
+cd build
+make -f ../makefile all VPATH=..
+```
+
 ## Developer Notes
 `assert()` from `#include <assert.h>` calls `__assert_func`, `fiprintf` then
 `abort`. This is all in newlib.
