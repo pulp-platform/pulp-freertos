@@ -6,7 +6,7 @@
  ******************************************************************************/
 /*
  * Copyright (c) 2009-2017 ARM Limited. All rights reserved.
- * Copyright (c) 20202 ETH Zurich
+ * Copyright (c) 2020 ETH Zurich
  *
  * SPDX-License-Identifier: Apache-2.0
  *
