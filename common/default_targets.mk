@@ -216,7 +216,7 @@ run-gvsoc: $(GVSIMDIR) gvsoc
 
 # analysis scripts
 $(SIMDIR)/trace_%_postproc.log: $(SIMDIR)/trace_core_%.log
-	$(PULPTRACE) --stats --cycles $^ $(PROG) -o $@
+	$(PULPTRACE) --time --stats --cycles $^ $(PROG) -o $@
 
 ## Symbolize simulation instruction trace log using the the original executable
 trace-symbolize: $(SIMDIR)/trace_1f_0_postproc.log
