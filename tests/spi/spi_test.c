@@ -1,8 +1,23 @@
 /*
-* SPDX-License-Identifier: Apache-2.0
-* Author: Greenwaves-Technologies
-*         Robert Balas (balasr@iis.ee.ethz.ch)
-*/
+ * Copyright 2020 Greenwaves Technologies
+ * Copyright 2020 ETH Zurich
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * Author: Germain Hagou
+ *         Robert Balas (balasr@iis.ee.ethz.ch)
+ */
 
 /*
  * Test if we can write to spi using pmsis
@@ -223,7 +238,6 @@ static int test_entry()
 	printf("starting error check\n");
 	int error = 0;
 	for (int i = 0; i < total_size; i++) {
-		//printf("%d: @%p: %x @%p: %x\n", i, &rx_buffer[i], rx_buffer[i], &tx_buffer[i], tx_buffer[i]);
 		if (rx_buffer[i] != tx_buffer[i]) {
 			if (error == 0)
 				printf("First error at index %d, expected 0x%x, got 0x%x at %p\n",

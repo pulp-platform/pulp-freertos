@@ -2,7 +2,7 @@
  * Based on riscv newlib libgloss/riscv/sys_*.c
  *
  * Copyright 2019 Clifford Wolf
- * Copyright 2020 ETH Zürich and University of Bologna
+ * Copyright 2020 ETH Zurich and University of Bologna
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above

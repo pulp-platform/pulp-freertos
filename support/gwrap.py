@@ -14,9 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+# SPDX-License-Identifier: Apache-2.0
+# Author: Robert Balas (balasr@iis.ee.ethz.ch)
 
 # Description: Instantiate gvsoc runner
-# Authors: Robert Balas (balasr@iis.ee.ethz.ch)
 
 import sys
 import os

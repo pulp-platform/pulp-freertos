@@ -1,4 +1,4 @@
-# Copyright 2019 ETH Zurich and University of Bologna
+# Copyright 2020 ETH Zurich
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,12 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
+# SPDX-License-Identifier: Apache-2.0
+# Author: Robert Balas (balasr@iis.ee.ethz.ch)
 
 # Description: Makefile to build the blinky and other demo applications. Note
 # that it supports the usual GNU Make implicit variables e.g. CC, CFLAGS,
 # CPPFLAGS etc. Consult the GNU Make manual for move information about these.
-
-# Author: Robert Balas (balasr@iis.ee.ethz.ch)
 
 # Notes:
 # Useful targets
