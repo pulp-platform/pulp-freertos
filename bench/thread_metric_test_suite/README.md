@@ -1,1 +1,0 @@
-# thread_metric_test_suite
