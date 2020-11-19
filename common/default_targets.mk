@@ -272,7 +272,7 @@ clean:
 ## Clean object files and all support dependencies
 distclean: clean
 	rm -rf $(SUPPORT_ROOT)/install/*
-
+	rm -r $(SIMDIR) $(GVSIMDIR)
 .PHONY: show-config
 ## Show current configuration
 show-config:
