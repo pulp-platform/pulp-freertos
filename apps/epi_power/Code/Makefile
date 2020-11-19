@@ -81,14 +81,16 @@ CFLAGS = \
 	-Wno-unused-parameter -Wno-unused-variable \
 	-O3 -g3 \
 	-DFEATURE_CLUSTER=0 -D__PULP__=1 -DNDEBUG \
-	-DportasmSKIP_ADDITIONAL_REGISTERS
+	-DportasmSKIP_ADDITIONAL_REGISTERS \
+	-D__HACK_FIRMWARE_OPT1
 
 ASFLAGS = \
 	-march=rv32emac -mabi=ilp32e -msmall-data-limit=8 -mno-save-restore \
 	-fsigned-char -ffunction-sections -fdata-sections \
 	-x assembler-with-cpp \
 	-DportasmSKIP_ADDITIONAL_REGISTERS \
-	-DPULP_FREERTOS_VECTORED_CONTEXT_SWITCH
+	-DPULP_FREERTOS_VECTORED_CONTEXT_SWITCH \
+	-D__HACK_FIRMWARE_OPT1
 endif
 
 # rtos, pulp and pmsis sources

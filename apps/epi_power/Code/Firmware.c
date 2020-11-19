@@ -41,7 +41,12 @@ HANDLER_WRAPPER_LIGHT(TIMER1_IRQ_handler);
 int PeriodCounterISR = TASKS_OS_PERIODICITY_MUL_FACTOR;
 
 /* Interrupt Handlers */
-void TIMER1_IRQ_handler()
+#ifdef __HACK_FIRMWARE_OPT1
+void __attribute__ ((interrupt))
+#else
+void
+#endif
+ TIMER1_IRQ_handler()
 {
 
 	#ifdef MEASURE_ACTIVE
