@@ -12,9 +12,19 @@
 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 * See the License for the specific language governing permissions and
 * limitations under the License.
+*
+* SPDX-License-Identifier: Apache-2.0
+* Author: Robert Balas (balasr@iis.ee.ethz.ch)
 */
 
 .extern freertos_risc_v_trap_handler
+#ifdef PULP_FREERTOS_VECTORED_CONTEXT_SWITCH
+.extern	freertos_risc_v_ctxt_handler
+#endif
+#ifdef __HACK_FIRMWARE_OPT1 /* TODO: properly do this with weak symbols */
+.extern TIMER1_IRQ_handler
+#endif
+
 
 .section .vectors, "ax"
 .option norvc
@@ -34,7 +44,11 @@ vector_table:
 #else
 	j freertos_risc_v_trap_handler
 #endif
+#ifdef __HACK_FIRMWARE_OPT1 /* TODO: properly do this with weak symbols */
+	j TIMER1_IRQ_handler
+#else
 	j freertos_risc_v_trap_handler
+#endif
 	j freertos_risc_v_trap_handler
 	j freertos_risc_v_trap_handler
 	j freertos_risc_v_trap_handler

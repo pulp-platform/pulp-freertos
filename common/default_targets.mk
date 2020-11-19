@@ -1,3 +1,17 @@
+# Copyright 2020 ETH Zurich
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
 # SPDX-License-Identifier: Apache-2.0
 # Author: Robert Balas (balasr@iis.ee.ethz.ch)
 
@@ -216,7 +230,7 @@ run-gvsoc: $(GVSIMDIR) gvsoc
 
 # analysis scripts
 $(SIMDIR)/trace_%_postproc.log: $(SIMDIR)/trace_core_%.log
-	$(PULPTRACE) --stats --cycles $^ $(PROG) -o $@
+	$(PULPTRACE) --time --stats --cycles $^ $(PROG) -o $@
 
 ## Symbolize simulation instruction trace log using the the original executable
 trace-symbolize: $(SIMDIR)/trace_1f_0_postproc.log
@@ -272,7 +286,7 @@ clean:
 ## Clean object files and all support dependencies
 distclean: clean
 	rm -rf $(SUPPORT_ROOT)/install/*
-
+	rm -r $(SIMDIR) $(GVSIMDIR)
 .PHONY: show-config
 ## Show current configuration
 show-config:

@@ -20,7 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# SPDX-License-Identifier: Apache-2.0
 # Author: Robert Balas (balasr@iis.ee.ethz.ch)
+
+# History
+# 0.1.0:
+# - initial release
+# 0.1.1:
+# - Add dot to allowable character in symbolic addresses
 
 import argparse
 import sys
@@ -37,7 +44,7 @@ parser = argparse.ArgumentParser(prog='pulptrace',
                                  with an instruction trace log from a pulp
                                  core""")
 
-parser.version = '0.1'
+parser.version = '0.1.1'
 parser.add_argument('trace_file', type=str, help='trace log from a pulp core')
 parser.add_argument('elf_file', type=str,
                     help='elf file that was ran, producing the trace log')

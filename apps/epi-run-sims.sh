@@ -1,25 +1,25 @@
 #!/usr/bin/env bash
 
 set -e
-set -x
 
 usage () {
-    echo "Usage: $0 sim-dir sim-config"
+    echo "Usage: $0 sim-dir sim-prefix sim-config "
+    echo "  sim-dir     storage location for simulation results"
+    echo "  sim-prefix  prefix of each simulation result directory"
+    echo "  sim-config  configuration file that defines this simulation run"
 }
 
 [[ -n $1 ]] || { usage; echo "error: missing sim-dir parameter"; exit 1; }
-[[ -n $2 ]] || { usage; echo "error: missing sim-config parameter"; exit 1; }
+[[ -n $2 ]] || { usage; echo "error: missing prefix parameter"; exit 1; }
+[[ -n $3 ]] || { usage; echo "error: missing sim-config parameter"; exit 1; }
 
-parent_sim_dir="$(dirname "$1")"
-[[ -d $parent_sim_dir ]] || { usage; echo "error: missing parent dir of sim-dir"; exit 1; }
+sim_dir="$1"
+sim_prefix="$2"
 
-sim_config="$2"
+sim_config="$3"
 [[ -f $sim_config ]] || { usage; echo "error: sim-config doesn't exist"; exit 1; }
 
 src_dir=$(realpath epi_power/Code)
-
-# example: sim_dir="/scratch/balasr/sim/0000-00-00/vanilla_dir"
-sim_dir="$1"
 
 
 # loading simulation configuration and sanitize
@@ -45,7 +45,7 @@ for p in "${period_ms[@]}"; do
 -DconfigTICK_RATE_HZ=${systick_rate_hz}"
 
     # define simulation directory
-    this_simdir="${sim_dir}_period_${p}_iter_${measure_iterations}"
+    this_simdir="${sim_dir}/${sim_prefix}_period_${p}_iter_${measure_iterations}"
 
     # record the simulation directory simplifying the analysis step
     echo "${this_simdir}" >> "${sim_dir}/simulations"

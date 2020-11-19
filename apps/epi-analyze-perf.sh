@@ -5,19 +5,6 @@
 
 set -e
 
-# for test run
-#ranges=(377261 502262 627262 752264 877264 1002265 1127266 \
-# 1252268 1377268 1502270 1627270 1752271 1877273 2002273 2127274 2252276 2377276 2502278 2627279 2752279)
-
-# for vanilla run
-# ranges=(388195 513196 638196 763197 888198 1013200 1138200 \
-#  1263201 1388203 1513204 1638204 1763206 1888207 2013208 2138209 2263210 \
-#  2388210 2513211 2638213 2763214 )
-
-# for opt run
-# ranges=(373349 498350 623351 748352 873354 998354 1123356 1248357 1373358 1498359 \
-#  1623360 1748360 1873362 1998362 2123363 2248365 2373365 2498367 2623367 2748369 )
-
 usage () {
     echo "usage: $0 simdir outdir"
     exit
@@ -54,7 +41,7 @@ echo "info: outdir=$outdir"
 # generate ranges
 if [[ ! -f "$outdir/occur.json" || ! -f "$outdir/interrupt_latency.csv" ]]; then
 echo "$outdir/occur.json or $outdir/interrupt_latency.csv does not exists, generating range and interrupt data"
-$pulptrace --analyze-interrupt "$interrupts" \
+"$pulptrace" --analyze-interrupt "$interrupts" \
 	   --interrupt 11 "<TIMER1_IRQ_handler>" \
 	   --interrupt-out "$outdir/interrupt_latency.csv" \
 	   --cycles --occur "<TIMER1_IRQ_handler>" \
@@ -78,7 +65,7 @@ for i in "${ranges[@]}"; do
     fi
     upper=$i
     echo "analyzing range from $lower to $i (diff" $(($upper - $lower))") cycles"
-    $pulptrace --cycles --stats --range $lower $upper \
+    "$pulptrace" --cycles --stats --range $lower $upper \
     	       --json "$outdir/stats-$lower-$upper.json" \
     	       -o "$outdir/trace-$lower-$upper.log" \
     	       "$trace" "$bin"

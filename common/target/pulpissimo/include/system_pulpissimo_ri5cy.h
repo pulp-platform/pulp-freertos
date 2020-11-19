@@ -34,10 +34,10 @@
 */
 
 /*!
- * @file system_pulp_ri5cy.h
+ * @file system_pulpissimo_ri5cy.h
  * @version 0.1
  * @date 2019-09-09
- * @brief Device specific configuration file for PULP_RI5CY (header
+ * @brief Device specific configuration file for PULPISSIMO_RI5CY (header
  *        file)
  *
  * Provides a system configuration function and a global variable that contains
