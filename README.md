@@ -28,6 +28,7 @@ documentation is available on [this website](https://www.freertos.org/features.h
 └── tests              Advanced tests using FreeRTOS primitives
 ```
 
+
 ## Getting Started
 You need the following items to develop and run FreeRTOS programs for PULP
 * A centos7 or ubuntu18 based workstation
@@ -170,3 +171,35 @@ make -f ../makefile all VPATH=..
 ## Developer Notes
 `assert()` from `#include <assert.h>` calls `__assert_func`, `fiprintf` then
 `abort`. This is all in newlib.
+
+
+## Licenses
+Description of all the licenses used in the repository. In general we use Apache
+2.0 except for some cases where it makes sense to use the underlying code's
+original license. For example the kernel and the demo application stays MIT
+licensed.
+
+```bash
+[dir-name]   # [spdx-license qualifier]
+
+apps/        # empty
+bench/       # empty
+demos/       # MIT
+kernel/      # MIT
+template/    # MIT
+env/         # Apache-2.0
+scripts/     # Apache-2.0
+support/     # Apache-2.0
+tests/       # Apache-2.0
+common/      # Apache-2.0
+common/libc  # Apache-2.0
+common/metal # Apache-2.0
+common/pmsis # Apache-2.0
+common/pmsis/backend                                           # BSD-3-Clause
+common/pmsis/pmsis_implem_pulp/                                # BSD-3-Clause
+common/pmsis/pmsis_implem_pulp/include/cores/TARGET_RISCV_32   # Apache-2.0
+common/pmsis/pmsis_implem_pulp/include/pmsis/implem/           # BSD-3-Clause
+common/pmsis/pmsis_implem_pulp/include/pmsis/targets/          # Apache-2.0
+common/pmsis/pmsis_rtos/                                       # BSD-3-Clause
+common/target                                                  # Apache-2.0
+```
