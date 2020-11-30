@@ -1,48 +1,20 @@
 /*
-** ###################################################################
-**     Processors:          PULP_RI5CY
-**                          PULP_RI5CY
-**
-**     Compilers:           GNU C Compiler
-**
-**
-**
-**     Reference manual:    riscv-spec-v2.2
-**     Version:             rev. 0.1, 2019-09-09
-**     Build:
-**
-**     Abstract:
-**         Provides a system configuration function and a global variable that
-**         contains the system frequency. It configures the device and initializes
-**         the oscillator (PLL) that is part of the microcontroller device.
-**
-**     Copyright 2016 Freescale Semiconductor, Inc.
-**     Copyright 2016-2018 NXP
-**     Copyright 2019 ETH Zuerich
-**     All rights reserved.
-**
-**     SPDX-License-Identifier: BSD-3-Clause
-**
-**     http:                 https://pulp-platform.org
-**     mail:                 balasr@iis.ee.ethz.ch
-**
-**     Revisions:
-**     - rev. 0.1 (2019-09-09)
-**         Initial version.
-**
-** ###################################################################
-*/
-
-/*!
- * @file system_pulp_ri5cy_metal.c
- * @version 0.1
- * @date 2019-09-09
- * @brief Device specific configuration file for PULP_RI5CY (header
- *        file)
+ * Copyright 2020 ETH Zurich
  *
- * Provides a system configuration function and a global variable that contains
- * the system frequency. It configures the device and initializes the oscillator
- * (PLL) that is part of the microcontroller device.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ * Author: Robert Balas (balasr@iis.ee.ethz.ch)
  */
 
 #include <stdint.h>
