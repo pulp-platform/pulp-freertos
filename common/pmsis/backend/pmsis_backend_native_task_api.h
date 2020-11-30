@@ -36,7 +36,6 @@
 #include <semphr.h>
 
 #include "pmsis/pmsis_types.h"
-#include "gap_common.h"
 #include "pmsis_gcc.h"
 #include "pmsis_backend_native_types.h"
 
