@@ -38,6 +38,19 @@
  * @{
  */
 
+#define DCDC_OPER_POINTS    (4)
+
+#define DCDC_DEFAULT_NV     (1200)
+#define DCDC_DEFAULT_MV     (1200)
+#define DCDC_DEFAULT_LV     (1000)
+#define DCDC_DEFAULT_RET    (800)
+#define DCDC_RANGE          (5)
+#define DCDC_RANGE_MASK     (0x1F)
+#define DCDC_BASE_VALUE     (550)
+#define DCDC_STEP           (50)
+
+#define MAX_DCDC_VARIATION  ((int32_t) (0.1*32767))
+
 /*******************************************************************************
  * Definitions
  ******************************************************************************/

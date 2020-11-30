@@ -131,7 +131,6 @@ typedef enum IRQn {
 #define __FPU_PRESENT                  0         /**< Defines if an FPU is present or not */
 
 #include "core_pulp.h"              /* Core Peripheral Access Layer */
-#include "core_pulp_memory_define.h"       /* Core Memory regions definitions */
 
 #ifdef FEATURE_CLUSTER
 #include "core_pulp_cluster.h"              /* Cluster Access Layer */
@@ -521,11 +520,6 @@ typedef struct {
 /* #include "periph/cpi_periph.h" */
 #define cpi(id) ((cpi_t *) UDMA_CPI(id))
 
-
-/* ----------------------------------------------------------------------------
-   -- Regulator Peripheral
-   ---------------------------------------------------------------------------- */
-#include "periph/regulator_periph.h"
 
 
 /* ----------------------------------------------------------------------------
