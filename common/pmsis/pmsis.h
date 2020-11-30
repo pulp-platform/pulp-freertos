@@ -58,7 +58,6 @@
 #include "pmsis/implem/debug.h"
 #include "pmsis/implem/drivers/drivers_data.h"
 #include "pmsis/implem/drivers/drivers.h"
-#include "pmsis/mem_slab/mem_slab.h"
 #include "pmsis/rtos/os/pmsis_task.h"
 #include "pmsis/rtos/os/pmsis_freq.h"
 #include "pmsis/rtos/os/os.h"

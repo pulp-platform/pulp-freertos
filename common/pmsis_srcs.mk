@@ -43,7 +43,6 @@ CPPFLAGS += -I"$(PMSIS_API_ROOT)/include"
 # pmsis rtos specific
 CPPFLAGS += -I"$(PMSIS_ROOT)/pmsis_rtos/include"
 
-PULP_SRCS += $(PMSIS_ROOT)/pmsis_rtos/mem_slab/mem_slab.c
 PULP_SRCS += $(PMSIS_ROOT)/pmsis_rtos/event_kernel/event_kernel.c
 PULP_SRCS += $(PMSIS_ROOT)/pmsis_rtos/os/device.c
 PULP_SRCS += $(PMSIS_ROOT)/pmsis_rtos/os/pmsis_task.c
