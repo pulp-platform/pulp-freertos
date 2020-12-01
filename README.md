@@ -179,27 +179,35 @@ Description of all the licenses used in the repository. In general we use Apache
 original license. For example the kernel and the demo application stays MIT
 licensed.
 
-```bash
-[dir-name]   # [spdx-license qualifier]
+We give a directory/filelist as a overview where on the left side a
+directory/file is given and on the right side the license it is distributed
+under. If we refer to a directory then the given license applies to all files
+within, except for subtrees that have a seperate license (also given in this
+list).
 
-apps/        # empty
-bench/       # empty
-demos/       # MIT
-kernel/      # MIT
-template/    # MIT
-env/         # Apache-2.0
-scripts/     # Apache-2.0
-support/     # Apache-2.0
-tests/       # Apache-2.0
-common/      # Apache-2.0
-common/libc  # Apache-2.0
-common/metal # Apache-2.0
-common/pmsis # Apache-2.0
+```bash
+[dir-name]          # [spdx-license qualifier]
+
+apps/               # empty
+bench/              # empty
+demos/              # MIT
+kernel/             # MIT
+template/           # MIT
+env/                # Apache-2.0
+scripts/            # Apache-2.0
+support/            # Apache-2.0
+tests/              # Apache-2.0 except for FreeRTOSConfig.h which is MIT
+nortos/             # Apache-2.0 except for FreeRTOSConfig.h which is MIT
+common/             # Apache-2.0
+common/libc                                                    # Apache-2.0
+common/metal                                                   # Apache-2.0
+common/pmsis                                                   # BSD-3-Clause
 common/pmsis/backend                                           # BSD-3-Clause
 common/pmsis/pmsis_implem_pulp/                                # BSD-3-Clause
-common/pmsis/pmsis_implem_pulp/include/cores/TARGET_RISCV_32   # Apache-2.0
+common/pmsis/pmsis_implem_pulp/include/cores/                  # Apache-2.0
 common/pmsis/pmsis_implem_pulp/include/pmsis/implem/           # BSD-3-Clause
 common/pmsis/pmsis_implem_pulp/include/pmsis/targets/          # Apache-2.0
+common/pmsis/pmsis_implem_pulp/include/pmsis/targets/periph.h  # BSD-3-Clause
 common/pmsis/pmsis_rtos/                                       # BSD-3-Clause
 common/target                                                  # Apache-2.0
 ```
