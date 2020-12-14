@@ -199,15 +199,8 @@ support/            # Apache-2.0
 tests/              # Apache-2.0 except for FreeRTOSConfig.h which is MIT
 nortos/             # Apache-2.0 except for FreeRTOSConfig.h which is MIT
 common/             # Apache-2.0
-common/libc                                                    # Apache-2.0
-common/metal                                                   # Apache-2.0
-common/pmsis                                                   # BSD-3-Clause
-common/pmsis/backend                                           # BSD-3-Clause
-common/pmsis/pmsis_implem_pulp/                                # BSD-3-Clause
-common/pmsis/pmsis_implem_pulp/include/cores/                  # Apache-2.0
-common/pmsis/pmsis_implem_pulp/include/pmsis/implem/           # BSD-3-Clause
-common/pmsis/pmsis_implem_pulp/include/pmsis/targets/          # Apache-2.0
-common/pmsis/pmsis_implem_pulp/include/pmsis/targets/periph.h  # BSD-3-Clause
-common/pmsis/pmsis_rtos/                                       # BSD-3-Clause
-common/target                                                  # Apache-2.0
+common/libc         # Apache-2.0
+common/metal        # Apache-2.0
+common/pmsis        # Apache-2.0
+common/target       # Apache-2.0
 ```
