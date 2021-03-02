@@ -21,7 +21,6 @@
 #include "bits.h"
 #include "fll.h"
 #include "irq.h"
-#include "system_core_v_mcu.h"
 
 /*
  * Fll control
