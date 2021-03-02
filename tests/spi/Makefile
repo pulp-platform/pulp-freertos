@@ -45,7 +45,7 @@
 PROJ_ROOT = $(shell git rev-parse --show-toplevel)
 
 # good defaults for many environment variables
-include $(PROJ_ROOT)/common/default_flags.mk
+include $(PROJ_ROOT)/default_flags.mk
 
 # manually set CFLAGS to disable some warnings (-Wconversion)
 CFLAGS = \
@@ -68,7 +68,7 @@ endif
 DPI_CONFIG=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))rtl_config.json
 
 # rtos, pulp and pmsis ources
-include $(PROJ_ROOT)/common/freertos_pmsis_srcs.mk
+include $(PROJ_ROOT)/default_srcs.mk
 
 # application name
 PROG = spi_test
@@ -82,4 +82,4 @@ CPPFLAGS += $(addprefix -I$(VPATH)/, ".")
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
 
 # compile, simulation and analysis targets
-include $(PROJ_ROOT)/common/default_targets.mk
+include $(PROJ_ROOT)/default_targets.mk

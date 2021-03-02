@@ -43,7 +43,7 @@
 #include "gpio.h"
 
 /* pmsis */
-#include "pmsis.h"
+/* #include "pmsis.h" */
 
 #if !defined(SYNC_CS_AUTO) && !defined(ASYNC_CS_AUTO) &&                       \
 	!defined(SYNC_CS_KEEP) && !defined(ASYNC_CS_KEEP)

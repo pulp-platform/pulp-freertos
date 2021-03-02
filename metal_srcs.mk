@@ -49,7 +49,9 @@ include $(dir)/makefile.mk
 endif
 
 # target/platform specific includes and srcs
-ifeq ($(FREERTOS_CONFIG_FAMILY),core-v-mcu)
+ifeq ($(FREERTOS_CONFIG_FAMILY),pulp)
+$(warning "FREERTOS_CONFIG_FAMILY: unused")
+else ifeq ($(FREERTOS_CONFIG_FAMILY),pulpissimo)
 $(warning "FREERTOS_CONFIG_FAMILY: unused")
 else
 $(error "FREERTOS_CONFIG_FAMILY is unset. Run `source env/platform-you-want.sh' \

@@ -45,7 +45,7 @@
 PROJ_ROOT = $(shell git rev-parse --show-toplevel)
 
 # good defaults for many environment variables
-include $(PROJ_ROOT)/common/default_flags.mk
+include $(PROJ_ROOT)/default_flags.mk
 
 # manually set CFLAGS to disable some warnings (-Wconversion)
 CFLAGS = \
@@ -59,7 +59,7 @@ CFLAGS = \
         -fstack-usage -Wstack-usage=1024
 
 # rtos, pulp and pmsis sources
-include $(PROJ_ROOT)/common/freertos_pmsis_srcs.mk
+include $(PROJ_ROOT)/default_srcs.mk
 
 # application name
 PROG = hello_world_pmsis
@@ -76,4 +76,4 @@ CPPFLAGS += -DUSE_STDIO
 CPPFLAGS += -DSTREAM_CHECK_ITERATIONS=2
 
 # compile, simulation and analysis targets
-include $(PROJ_ROOT)/common/default_targets.mk
+include $(PROJ_ROOT)/default_targets.mk
