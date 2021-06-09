@@ -20,5 +20,6 @@ SRCS += $(dir)/uart.c
 SRCS += $(dir)/fll.c
 SRCS += $(dir)/pmsis_task.c
 SRCS += $(dir)/device.c
+SRCS += $(dir)/spi.c
 
 CV_CPPFLAGS += -I"$(dir)/include"
