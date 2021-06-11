@@ -287,6 +287,7 @@ int pi_uart_ioctl(struct pi_device *device, uint32_t cmd, void *arg)
 		break;
 
 	default:
+		__restore_irq(irq);
 		return -1;
 	}
 	__restore_irq(irq);
