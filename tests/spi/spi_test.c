@@ -41,9 +41,13 @@
 #include "fll.h"
 #include "irq.h"
 #include "gpio.h"
+#include "spi.h"
 
 /* pmsis */
-/* #include "pmsis.h" */
+#include "target.h"
+#include "pmsis_types.h"
+#include "os.h"
+#include "implementation_specific_defines.h"
 
 #if !defined(SYNC_CS_AUTO) && !defined(ASYNC_CS_AUTO) &&                       \
 	!defined(SYNC_CS_KEEP) && !defined(ASYNC_CS_KEEP)

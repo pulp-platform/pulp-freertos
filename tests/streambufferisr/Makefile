@@ -48,7 +48,7 @@ PROJ_ROOT = $(shell git rev-parse --show-toplevel)
 include $(PROJ_ROOT)/default_flags.mk
 
 # rtos and pulp sources
-include $(PROJ_ROOT)/metal_srcs.mk
+include $(PROJ_ROOT)/default_srcs.mk
 
 # application name
 PROG = streambufferisr
