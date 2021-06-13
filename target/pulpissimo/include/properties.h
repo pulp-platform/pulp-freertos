@@ -31,7 +31,7 @@
 #define ARCHI_REF_CLOCK_LOG2 15
 #define ARCHI_REF_CLOCK	     (1 << ARCHI_REF_CLOCK_LOG2)
 
-#define ARCHI_NB_FLL 3
+#define ARCHI_NB_FLL 2
 
 #define __RT_FLL_CL	2
 #define __RT_FLL_PERIPH 1
@@ -47,7 +47,7 @@
 #define ARCHI_FC_CID (32)
 
 /* Cluster */
-#define ARCHI_HAS_CLUSTER   (1)
+#define ARCHI_HAS_CLUSTER   (0)
 #define ARCHI_CL_CID(id)    (id)
 #define ARCHI_CLUSTER_NB_PE (8) /* Processing elements. */
 
