@@ -15,13 +15,23 @@
 # SPDX-License-Identifier: Apache-2.0
 # Author: Robert Balas (balasr@iis.ee.ethz.ch)
 
+SRCS += $(dir)/uart.c
+SRCS += $(dir)/spi.c
 ifeq ($(CONFIG_DRIVER_FLL),y)
 SRCS += $(dir)/fll.c
+else ifeq ($(CONFIG_DRIVER_CLKDIV,y)
+SRCS += $(dir)/clkdiv.c
+else
+$(error "no driver for clock configuration enabled")
 endif
 SRCS += $(dir)/timer_irq.c
 SRCS += $(dir)/irq.c
 SRCS += $(dir)/soc_eu.c
 SRCS += $(dir)/gpio.c
 SRCS += $(dir)/pinmux.c
+SRCS += $(dir)/fc_event.c
 
-CV_CPPFLAGS += -I$(dir)/include
+SRCS += $(dir)/pmsis_task.c
+SRCS += $(dir)/device.c
+
+CV_CPPFLAGS += -I"$(dir)/include"

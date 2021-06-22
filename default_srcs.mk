@@ -64,7 +64,6 @@ include $(dir)/makefile.mk
 dir := $(FREERTOS_PROJ_ROOT)/drivers
 ifeq ($(CONFIG_FREERTOS_KERNEL),y)
 include $(dir)/makefile.mk
-include $(dir)/makefile_pmsis.mk
 else
 # TODO: this part of the workaround above
 CV_CPPFLAGS += -I$(dir)/include

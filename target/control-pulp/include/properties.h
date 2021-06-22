@@ -22,6 +22,13 @@
 /* PULP defs */
 #define PULP
 
+/* variable system and fixed peripheral frequency */
+#define ASIC_SYSTEM_CLOCK 20000000u /* TODO: these values are inaccurate */
+#define FPGA_SYSTEM_CLOCK 20000000u
+
+#define ASIC_PERIPH_CLOCK 10000000u
+#define FPGA_PERIPH_CLOCK 10000000u
+
 #define ARCHI_FPGA_FREQUENCY 5000000
 
 /* hardware modules */
