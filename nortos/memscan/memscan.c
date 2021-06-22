@@ -24,7 +24,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "pulp_io.h"
+#include "io.h"
 
 int main(int argc, char *argv[])
 {

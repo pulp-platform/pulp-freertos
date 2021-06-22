@@ -154,7 +154,7 @@ int main(void)
 static void prvSetupHardware(void)
 {
 	/* Init board hardware. */
-	pulp_sys_init();
+	system_init();
 }
 
 void vSendString(const char *const pcString)

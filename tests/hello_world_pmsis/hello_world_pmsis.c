@@ -40,7 +40,8 @@
 #include "gpio.h"
 
 /* pmsis */
-#include "pmsis.h"
+#include "target.h"
+#include "os.h"
 
 void vApplicationMallocFailedHook(void);
 void vApplicationIdleHook(void);

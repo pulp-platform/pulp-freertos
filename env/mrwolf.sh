@@ -17,8 +17,12 @@
 # SPDX-License-Identifier: Apache-2.0
 # Author: Robert Balas (balasr@iis.ee.ethz.ch)
 
-
 # var that points to this project's root
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+
 export FREERTOS_PROJ_ROOT="$ROOT"
 export FREERTOS_CONFIG_FAMILY="mrwolf"
+
+export CONFIG_TARGET="mrwolf"
+
+printf "WARNING: mrwolf is not properly supported yet\n"

@@ -21,3 +21,7 @@
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 export FREERTOS_PROJ_ROOT="$ROOT"
 export FREERTOS_CONFIG_FAMILY="pulpissimo"
+
+export CONFIG_TARGET="control-pulp"
+
+source "$ROOT/env/default-config.sh"

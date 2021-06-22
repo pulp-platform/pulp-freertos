@@ -17,37 +17,35 @@
 
 ---
 BasedOnStyle: LLVM
-IndentWidth: 4
-TabWidth: 4
-UseTab: Always
-BreakBeforeBraces: Allman
-AlwaysBreakBeforeMultilineStrings: true
+Language: Cpp
+UseTab:	Always
+BreakBeforeBraces: Linux
 AllowShortIfStatementsOnASingleLine: false
+IndentCaseLabels: false
+SortIncludes: false
+ContinuationIndentWidth: 8
+ColumnLimit: 80
+AlwaysBreakBeforeMultilineStrings: true
 AllowShortLoopsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: false
-IndentCaseLabels: false
 AlignEscapedNewlinesLeft: false
 AlignTrailingComments: true
-AlignOperands: true
 AllowAllParametersOfDeclarationOnNextLine: false
 AlignAfterOpenBracket: true
 SpaceAfterCStyleCast: false
 MaxEmptyLinesToKeep: 2
 BreakBeforeBinaryOperators: NonAssignment
 BreakStringLiterals: false
-SortIncludes: false
-ContinuationIndentWidth: 4
-ColumnLimit: 100
-IndentPPDirectives: AfterHash
-BinPackArguments: true
-BinPackParameters: true
+IndentWidth: 8
 BreakBeforeBinaryOperators: None
-MaxEmptyLinesToKeep: 1
-AlwaysBreakAfterDefinitionReturnType: None
-AlwaysBreakAfterReturnType: None
-AlwaysBreakBeforeMultilineStrings: false
-AlignConsecutiveAssignments: true
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
 AlignConsecutiveMacros: true
-SpacesInParentheses: true
-SpacesInCStyleCastParentheses: true
-...
+
+#PenaltyBreakAssignment: 10
+PenaltyBreakBeforeFirstCallParameter: 30
+PenaltyBreakComment: 10
+PenaltyBreakFirstLessLess: 0
+PenaltyBreakString: 10
+PenaltyExcessCharacter: 100
+PenaltyReturnTypeOnItsOwnLine: 60

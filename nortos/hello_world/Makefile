@@ -31,24 +31,19 @@
 # USER_SRCS  Add your source files here (use +=)
 # CPPFLAGS   Add your include search paths and macro definitions (use +=)
 
-# Adding common compile flags when using default_flags.mk.
-# Compile options (passed to make) e.g. make NDEBUG=yes
-# NDEBUG    Make release build
-# LIBC      Link against libc
-# LTO       Enable link time optimization
-# SANITIZE  Enable gcc sanitizer for debugging memory access problems
-# STACKDBG  Enable stack debugging information and warnings.
-#           By default 1 KiB but can be changed with MAXSTACKSIZE=your_value
-
+# For compile options check the README.md
 
 # indicate this repository's root folder
 PROJ_ROOT = $(shell git rev-parse --show-toplevel)
 
+# withouth kernel
+CONFIG_FREERTOS_KERNEL=n
+
 # good defaults for many environment variables
-include $(PROJ_ROOT)/common/default_flags.mk
+include $(PROJ_ROOT)/default_flags.mk
 
 # rtos and pulp sources
-include $(PROJ_ROOT)/common/freertos_metal_srcs.mk
+include $(PROJ_ROOT)/default_srcs.mk
 
 # application name
 PROG = helloworld
@@ -56,10 +51,10 @@ PROG = helloworld
 # application/user specific code
 USER_SRCS = helloworld.c
 
-# FreeRTOS.h
+# system_metal_conf.h
 CPPFLAGS += $(addprefix -I$(VPATH)/, ".")
 
-CPPFLAGS += -DportasmHANDLE_INTERRUPT=undefined_handler
+CPPFLAGS += -DportasmHANDLE_INTERRUPT=undefined_handler -D__PULP__
 
 # compile, simulation and analysis targets
-include $(PROJ_ROOT)/common/default_targets.mk
+include $(PROJ_ROOT)/default_targets.mk

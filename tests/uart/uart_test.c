@@ -41,8 +41,10 @@
 #include "irq.h"
 #include "gpio.h"
 
+#include "target.h"
 /* pmsis */
-#include "pmsis.h"
+#include "os.h"
+#include "uart.h"
 
 void vApplicationMallocFailedHook(void);
 void vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName);

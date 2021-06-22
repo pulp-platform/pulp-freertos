@@ -31,24 +31,16 @@
 # USER_SRCS  Add your source files here (use +=)
 # CPPFLAGS   Add your include search paths and macro definitions (use +=)
 
-# Adding common compile flags when using default_flags.mk.
-# Compile options (passed to make) e.g. make NDEBUG=yes
-# NDEBUG    Make release build
-# LIBC      Link against libc
-# LTO       Enable link time optimization
-# SANITIZE  Enable gcc sanitizer for debugging memory access problems
-# STACKDBG  Enable stack debugging information and warnings.
-#           By default 1 KiB but can be changed with MAXSTACKSIZE=your_value
-
+# For compile options check the README.md
 
 # indicate this repository's root folder
 PROJ_ROOT = $(shell git rev-parse --show-toplevel)
 
 # good defaults for many environment variables
-include $(PROJ_ROOT)/common/default_flags.mk
+include $(PROJ_ROOT)/default_flags.mk
 
 # rtos and pulp sources
-include $(PROJ_ROOT)/common/freertos_metal_srcs.mk
+include $(PROJ_ROOT)/default_srcs.mk
 
 # application name
 PROG = streambufferisr
@@ -65,4 +57,4 @@ CPPFLAGS += -DUSE_STDIO
 CPPFLAGS += -DSTREAM_CHECK_ITERATIONS=2
 
 # compile, simulation and analysis targets
-include $(PROJ_ROOT)/common/default_targets.mk
+include $(PROJ_ROOT)/default_targets.mk
