@@ -15,7 +15,9 @@
 # SPDX-License-Identifier: Apache-2.0
 # Author: Robert Balas (balasr@iis.ee.ethz.ch)
 
+ifeq ($(CONFIG_DRIVER_FLL),y)
 SRCS += $(dir)/fll.c
+endif
 SRCS += $(dir)/timer_irq.c
 SRCS += $(dir)/irq.c
 SRCS += $(dir)/soc_eu.c

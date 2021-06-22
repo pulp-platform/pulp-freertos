@@ -16,8 +16,13 @@
 # Author: Robert Balas (balasr@iis.ee.ethz.ch)
 
 SRCS += $(dir)/crt0.S
+ifeq ($(CONFIG_FREERTOS_KERNEL),y)
+SRCS += $(dir)/system.c
 SRCS += $(dir)/vectors.S
-SRCS += $(dir)/system_core_v_mcu.c
+else
+SRCS += $(dir)/system_metal.c
+SRCS += $(dir)/vectors_metal.S
+endif
 
 CV_CPPFLAGS += -I$(dir)/include
 

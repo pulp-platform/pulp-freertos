@@ -40,7 +40,6 @@
 
 // default malloc for driver structs etc (might not be compatible with udma!)
 /* TODO: rereoute to newlib malloc (?)*/
-#ifdef __PULP__
 #define pi_default_malloc(x)  malloc(x)
 #define pi_default_free(x,y)  free(x)
 #define pi_data_malloc(x)     malloc(x)
@@ -51,13 +50,6 @@
 #define pmsis_l2_malloc_free  pi_l2_free
 #define pmsis_l2_malloc_init  pi_l2_malloc_init
 #define pmsis_l2_malloc_dump  pi_l2_malloc_dump
-#else
-#error "__PULP__ not set: malloc not supported"
-#define pi_default_malloc(x)  pmsis_l2_malloc(x)
-#define pi_default_free(x,y)  pmsis_l2_malloc_free(x,y)
-#define pi_data_malloc(x)     pmsis_l2_malloc(x)
-#define pi_data_free(x,y)     pmsis_l2_malloc_free(x,y)
-#endif
 
 #define PI_TASK_IMPLEM                          \
     uint8_t destroy;

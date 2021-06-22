@@ -52,6 +52,7 @@
 #define SPIM_CS_DATA_GET_DRV_DATA(cs_data) (cs_data->drv_data)
 
 struct spim_driver_data *__g_spim_drv_data[UDMA_NB_SPIM] = {0};
+
 struct spim_drv_fifo {
 	pi_task_t *fifo_head;
 	pi_task_t *fifo_tail;

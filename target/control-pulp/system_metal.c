@@ -19,15 +19,17 @@
 
 #include <stdint.h>
 #include <assert.h>
+#include <stdlib.h>
 
-#include <FreeRTOS.h>
-#include "FreeRTOSConfig.h"
+#include "system_metal_conf.h"
 
 #include "fll.h"
-#include "fc_event.h"
-#include "properties.h"
 #include "irq.h"
 #include "soc_eu.h"
+
+#ifndef DISABLE_WDOG
+#define DISABLE_WDOG 1
+#endif
 
 /* test some assumptions we make about compiler settings */
 static_assert(sizeof(uintptr_t) == 4,
@@ -47,16 +49,7 @@ __attribute__((section(".heap"), used)) uint8_t ucHeap[configTOTAL_HEAP_SIZE];
  */
 uint32_t __heap_size = configTOTAL_HEAP_SIZE;
 
-volatile uint32_t system_core_clock = DEFAULT_SYSTEM_CLOCK;
-
-/* FreeRTOS task handling */
-BaseType_t xTaskIncrementTick(void);
-void vTaskSwitchContext(void);
-
-/* interrupt handling */
-void timer_irq_handler(void);
-void undefined_handler(void);
-void (*isr_table[32])(void);
+uint32_t volatile system_core_clock = DEFAULT_SYSTEM_CLOCK;
 
 /**
  * Board init code. Always call this before anything else.
@@ -71,29 +64,19 @@ void system_init(void)
 	/* make sure irq (itc) is a good state */
 	pulp_irq_init();
 
-	/* Hook up isr table. This table is temporary until we figure out how to
-	 * do proper vectored interrupts.
-	 */
-	isr_table[0xa] = timer_irq_handler;
-	isr_table[0x1a] = fc_soc_event_handler; // 26
-
 	/* mtvec is set in crt0.S */
 
 	/* deactivate all soc events as they are enabled by default */
 	soc_eu_event_init();
 
-	/* Setup soc events handler. */
-	/* pi_fc_event_handler_init(FC_SOC_EVENT); */
-	pi_fc_event_handler_init(26); /* TODO: FIX THIS */
-
+	/* TODO: enable uart */
 	/* TODO: I$ enable*/
 	/* enable core level interrupt (mie) */
 	irq_clint_enable();
-
-	/* TODO: enable uart */
 }
 
-void system_core_clock_update(void)
+//
+void system_core_clock_update()
 {
 	system_core_clock = pi_fll_get_frequency(FLL_SOC, 0);
 }
@@ -102,41 +85,4 @@ void system_core_clock_get(void)
 {
 	system_core_clock_update();
 	return system_core_clock;
-}
-
-void timer_irq_handler(void)
-{
-#warning requires critical section if interrupt nesting is used.
-
-	if (xTaskIncrementTick() != 0) {
-		vTaskSwitchContext();
-	}
-}
-
-void undefined_handler(void)
-{
-#ifdef __PULP_USE_LIBC
-	abort();
-#else
-	taskDISABLE_INTERRUPTS();
-	for (;;)
-		;
-#endif
-}
-
-void vPortSetupTimerInterrupt(void)
-{
-	extern int timer_irq_init(uint32_t ticks);
-
-	/* No CLINT so use the PULP timer to generate the tick interrupt. */
-	/* TODO: configKERNEL_INTERRUPT_PRIORITY - 1 ? */
-	timer_irq_init(ARCHI_REF_CLOCK / configTICK_RATE_HZ);
-	/* TODO: allow setting interrupt priority (to super high(?)) */
-	irq_enable(IRQ_FC_EVT_TIMER0_LO);
-}
-
-void vSystemIrqHandler(uint32_t mcause)
-{
-	extern void (*isr_table[32])(void);
-	isr_table[mcause & 0x1f]();
 }

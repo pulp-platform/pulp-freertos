@@ -150,8 +150,20 @@ Here a few typical and useful invocations
 * `make run-gvsoc GVSIM_ARGS="--trace=insn:insn.txt --trace=l2:l2.txt"` - trace
   instructions to `insn.txt` and l2 memory access to `l2.txt`
 
-## Environment Variables
-(TODO)
+## Environment Variables and Configuration Options
+See `env/default-config.sh`
+* `CONFIG_FREERTOS_KERNEL=y/n` (default y) Use the FreeRTOS kernel
+* `CONFIG_USE_NEWLIB=y/n` (default y) Use newlib libc
+
+* `CONFIG_DRIVER_PLIC=y/n` (default n) Use the PLIC driver
+* `CONFIG_DRIVER_FLL=y/n` (default y) Use the FLL driver
+* `CONFIG_DRIVER_CLKDIV=y/n` (default n) Use the clock divider driver (control-pulp)
+
+* `CONFIG_CC_LTO=y/n` (default n) Use link-time optimizations
+* `CONFIG_CC_SANITIZE=y/n` (default n) Use address sanitizers
+* `CONFIG_CC_STACKDBG=y/n` (default n) Generate stack debugging information
+* `CONFIG_CC_MAXSTACKSIZE=int` (default 1024) Limit maximum stack size
+
 
 ## Custom Build Directory and Out-Of-Tree Builds
 Out-of-Tree builds and by extension custom build directories are supported using

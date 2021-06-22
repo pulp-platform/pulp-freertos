@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 ETH Zurich
+ * Copyright 2021 ETH Zurich
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,5 @@
  * Author: Robert Balas (balasr@iis.ee.ethz.ch)
  */
 
-/*
- * Description: Write to the whole l2 address space
- * (skipping the two private banks)
- */
-
-#include <stdlib.h>
-#include <stdio.h>
-#include "io.h"
-
-int main(int argc, char *argv[])
-{
-	uint32_t val = 0;
-	printf("memscan start\n");
-	for (uint32_t addr = 0x1c010000; addr < 0x1c080000; addr += 4) {
-		val += 1;
-		writew(val, addr);
-	}
-	printf("memscan finished\n");
-	return EXIT_SUCCESS;
-}
+#define DEFAULT_SYSTEM_CLOCK  50000000u /* Default System clock value */
+#define configTOTAL_HEAP_SIZE ((size_t)(16 * 1024))

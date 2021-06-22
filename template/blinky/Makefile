@@ -34,15 +34,7 @@
 # USER_SRCS  Add your source files here (use +=)
 # CPPFLAGS   Add your include search paths and macro definitions (use +=)
 
-# Adding common compile flags when using default_flags.mk.
-# Compile options (passed to make) e.g. make NDEBUG=yes
-# RELEASE   Make release build (default no)
-# LIBC      Link against libc (default yes)
-# LTO       Enable link time optimization (default no)
-# SANITIZE  Enable gcc sanitizer for debugging memory access problems (default no)
-# STACKDBG  Enable stack debugging information and warnings.
-#           By default 1 KiB but can be changed with MAXSTACKSIZE=your_value
-
+# For compile options check the README.md
 
 # indicate this repository's root folder
 # set some project specific path variables
@@ -52,10 +44,10 @@ $(error "FREERTOS_PROJ_ROOT is unset. Run `source env/platform-you-want.sh' \
 endif
 
 # good defaults for many environment variables
-include $(FREERTOS_PROJ_ROOT)/common/default_flags.mk
+include $(FREERTOS_PROJ_ROOT)/default_flags.mk
 
 # rtos and pulp sources
-include $(FREERTOS_PROJ_ROOT)/common/freertos_metal_srcs.mk
+include $(FREERTOS_PROJ_ROOT)/default_srcs.mk
 
 # application name
 PROG = blinky
@@ -71,4 +63,4 @@ CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
 CPPFLAGS += -DmainCREATE_SIMPLE_BLINKY_DEMO_ONLY=1
 
 # compile, simulation and analysis targets
-include $(FREERTOS_PROJ_ROOT)/common/default_targets.mk
+include $(FREERTOS_PROJ_ROOT)/default_targets.mk

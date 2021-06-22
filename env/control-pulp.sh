@@ -1,4 +1,6 @@
-# Copyright 2020 ETH Zurich
+#!/usr/bin/env bash
+
+# Copyright 2021 ETH Zurich
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,10 +17,13 @@
 # SPDX-License-Identifier: Apache-2.0
 # Author: Robert Balas (balasr@iis.ee.ethz.ch)
 
-SRCS += $(dir)/crt0.S
-SRCS += $(dir)/vectors.S
-SRCS += $(dir)/system_core_v_mcu_metal.c
+# var that points to this project's root
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+export FREERTOS_PROJ_ROOT="$ROOT"
+export FREERTOS_CONFIG_FAMILY="control-pulp"
 
-CV_CPPFLAGS += -I$(dir)/include
+export CONFIG_TARGET="control-pulp"
 
-CV_LDFLAGS += -T$(dir)/link.ld
+source "$ROOT/env/default-config.sh"
+
+export CONFIG_DRIVER_FLL=n

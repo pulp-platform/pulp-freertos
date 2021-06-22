@@ -17,10 +17,10 @@
 
 # Compile options (passed to make) e.g. make NDEBUG=yes
 # NDEBUG    Make release build
-# LIBC      Link against libc
-# LTO       Enable link time optimization
-# SANITIZE  Enable gcc sanitizer for debugging memory access problems
-# STACKDBG  Enable stack debugging information and warnings.
+# CONFIG_USE_NEWLIB Link against libc
+# CONFIG_CC_LTO       Enable link time optimization
+# CONFIG_CC_SANITIZE  Enable gcc sanitizer for debugging memory access problems
+# CONFIG_CC_STACKDBG  Enable stack debugging information and warnings.
 #           By default 1 KiB but can be changed with MAXSTACKSIZE=your_value
 
 RISCV		?= $(HOME)/.riscv
@@ -125,7 +125,7 @@ CV_CPPFLAGS += -DNDEBUG
 endif
 
 # do we need libc (by default yes)
-ifeq ($(LIBC),no)
+ifeq ($(CONFIG_USE_NEWLIB),n)
 $(warning Libc disabled. This setup is hard to get working and probably fails at the linker stage)
 CV_LDFLAGS += -nolibc
 else
@@ -152,17 +152,17 @@ CV_CPPFLAGS    += -D__PULP_USE_LIBC
 endif
 
 # stack debugging information
-ifeq ($(STACKDBG),yes)
+ifeq ($(CONFIG_CC_STACKDBG),y)
 CV_CFLAGS += -fstack-usage
-ifeq ($(MAXSTACKSIZE),)
+ifeq ($(CONFIG_CC_MAXSTACKSIZE),)
 CV_CFLAGS += -Wstack-usage=1024
 else
-CV_CFLAGS += -Wstack-usage=$(MAXSTACKSIZE)
+CV_CFLAGS += -Wstack-usage=$(CONFIG_CC_MAXSTACKSIZE)
 endif
 endif
 
 # check if we want to debug with memory sanitiszers
-ifeq ($(SANITIZE),yes)
+ifeq ($(CONFIG_CC_SANITIZE),y)
 CV_CFLAGS += -fsanitize=address -fsanitize=undefined -fsanitize=leak
 endif
 
@@ -170,7 +170,7 @@ endif
 # note that the gnu manpage recommends passing the optimization flags used at
 # compile time also to the linker when using LTO (weird!) which is why we have
 # CFLAGS in the linker target
-ifeq ($(LTO),yes)
+ifeq ($(CONFIG_CC_LTO),y)
 CV_CFLAGS += -flto
 endif
 

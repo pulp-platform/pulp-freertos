@@ -17,7 +17,9 @@
 
 SRCS += $(dir)/fc_event.c
 SRCS += $(dir)/uart.c
+ifeq ($(CONFIG_DRIVER_FLL),y)
 SRCS += $(dir)/fll.c
+endif
 SRCS += $(dir)/pmsis_task.c
 SRCS += $(dir)/device.c
 SRCS += $(dir)/spi.c

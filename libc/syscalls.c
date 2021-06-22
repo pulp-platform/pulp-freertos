@@ -51,8 +51,11 @@
 #include "stdout.h"
 
 /* FreeRTOS */
+#ifdef CONFIG_FREERTOS_KERNEL
 #include "FreeRTOS.h"
 #include "task.h"
+#endif
+
 #if !defined(configUSE_NEWLIB_REENTRANT) || (configUSE_NEWLIB_REENTRANT != 1)
 #warning "configUSE_NEWLIB_REENTRANT is unset or zero. This setting \
 is required for thread-safety of newlib sprintf, strtok, etc..."
@@ -324,10 +327,14 @@ void __malloc_lock(struct _reent *p)
 {
 	/* Make sure no mallocs inside ISRs */
 	/* configASSERT(!xPortIsInsideInterrupt()); */
+#ifdef CONFIG_FREERTOS_KERNEL
 	vTaskSuspendAll();
+#endif
 }
 
 void __malloc_unlock(struct _reent *p)
 {
+#ifdef CONFIG_FREERTOS_KERNEL
 	(void)xTaskResumeAll();
+#endif
 }

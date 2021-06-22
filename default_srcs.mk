@@ -19,6 +19,7 @@
 # and COMMON_ROOT to the driver folder
 
 # general OS
+ifeq ($(CONFIG_FREERTOS_KERNEL),y)
 dir := $(FREERTOS_PROJ_ROOT)/kernel
 
 SRCS += $(dir)/event_groups.c
@@ -32,29 +33,39 @@ SRCS += $(dir)/portable/GCC/RISC-V/port.c
 SRCS += $(dir)/portable/GCC/RISC-V/portASM.S
 # memory managment
 SRCS += $(dir)/portable/MemMang/heap_3.c
+# freertos macro
+CV_CPPFLAGS += -DCONFIG_FREERTOS_KERNEL
 # freertos generic headers
 CV_CPPFLAGS += -I"$(dir)/include"
 CV_CPPFLAGS += -I"$(dir)/portable/GCC/RISC-V"
 # freertos header for assembler
 CV_CPPFLAGS += -I"$(dir)/portable/GCC/RISC-V/chip_specific_extensions/PULPissimo"
+endif
 
 # arch (RISC-V) specific
 dir := $(FREERTOS_PROJ_ROOT)/target/arch
 include $(dir)/makefile.mk
 
 # c runtime and init
-ifneq ($(LIBC),no)
+ifeq ($(CONFIG_USE_NEWLIB),y)
 # syscall shims / implementation
 dir := $(FREERTOS_PROJ_ROOT)/libc
 include $(dir)/makefile.mk
 endif
 
 # metal drivers and runtime
-# runtime
-dir := $(FREERTOS_PROJ_ROOT)/target/core-v-mcu
+# target dependend files
+dir := $(FREERTOS_PROJ_ROOT)/target/$(CONFIG_TARGET)
 include $(dir)/makefile.mk
 
 # drivers
+# TODO: currently the drivers are not properly decoupled from the kernel so we
+# depend on the kernel until this is fixed
 dir := $(FREERTOS_PROJ_ROOT)/drivers
+ifeq ($(CONFIG_FREERTOS_KERNEL),y)
 include $(dir)/makefile.mk
 include $(dir)/makefile_pmsis.mk
+else
+# TODO: this part of the workaround above
+CV_CPPFLAGS += -I$(dir)/include
+endif
