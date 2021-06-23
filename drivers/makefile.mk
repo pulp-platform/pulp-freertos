@@ -19,10 +19,10 @@ SRCS += $(dir)/uart.c
 SRCS += $(dir)/spi.c
 ifeq ($(CONFIG_DRIVER_FLL),y)
 SRCS += $(dir)/fll.c
-else ifeq ($(CONFIG_DRIVER_CLKDIV,y)
+else ifeq ($(CONFIG_DRIVER_CLKDIV),y)
 SRCS += $(dir)/clkdiv.c
 else
-$(error "no driver for clock configuration enabled")
+$(error no driver for clock configuration enabled. Choose FLL or CLKDIV)
 endif
 SRCS += $(dir)/timer_irq.c
 SRCS += $(dir)/irq.c
