@@ -22,7 +22,7 @@
 #include "pmsis_task.h"
 
 #include "uart.h"
-#include "fll.h"
+#include "freq.h"
 #include "device.h"
 #include "events.h"
 #include "udma_core.h"
@@ -70,7 +70,7 @@ static inline void __pi_uart_conf_set(struct uart_itf_data_s *data,
 {
 	uint32_t device_id = data->device_id;
 	/* clk divider for uart */
-	uint32_t periph_freq = pi_freq_get(PI_FREQ_DOMAIN_FC);
+	uint32_t periph_freq = pi_freq_get(PI_FREQ_DOMAIN_PERIPH);
 	uint16_t clk_div = periph_freq / conf->baudrate_bps;
 
 	UART_TRACE(
