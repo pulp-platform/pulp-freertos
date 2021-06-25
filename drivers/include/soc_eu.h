@@ -321,5 +321,7 @@ static inline void hal_soc_eu_configure(int cluster, int event, int active)
 	/* #endif */
 }
 
+/* initialize soc event unit */
+void soc_eu_event_init();
 
 #endif /* __SOC_EU_H__ */

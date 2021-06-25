@@ -37,11 +37,14 @@
 
 /* C lib */
 #include <sys/stat.h>
+#include <sys/timeb.h>
+#include <sys/time.h>
 #include <newlib.h>
 #include <unistd.h>
 #include <errno.h>
 #include <stdint.h>
 #include <string.h>
+#include <utime.h>
 
 /* Drivers */
 #include "pulp_mem_map.h"
@@ -135,7 +138,8 @@ void _exit(int exit_status)
 {
 	writew(exit_status | (1 << APB_SOC_STATUS_EOC_BIT),
 	       (uintptr_t)(PULP_APB_SOC_CTRL_ADDR + APB_SOC_CORESTATUS_OFFSET));
-	asm volatile("wfi");
+	for (;;)
+	    asm volatile("wfi");
 }
 
 int _faccessat(int dirfd, const char *file, int mode, int flags)

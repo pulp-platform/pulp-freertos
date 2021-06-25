@@ -103,7 +103,7 @@ void pi_task_release(pi_task_t *task)
 	/* if the mutex is only virtual (e.g. wait on soc event)
 	 * if the sched support semaphore/mutexes */
 	if (task->wait_on.sem_object) {
-		DEBUG_PRINTF("[%s] sem give %p\n", __func__, task->wait_on);
+		DEBUG_PRINTF("[%s] sem give %p\n", __func__, &task->wait_on);
 		pi_sem_give(&(task->wait_on));
 	}
 	hal_compiler_barrier();

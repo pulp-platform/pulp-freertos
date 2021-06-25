@@ -17,11 +17,13 @@
  */
 
 #include <stddef.h>
+#include <string.h>
 
 #include "pmsis_types.h"
 #include "pmsis_task.h"
 
 #include "uart.h"
+#include "fc_event.h"
 #include "freq.h"
 #include "device.h"
 #include "events.h"
@@ -71,7 +73,7 @@ static inline void __pi_uart_conf_set(struct uart_itf_data_s *data,
 	uint32_t device_id = data->device_id;
 	/* clk divider for uart */
 	uint32_t periph_freq = pi_freq_get(PI_FREQ_DOMAIN_PERIPH);
-	uint16_t clk_div = periph_freq / conf->baudrate_bps;
+	uint16_t clk_div = (uint16_t)(periph_freq / conf->baudrate_bps);
 
 	UART_TRACE(
 		"UART(%ld) setting: baudrate=%ld CLK_DIV=%ld, RX_ENA=%ld, "
@@ -314,7 +316,7 @@ static int32_t __pi_uart_copy(struct uart_itf_data_s *data, uint32_t l2_buf,
 	task->data[2] = channel;
 	task->data[3] = 0; /* Repeat size ? */
 	task->next = NULL;
-	uint8_t head = __pi_uart_task_fifo_enqueue(data, task, channel);
+	uint8_t head = (uint8_t)__pi_uart_task_fifo_enqueue(data, task, channel);
 	if (head == 0) {
 		/* Execute the transfer. */
 		UART_TRACE(
@@ -499,4 +501,15 @@ int pi_uart_read_async(struct pi_device *device, void *buffer, uint32_t size,
 	UART_TRACE("UART(%ld): Read l2_buf=%lx size=%ld\n", data->device_id,
 		   l2_buf, size);
 	return __pi_uart_copy(data, l2_buf, size, RX_CHANNEL, callback);
+}
+
+/* unimplemented cluster functions */
+static inline void pi_cl_uart_write_wait(pi_cl_uart_req_t *req)
+{
+	abort();
+}
+
+static inline void pi_cl_uart_read_wait(pi_cl_uart_req_t *req)
+{
+	abort();
 }

@@ -51,9 +51,6 @@
 #define pmsis_l2_malloc_init  pi_l2_malloc_init
 #define pmsis_l2_malloc_dump  pi_l2_malloc_dump
 
-#define PI_TASK_IMPLEM                          \
-    uint8_t destroy;
-
 #define CLUSTER_TASK_IMPLEM
 
 #endif  /* __IMPLEMENTATION_SPECIFIC_DEFINES_H__ */

@@ -256,15 +256,15 @@ backup:
 .PHONY: clean
 ## Clean object files
 clean:
-	rm -f $(OBJS) $(PROG) $(DEPS) $(SU) \
+	$(RM) $(OBJS) $(PROG) $(DEPS) $(SU) \
 		$(PROG).hex $(PROG).lst $(PROG).siz memory.map $(PROG).veri \
 		$(PROG).stim $(SIMDIR)/vectors/stim.txt
 
 .PHONY: distclean
 ## Clean object files and all support dependencies
 distclean: clean
-	rm -rf $(SUPPORT_ROOT)/install/*
-	rm -r $(SIMDIR) $(GVSIMDIR)
+	$(RM) -r $(SUPPORT_ROOT)/install/*
+	$(RM) -r $(SIMDIR) $(GVSIMDIR)
 .PHONY: show-config
 ## Show current configuration
 show-config:
