@@ -86,15 +86,31 @@ $(shell mkdir -p $(GVSIMDIR))
 
 # creating symlink farm because PULP/PULPissimo relies on hardcoded paths
 $(SIMDIR)/modelsim.ini:
+ifndef VSIM_PATH
+	$(error "VSIM_PATH is undefined. Either call \
+	'source $$YOUR_HW_DIR/setup/vsim.sh' or set it manually.")
+endif
 	ln -s $(VSIM_PATH)/modelsim.ini $@
 
 $(SIMDIR)/boot:
+ifndef VSIM_PATH
+	$(error "VSIM_PATH is undefined. Either call \
+	'source $$YOUR_HW_DIR/setup/vsim.sh' or set it manually.")
+endif
 	ln -s $(VSIM_PATH)/boot $@
 
 $(SIMDIR)/tcl_files:
+ifndef VSIM_PATH
+	$(error "VSIM_PATH is undefined. Either call \
+	'source $$YOUR_HW_DIR/setup/vsim.sh' or set it manually.")
+endif
 	ln -s $(VSIM_PATH)/tcl_files $@
 
 $(SIMDIR)/waves:
+ifndef VSIM_PATH
+	$(error "VSIM_PATH is undefined. Either call \
+	'source $$YOUR_HW_DIR/setup/vsim.sh' or set it manually.")
+endif
 	ln -s $(VSIM_PATH)/waves $@
 
 $(SIMDIR)/vectors/stim.txt: $(PROG).stim
@@ -149,8 +165,8 @@ run: $(SIMDIR)/modelsim.ini $(SIMDIR)/boot $(SIMDIR)/tcl_files \
 	$(SIMDIR)/stdout $(SIMDIR)/fs \
 	$(DPI_LIBS) $(RUN_MORE)
 ifndef VSIM_PATH
-	$(error "VSIM_PATH is not set. Make sure your ran `source setup/vsim.sh` \
-	in your PULP/PULPissimo repository")
+	$(error "VSIM_PATH is undefined. Either call \
+	'source $$YOUR_HW_DIR/setup/vsim.sh' or set it manually.")
 endif
 	cp $(PROG) $(SIMDIR)
 	cp $(PROG).lst $(SIMDIR)
