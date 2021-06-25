@@ -20,6 +20,8 @@
 #include <stdint.h>
 #include <assert.h>
 
+#include "system.h"
+
 #include <FreeRTOS.h>
 #include "FreeRTOSConfig.h"
 
@@ -93,7 +95,7 @@ void system_core_clock_update(void)
 	system_core_clock = DEFAULT_SYSTEM_CLOCK;
 }
 
-void system_core_clock_get(void)
+uint32_t system_core_clock_get(void)
 {
 	system_core_clock_update();
 	return system_core_clock;
