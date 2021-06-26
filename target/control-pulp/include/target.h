@@ -36,7 +36,7 @@ static inline void hal_write32(volatile void *addr, uint32_t value)
 	asm volatile("" : : : "memory");
 }
 
-static inline void hal_write8(volatile void *addr, uint32_t value)
+static inline void hal_write8(volatile void *addr, uint8_t value)
 {
 	asm volatile("" : : : "memory");
 	*((volatile uint8_t *)addr) = value;

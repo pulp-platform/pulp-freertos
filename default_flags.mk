@@ -32,7 +32,8 @@ SIZE		= $(RISCV_PREFIX)size
 
 # set some project specific path variables
 ifndef FREERTOS_PROJ_ROOT
-$(error "FREERTOS_PROJ_ROOT is unset. Point it to this project's root directory.")
+$(error "FREERTOS_PROJ_ROOT is unset. Initialize it by calling \
+`source env/desired-config.sh' in FreeRTOS' project root directory.")
 endif
 
 SCRIPTS_ROOT = $(FREERTOS_PROJ_ROOT)/scripts

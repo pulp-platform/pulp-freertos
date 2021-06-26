@@ -81,7 +81,7 @@ void system_core_clock_update()
 	system_core_clock = pi_fll_get_frequency(FLL_SOC, 0);
 }
 
-void system_core_clock_get(void)
+uint32_t system_core_clock_get(void)
 {
 	system_core_clock_update();
 	return system_core_clock;

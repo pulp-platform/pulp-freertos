@@ -23,6 +23,8 @@
 /* TODO: remove this hack */
 #include "implementation_specific_defines.h"
 
+#include "system.h"
+#include "fc_event.h"
 #include "udma.h"
 #include "fll.h"
 #include "events.h"
@@ -294,7 +296,7 @@ void spim_eot_handler(void *arg)
 			 * sched%p\n", */
 			/* 	   __func__, __LINE__, task, task->id, */
 			/* 	   default_sched); */
-			DBG_PRINTF("%s:%d periph id:%x\n", __func__, __LINE__,
+			DBG_PRINTF("%s:%d periph id:%"PRIu32"\n", __func__, __LINE__,
 				   periph_id);
 			/* TODO: hacked away */
 			/* pmsis_event_push(default_sched, task); */
@@ -322,7 +324,7 @@ void spim_tx_handler(void *arg)
 		(event >> UDMA_CHANNEL_NB_EVENTS_LOG2) - UDMA_SPIM_ID(0);
 	hal_soc_eu_clear_fc_mask(SOC_EVENT_UDMA_SPIM_TX(periph_id));
 	arg = (void *)(SOC_EVENT_UDMA_SPIM_EOT(0) + periph_id);
-	DBG_PRINTF("%s:%d periph_id %x arg:%p\n", __func__, __LINE__, periph_id,
+	DBG_PRINTF("%s:%d periph_id %"PRIu32" arg:%p\n", __func__, __LINE__, periph_id,
 		   arg);
 	spim_eot_handler(arg);
 	DBG_PRINTF("%s:%d\n", __func__, __LINE__);
@@ -337,7 +339,7 @@ void spim_rx_handler(void *arg)
 		(event >> UDMA_CHANNEL_NB_EVENTS_LOG2) - UDMA_SPIM_ID(0);
 	hal_soc_eu_clear_fc_mask(SOC_EVENT_UDMA_SPIM_RX(periph_id));
 	arg = (void *)(SOC_EVENT_UDMA_SPIM_EOT(0) + periph_id);
-	DBG_PRINTF("%s:%d periph_id %x arg:%p\n", __func__, __LINE__, periph_id,
+	DBG_PRINTF("%s:%d periph_id %"PRIu32" arg:%p\n", __func__, __LINE__, periph_id,
 		   arg);
 	spim_eot_handler(arg);
 	DBG_PRINTF("%s:%d\n", __func__, __LINE__);
@@ -354,7 +356,7 @@ void __pi_spi_receive_async(struct spim_cs_data *cs_data, void *data,
 	int device_id = drv_data->device_id;
 	uint32_t cfg = cs_data->cfg;
 	DBG_PRINTF(
-		"%s:%d: core clock:%d, baudrate:%d, div=%d, udma_cmd cfg =%lx, qpi=%lx\n",
+		"%s:%d: core clock:%"PRIu32", baudrate:%"PRIu32", div=%"PRIu32", udma_cmd cfg =%lx, qpi=%d\n",
 		__func__, __LINE__, system_core_clock_get(),
 		cs_data->max_baudrate,
 		system_core_clock_get() / cs_data->max_baudrate, cfg, qspi);
@@ -557,7 +559,7 @@ void __pi_spi_send_async(struct spim_cs_data *cs_data, void *data, size_t len,
 	int device_id = drv_data->device_id;
 	uint32_t cfg = cs_data->cfg;
 	DBG_PRINTF(
-		"%s:%d: core clock:%d, baudrate:%d, div=%d, udma_cmd cfg =%lx, qpi=%lx\n",
+		"%s:%d: core clock:%"PRIu32", baudrate:%"PRIu32", div=%"PRIu32", udma_cmd cfg =%lx, qpi=%d\n",
 		__func__, __LINE__, system_core_clock_get(),
 		cs_data->max_baudrate,
 		system_core_clock_get() / cs_data->max_baudrate, cfg, qspi);
@@ -636,7 +638,7 @@ void __pi_spi_xfer_async(struct spim_cs_data *cs_data, void *tx_data,
 
     int device_id = drv_data->device_id;
     uint32_t cfg = cs_data->cfg;
-    DBG_PRINTF("%s:%d: core clock:%d, baudrate:%d, div=%d, udma_cmd cfg =%lx\n",
+    DBG_PRINTF("%s:%d: core clock:%"PRIu32", baudrate:%"PRIu32", div=%"PRIu32", udma_cmd cfg =%d\n",
             __func__,__LINE__,system_core_clock_get(),cs_data->max_baudrate,
             system_core_clock_get() / cs_data->max_baudrate,cfg);
     uint32_t byte_align = (cs_data->wordsize == PI_SPI_WORDSIZE_32)
@@ -770,7 +772,7 @@ int pi_spi_open(struct pi_device *device)
 		}
 		if (clk_div > 0xFF) {
 			DBG_PRINTF(
-				"[%s] clk_div, %x, does not fit into 8 bits. SoC frequency too high.\n",
+				"[%s] clk_div, %"PRIu32", does not fit into 8 bits. SoC frequency too high.\n",
 				__func__, clk_div);
 			restore_irq(irq);
 			return -3;
@@ -816,14 +818,14 @@ void pi_spi_close(struct pi_device *device)
 		pi_default_free(drv_data, sizeof(drv_data));
 
 		restore_irq(irq);
-		return 0;
+		return;
 	}
 	pi_data_free(cs_data, sizeof(cs_data));
 	/* TODO: moved to end return drv_data->nb_open; */
 	/* TODO: paste end */
 
 	restore_irq(irq);
-	return drv_data->nb_open;
+	return;
 }
 
 void pi_spi_ioctl(struct pi_device *device, uint32_t cmd, void *arg)

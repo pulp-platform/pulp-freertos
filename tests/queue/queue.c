@@ -66,7 +66,7 @@
 #include <stdlib.h>
 
 /* driver includes */
-#include "system_pmsis.h"
+#include "system.h"
 #include "timer_irq.h"
 #include "fll.h"
 #include "irq.h"
