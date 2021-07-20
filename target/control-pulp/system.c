@@ -83,8 +83,8 @@ void system_init(void)
 	pi_fc_event_handler_init(26); /* TODO: FIX THIS */
 
 	/* TODO: I$ enable*/
-	/* enable core level interrupt (mie) */
-	irq_clint_enable();
+	/* enable global core level interrupts (MIE in mstatus) */
+	irq_clint_global_enable();
 
 	/* TODO: enable uart */
 }
