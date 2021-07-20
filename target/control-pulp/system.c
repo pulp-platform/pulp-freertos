@@ -85,6 +85,8 @@ void system_init(void)
 	/* TODO: I$ enable*/
 	/* enable global core level interrupts (MIE in mstatus) */
 	irq_clint_global_enable();
+	/* enable timer interrupt also in the mie csr (required in the cv32e40p) */
+	irq_clint_enable(IRQ_FC_EVT_TIMER0_LO);
 
 	/* TODO: enable uart */
 }
