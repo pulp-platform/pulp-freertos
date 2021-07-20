@@ -226,8 +226,9 @@ static inline void hal_soc_eu_set_fc_mask(int evt)
 		return;
 
 	int shift = evt % 32;
-	uint32_t reg_offset = evt / 32 * 4;
-	soc_eu_fc_write(soc_eu_fc_read(reg_offset) & ~(1 << shift), reg_offset);
+	uint32_t reg_offset = (uint32_t)evt / 32 * 4;
+	soc_eu_fc_write(soc_eu_fc_read(reg_offset) & ~(1u << shift),
+			reg_offset);
 }
 
 static inline void hal_soc_eu_set_pr_mask(int evt)
@@ -236,8 +237,9 @@ static inline void hal_soc_eu_set_pr_mask(int evt)
 		return;
 
 	int shift = evt % 32;
-	uint32_t reg_offset = evt / 32 * 4;
-	soc_eu_pr_write(soc_eu_pr_read(reg_offset) & ~(1 << shift), reg_offset);
+	uint32_t reg_offset = (uint32_t)evt / 32 * 4;
+	soc_eu_pr_write(soc_eu_pr_read(reg_offset) & ~(1u << shift),
+			reg_offset);
 }
 
 static inline void hal_soc_eu_set_cl_mask(int clusterId, int evt)
@@ -246,8 +248,9 @@ static inline void hal_soc_eu_set_cl_mask(int clusterId, int evt)
 		return;
 
 	int shift = evt % 32;
-	uint32_t reg_offset = evt / 32 * 4;
-	soc_eu_cl_write(soc_eu_cl_read(reg_offset) & ~(1 << shift), reg_offset);
+	uint32_t reg_offset = (uint32_t)evt / 32 * 4;
+	soc_eu_cl_write(soc_eu_cl_read(reg_offset) & ~(1u << shift),
+			reg_offset);
 }
 
 static inline void hal_soc_eu_clear_fc_mask(int evt)
@@ -256,8 +259,8 @@ static inline void hal_soc_eu_clear_fc_mask(int evt)
 		return;
 
 	int shift = evt % 32;
-	uint32_t reg_offset = evt / 32 * 4;
-	soc_eu_fc_write(soc_eu_fc_read(reg_offset) | (1 << shift), reg_offset);
+	uint32_t reg_offset = (uint32_t)evt / 32 * 4;
+	soc_eu_fc_write(soc_eu_fc_read(reg_offset) | (1u << shift), reg_offset);
 }
 
 static inline void hal_soc_eu_clear_pr_mask(int evt)
@@ -266,8 +269,8 @@ static inline void hal_soc_eu_clear_pr_mask(int evt)
 		return;
 
 	int shift = evt % 32;
-	uint32_t reg_offset = evt / 32 * 4;
-	soc_eu_pr_write(soc_eu_pr_read(reg_offset) | (1 << shift), reg_offset);
+	uint32_t reg_offset = (uint32_t)evt / 32 * 4;
+	soc_eu_pr_write(soc_eu_pr_read(reg_offset) | (1u << shift), reg_offset);
 }
 
 static inline void hal_soc_eu_clear_cl_mask(int clusterId, int evt)
@@ -276,8 +279,8 @@ static inline void hal_soc_eu_clear_cl_mask(int clusterId, int evt)
 		return;
 
 	int shift = evt % 32;
-	uint32_t reg_offset = evt / 32 * 4;
-	soc_eu_cl_write(soc_eu_cl_read(reg_offset) | (1 << shift), reg_offset);
+	uint32_t reg_offset = (uint32_t)evt / 32 * 4;
+	soc_eu_cl_write(soc_eu_cl_read(reg_offset) | (1u << shift), reg_offset);
 }
 
 

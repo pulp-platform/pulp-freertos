@@ -92,13 +92,13 @@ static inline void pi_yield()
 	taskYIELD();
 }
 
-static inline int disable_irq(void)
+static inline uint32_t disable_irq(void)
 {
 	hal_compiler_barrier();
 	return __disable_irq();
 }
 
-static inline void restore_irq(int irq_enable)
+static inline void restore_irq(uint32_t irq_enable)
 {
 	hal_compiler_barrier();
 	__restore_irq(irq_enable);
@@ -107,7 +107,7 @@ static inline void restore_irq(int irq_enable)
 /* TODO: fix these functions, seems broken */
 static inline void __os_native_api_sem_take(void *sem_object)
 {
-	int irq = __disable_irq();
+	uint32_t irq = __disable_irq();
 	if (__get_mcause() & MCAUSE_IRQ_Msk) {
 		/* This case should never happen ! */
 		BaseType_t ret;
@@ -120,7 +120,7 @@ static inline void __os_native_api_sem_take(void *sem_object)
 
 static inline void __os_native_api_sem_give(void *sem_object)
 {
-	int irq = __disable_irq();
+	uint32_t irq = __disable_irq();
 	if (__get_mcause() & MCAUSE_IRQ_Msk) {
 		BaseType_t ret;
 		xSemaphoreGiveFromISR(sem_object, &ret);
@@ -190,7 +190,7 @@ static inline void __os_native_api_mutex_lock(void *mutex_object)
 
 static inline void __os_native_api_mutex_release(void *mutex_object)
 {
-	int irq = __disable_irq();
+	uint32_t irq = __disable_irq();
 	BaseType_t ret;
 	xSemaphoreGiveFromISR(mutex_object, &ret);
 	__restore_irq(irq);
@@ -230,7 +230,7 @@ static inline void pmsis_spinlock_init(pmsis_spinlock_t *spinlock)
 
 static inline void pmsis_spinlock_take(pmsis_spinlock_t *spinlock)
 {
-	int irq_enabled = disable_irq();
+	uint32_t irq_enabled = disable_irq();
 	hal_compiler_barrier();
 	spinlock->lock = 1;
 	hal_compiler_barrier();
@@ -239,7 +239,7 @@ static inline void pmsis_spinlock_take(pmsis_spinlock_t *spinlock)
 
 static inline void pmsis_spinlock_release(pmsis_spinlock_t *spinlock)
 {
-	int irq_enabled = disable_irq();
+	uint32_t irq_enabled = disable_irq();
 	hal_compiler_barrier();
 	spinlock->lock = 0;
 	hal_compiler_barrier();
@@ -253,7 +253,7 @@ static void pi_time_wait_us(int time_us)
 		for (volatile int i = 0; i < time_us; i++)
 			;
 	} else {
-		vTaskDelay((time_us / 1000) / portTICK_PERIOD_MS);
+		vTaskDelay(((uint32_t)time_us / 1000) / portTICK_PERIOD_MS);
 	}
 }
 

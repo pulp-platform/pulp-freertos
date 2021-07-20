@@ -45,7 +45,7 @@ uint32_t soc_eu_mask_get(uint32_t offset)
 void soc_eu_event_init()
 {
 	/* deactivate all soc events */
-	for (int i = 0; i < SOC_NB_EVENT_REGS; i++) {
+	for (unsigned i = 0; i < SOC_NB_EVENT_REGS; i++) {
 		soc_eu_mask_set(SOC_FC_FIRST_MASK + i * 4, 0xffffffff);
 	}
 }
