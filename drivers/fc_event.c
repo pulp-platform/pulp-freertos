@@ -37,7 +37,7 @@ void pi_fc_event_handler_init(uint32_t fc_event_irq)
 	/* TODO: fix this mess, that should be 8 32-bit writes */
 	/* open the mask for fc_soc_event irq */
 	for (int i = 0; i < NB_SOC_EVENTS; i++) {
-		pi_fc_event_handler_clear(i);
+		pi_fc_event_handler_clear((uint32_t)i);
 	}
 	irqn_enable(fc_event_irq);
 }

@@ -106,7 +106,7 @@ static int32_t __pi_spim_drv_fifo_enqueue(struct spim_cs_data *data,
 					  struct spim_transfer *transfer,
 					  pi_task_t *end_task);
 static inline pi_task_t *__pi_spim_drv_fifo_pop(struct spim_driver_data *data);
-static inline void __pi_spim_exec_transfer(pi_task_t *task);
+/* static inline void __pi_spim_exec_transfer(pi_task_t *task); */
 
 void __pi_spi_send_async(struct spim_cs_data *cs_data, void *data, size_t len,
 			 pi_spi_flags_e flags, pi_task_t *task);
@@ -371,7 +371,7 @@ void __pi_spi_receive_async(struct spim_cs_data *cs_data, void *data,
 		abort(); /* TODO: unimplemented transaction splitting */
 	}
 
-	int irq = __disable_irq();
+	uint32_t irq = __disable_irq();
 
 	if (!drv_data->end_of_transfer) {
 		cs_data->udma_cmd[0] = cfg;
@@ -436,7 +436,7 @@ void __pi_spi_receive_async_with_ucode(struct spim_cs_data *cs_data, void *data,
 
     int cmd_id = 0;
 
-    int irq = __disable_irq();
+    uint32_t irq = __disable_irq();
     if(!drv_data->end_of_transfer)
     {
         if(cs_mode != PI_SPI_CS_AUTO)
@@ -501,7 +501,7 @@ void __pi_spi_send_async_with_ucode(struct spim_cs_data *cs_data, void *data,
 
     int cmd_id = 0;
 
-    int irq = __disable_irq();
+    uint32_t irq = __disable_irq();
     if(!drv_data->end_of_transfer)
     {
         if(cs_mode != PI_SPI_CS_AUTO)
@@ -578,7 +578,7 @@ void __pi_spi_send_async(struct spim_cs_data *cs_data, void *data, size_t len,
 
 	DBG_PRINTF("%s:%d: udma_cmd=%p\n", __func__, __LINE__,
 		   &(cs_data->udma_cmd[0]));
-	int irq = disable_irq();
+	uint32_t irq = disable_irq();
 	/* check if we already have a transfer ongoing */
 	if (!drv_data->end_of_transfer) { /* enqueue the transfer */
 		cs_data->udma_cmd[0] = cfg;
@@ -647,7 +647,7 @@ void __pi_spi_xfer_async(struct spim_cs_data *cs_data, void *tx_data,
 
     int cmd_id = 0;
 
-    int irq = __disable_irq();
+    uint32_t irq = __disable_irq();
     if(!drv_data->end_of_transfer)
     {
         cs_data->udma_cmd[0] = cfg;
@@ -718,7 +718,7 @@ void __pi_spi_xfer_async(struct spim_cs_data *cs_data, void *tx_data,
 int pi_spi_open(struct pi_device *device)
 {
 	struct pi_spi_conf *conf = (struct pi_spi_conf *)device->config;
-	int irq = __disable_irq();
+	uint32_t irq = __disable_irq();
 	/* int status = __pi_spi_open((struct spim_cs_data **)(&device->data),
 	 * conf); */
 
@@ -800,7 +800,7 @@ int pi_spi_open(struct pi_device *device)
 void pi_spi_close(struct pi_device *device)
 {
 	struct pi_spi_conf *conf = (struct pi_spi_conf *)device->config;
-	int irq = __disable_irq();
+	uint32_t irq = __disable_irq();
 	/* TODO: paste beg */
 	struct spim_cs_data *cs_data = device->data;
 	struct spim_driver_data *drv_data = cs_data->drv_data;

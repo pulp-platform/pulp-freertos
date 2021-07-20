@@ -150,7 +150,7 @@
   \brief   Restore the MIE bit
   \details Restore the MIE bit of MSTATUS
  */
-__attribute__((always_inline)) static inline void __restore_irq(int irq)
+__attribute__((always_inline)) static inline void __restore_irq(uint32_t irq)
 {
 	/* TODO: should probably read then write this register to not clear
 	 * unintended bits */
@@ -172,7 +172,7 @@ __attribute__((always_inline)) static inline void __enable_irq(void)
   \details Disables IRQ interrupts by clearing the MPIE-bit in the CPSR.
 	   Can only be executed in Privileged modes.
  */
-__attribute__((always_inline)) static inline int __disable_irq(void)
+__attribute__((always_inline)) static inline uint32_t __disable_irq(void)
 {
 	uint32_t val = csr_read_clear(MSTATUS_ADDR, BIT(MSTATUS_MIE_Pos));
 	return val;

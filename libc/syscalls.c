@@ -250,7 +250,7 @@ long _sysconf(int name)
 
 clock_t _times(struct tms *buf)
 {
-	return -1;
+	return 0;
 }
 
 int _unlink(const char *name)

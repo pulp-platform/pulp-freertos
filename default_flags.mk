@@ -96,22 +96,22 @@ GCC_GTEQ_8 = $(shell expr `$(CC) -dumpversion | cut -f1 -d.` \>= 8)
 # A-Extension in this PULP version.
 
 # User controllable standard makeflags
-CFLAGS = -Os -g3
+CFLAGS = -Os -g3 -march=rv32imac -mabi=ilp32
 CPPFLAGS =
 LDFLAGS =
 LDLIBS =
-ASFLAGS = -Os -g3
+ASFLAGS = -Os -g3 -march=rv32imac -mabi=ilp32
 
 # Builtin mandatory flags. Need to be simply expanded variables for appends in
 # sub-makefiles to work correctly
 CV_CFLAGS := \
-	-march=rv32imac -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore \
+	-msmall-data-limit=8 -mno-save-restore \
 	-fsigned-char -ffunction-sections -fdata-sections \
 	-std=gnu11 \
 	-Wall -Wextra -Wshadow -Wformat=2 -Wundef -Wconversion -Wno-unused-parameter
 
 CV_ASFLAGS := \
-	-march=rv32imac -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore \
+	-msmall-data-limit=8 -mno-save-restore \
 	-fsigned-char -ffunction-sections -fdata-sections \
 	-x assembler-with-cpp
 
