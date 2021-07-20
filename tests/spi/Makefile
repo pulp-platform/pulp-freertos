@@ -73,5 +73,8 @@ CPPFLAGS += $(addprefix -I$(VPATH)/, ".")
 
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
 
+# Uncomment to disable Additional reigsters (HW Loops)
+#CPPFLAGS += -DportasmSKIP_ADDITIONAL_REGISTERS
+
 # compile, simulation and analysis targets
 include $(PROJ_ROOT)/default_targets.mk

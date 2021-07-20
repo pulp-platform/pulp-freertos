@@ -45,17 +45,32 @@ void irq_disable(uint32_t mask)
 /* utility functions for the core level interrupt (CLINT) described in the
  * RISC-V privileged specification */
 
-uint32_t irq_clint_disable()
+/* enable/disable interrupt globally (MIE bit in mstatus csr) */
+uint32_t irq_clint_global_disable()
 {
 	uint32_t val = csr_read_clear(CSR_MSTATUS, MSTATUS_IE);
 	return val;
 }
 
-uint32_t irq_clint_enable()
+uint32_t irq_clint_global_enable()
 {
 	uint32_t val = csr_read_set(CSR_MSTATUS, MSTATUS_IE);
 	return val;
 }
+
+/* enable/disable interrupts selectively (in mie csr) */
+uint32_t irq_clint_disable(int32_t mask)
+{
+	uint32_t val = csr_read_clear(CSR_MIE, mask);
+	return val;
+}
+
+uint32_t irq_clint_enable(int32_t mask)
+{
+ 	uint32_t val = csr_read_set(CSR_MIE, mask);
+	return val;
+}
+
 
 /* TODO: make this a constructor? */
 void pulp_irq_init()

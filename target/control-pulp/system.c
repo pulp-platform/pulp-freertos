@@ -83,8 +83,10 @@ void system_init(void)
 	pi_fc_event_handler_init(26); /* TODO: FIX THIS */
 
 	/* TODO: I$ enable*/
-	/* enable core level interrupt (mie) */
-	irq_clint_enable();
+	/* enable global core level interrupts (MIE in mstatus) */
+	irq_clint_global_enable();
+	/* enable timer interrupt also in the mie csr (required in the cv32e40p) */
+	irq_clint_enable(IRQ_FC_EVT_TIMER0_LO);
 
 	/* TODO: enable uart */
 }

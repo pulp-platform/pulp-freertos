@@ -56,5 +56,8 @@ CPPFLAGS += -DUSE_STDIO
 # number of error check polls before the tests is conclueded as being successful
 CPPFLAGS += -DQUEUE_CHECK_ITERATIONS=2
 
+# Uncomment to disable Additional reigsters (HW Loops)
+#CPPFLAGS += -DportasmSKIP_ADDITIONAL_REGISTERS
+
 # compile, simulation and analysis targets
 include $(PROJ_ROOT)/default_targets.mk

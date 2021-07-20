@@ -90,7 +90,7 @@ void system_init(void)
 
 	/* TODO: I$ enable*/
 	/* enable core level interrupt (mie) */
-	irq_clint_enable();
+	irq_clint_global_enable();
 
 	/* TODO: enable uart */
 }
