@@ -153,6 +153,8 @@ Here a few typical and useful invocations
 ## Environment Variables and Configuration Options
 See `env/default-config.sh`
 * `CONFIG_FREERTOS_KERNEL=y/n` (default y) Use the FreeRTOS kernel
+* `CONFIG_FREERTOS_KERNEL=string` (default PULPissimo) Name of the chip specific
+  include directory
 * `CONFIG_USE_NEWLIB=y/n` (default y) Use newlib libc
 
 * `CONFIG_DRIVER_PLIC=y/n` (default n) Use the PLIC driver

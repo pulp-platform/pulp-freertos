@@ -39,7 +39,10 @@ CV_CPPFLAGS += -DCONFIG_FREERTOS_KERNEL
 CV_CPPFLAGS += -I"$(dir)/include"
 CV_CPPFLAGS += -I"$(dir)/portable/GCC/RISC-V"
 # freertos header for assembler
-CV_CPPFLAGS += -I"$(dir)/portable/GCC/RISC-V/chip_specific_extensions/PULPissimo"
+ifeq ($(CONFIG_FREERTOS_CHIP_INCLUDE),)
+$(error "CONFIG_FREERTOS_CHIP_INCLUDE is unset. Set to your target platform. See README.md.")
+endif
+CV_CPPFLAGS += -I"$(dir)/portable/GCC/RISC-V/chip_specific_extensions/$(CONFIG_FREERTOS_CHIP_INCLUDE)"
 endif
 
 # arch (RISC-V) specific

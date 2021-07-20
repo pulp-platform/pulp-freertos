@@ -26,5 +26,7 @@ export CONFIG_TARGET="control-pulp"
 
 source "$ROOT/env/default-config.sh"
 
+export CONFIG_FREERTOS_CHIP_INCLUDE=ControlPULP_CV32E40P
+
 export CONFIG_DRIVER_FLL=n
 export CONFIG_DRIVER_CLKDIV=y
