@@ -87,6 +87,8 @@ void system_init(void)
 	irq_clint_global_enable();
 	/* enable timer interrupt also in the mie csr (required in the cv32e40p) */
 	irq_clint_enable(IRQ_FC_EVT_TIMER0_LO);
+	/* enable soc_events to propagate to core */
+	irq_clint_enable(IRQ_FC_EVT_SOC_EVT);
 
 	/* TODO: enable uart */
 }
