@@ -18,7 +18,7 @@
 # Author: Robert Balas (balasr@iis.ee.ethz.ch)
 
 # var that points to this project's root
-ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+ROOT=$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/.." && pwd)
 export FREERTOS_PROJ_ROOT="$ROOT"
 export FREERTOS_CONFIG_FAMILY="pulp"
 
