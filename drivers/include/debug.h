@@ -46,7 +46,7 @@
 #endif /* TRACE_UART */
 
 /* Debug helper. */
-#ifdef DEBUG
+#if defined (DEBUG_TASKS)
 #define DEBUG_PRINTF printf
 #else
 #define DEBUG_PRINTF(...) ((void)0)

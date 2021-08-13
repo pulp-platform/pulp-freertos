@@ -121,4 +121,9 @@ static inline int pi_cl_cluster_nb_cores()
 	return ARCHI_CLUSTER_NB_PE;
 }
 
+static inline uint32_t pi_cl_cluster_nb_pe_cores(void)
+{
+	return ARCHI_CLUSTER_NB_PE;
+}
+
 #endif

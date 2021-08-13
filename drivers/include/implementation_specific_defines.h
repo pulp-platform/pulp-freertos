@@ -20,6 +20,7 @@
 #ifndef __IMPLEMENTATION_SPECIFIC_DEFINES_H__
 #define __IMPLEMENTATION_SPECIFIC_DEFINES_H__
 
+#include <stdint.h>
 #include "stdlib.h"
 #include "string.h"
 
@@ -51,6 +52,8 @@
 #define pmsis_l2_malloc_init  pi_l2_malloc_init
 #define pmsis_l2_malloc_dump  pi_l2_malloc_dump
 
-#define CLUSTER_TASK_IMPLEM
-
+#define PI_TASK_IMPLEM                          \
+    uint8_t destroy;
+#define CLUSTER_TASK_IMPLEM                     \
+    uint32_t cluster_team_mask;
 #endif  /* __IMPLEMENTATION_SPECIFIC_DEFINES_H__ */

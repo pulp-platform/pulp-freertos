@@ -40,8 +40,15 @@ _start:
 	addi  gp, gp, %pcrel_lo(1b)
 .option pop
 
-#if defined(ARCHI_HAS_CLUSTER)
-	/* TODO */
+        csrr a0, 0xf14 /* Cluster ID */
+        andi a1, a0, 0x1f       /* Core ID */
+        srli a0, a0, 5
+
+#if defined(CONFIG_CLUSTER)
+        li a2, 31 /* FC_Cluster ID */
+        //bne a2, a0, cl_cluster_exec_loop
+        .extern cluster_exec_loop
+        bne a2, a0, cluster_exec_loop
 #endif
 /* initialize stack pointer */
 	la sp, __stack_top

@@ -98,8 +98,12 @@
 void irq_mask(uint32_t mask);
 void irq_enable(uint32_t mask);
 void irq_disable(uint32_t mask);
-uint32_t irq_clint_disable();
-uint32_t irq_clint_enable();
+void irq_pend(uint32_t mask);
+void irq_clear(uint32_t mask);
+uint32_t irq_clint_global_disable();
+uint32_t irq_clint_global_enable();
+uint32_t irq_clint_disable(int32_t mask);
+uint32_t irq_clint_enable(int32_t mask);
 void pulp_irq_init();
 
 /** Interrupt Number Definitions */
@@ -107,12 +111,12 @@ void pulp_irq_init();
 	32 /**< Number of interrupts in the Vector table */
 
 typedef enum {
-	FC_NOTIFY_CLUSTER_EVENT = 0,   /**< Software event interrupt */
+    //FC_NOTIFY_CLUSTER_EVENT = 0,   /**< Software event interrupt */
 	CLUSTER_NOTIFY_FC_EVENT = 1,   /**< Software event interrupt */
 	FC_SW_NOTIFY_BRIDGE_EVENT = 2, /**< Software event interrupt */
 	FC_SW_NOTIFY_EVENT = 3,	       /**< Software event interrupt */
 	CLUSTER_NOTIFY_FC_IRQN = 4,    /**< Software event interrupt */
-	DMA_SW_IRQN = 6,
+	/* DMA_SW_IRQN = 6, */
 	PENDSV_IRQN = 7, /**< Software event U -> M PendSV interrupt */
 
 	/* Device specific interrupts */
