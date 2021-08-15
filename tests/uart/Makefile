@@ -50,6 +50,9 @@ CFLAGS = \
 	-DFEATURE_CLUSTER=0 -D__PULP__=1 -DASYNC=0 -DDEBUG \
         -fstack-usage -Wstack-usage=1024
 
+# disable cluster
+CONFIG_CLUSTER=n
+
 # rtos, pulp and pmsis sources
 include $(PROJ_ROOT)/default_srcs.mk
 

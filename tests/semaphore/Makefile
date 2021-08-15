@@ -36,6 +36,9 @@
 # indicate this repository's root folder
 PROJ_ROOT = $(shell git rev-parse --show-toplevel)
 
+# disable cluster
+CONFIG_CLUSTER=n
+
 # good defaults for many environment variables
 include $(PROJ_ROOT)/default_flags.mk
 
