@@ -19,6 +19,9 @@ SRCS += $(dir)/crt0.S
 ifeq ($(CONFIG_FREERTOS_KERNEL),y)
 SRCS += $(dir)/system.c
 SRCS += $(dir)/vectors.S
+ifeq ($(CONFIG_CLUSTER),y)
+SRCS += $(dir)/cluster.S
+endif
 else
 SRCS += $(dir)/system_metal.c
 SRCS += $(dir)/vectors_metal.S

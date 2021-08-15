@@ -23,6 +23,8 @@ MEMORY
 {
   L2           : ORIGIN = 0x1c000004, LENGTH = 0x0007fffc
   L2_aliased   : ORIGIN = 0x00000004, LENGTH = 0x00003ffc
+  L1           : ORIGIN = 0x10000004, LENGTH = 0x0000fffc
+  L1_aliased   : ORIGIN = 0x00000004, LENGTH = 0x0000fffc
 }
 
 /*
@@ -59,10 +61,17 @@ SECTIONS
    /* TODO: what do we really want to put here when we have the gp */
   .data_tiny_fc : ALIGN(4)
   {
+    . = ALIGN(16);
     *(.data_tiny_fc)
     *(.data_tiny_fc.*)
+    . = ALIGN(16);
+    __l1FcShared_start = .;
+    *(.l1FcTiny)
+    *(.l1FcTiny.*)
+    __l1FcShared_end = .;
   } > L2_aliased AT> L2
 
+  __l1FcShared_size = __l1FcShared_end - __l1FcShared_start;
 
   /* text */
   .init : ALIGN(4)
@@ -331,7 +340,7 @@ SECTIONS
    * Contains other data such as peripheral data and cluster code and data
    */
 
-  .l2_data MAX(0x1c010000, ALIGN(4)) :
+  .l2_data MAX(0x1c010000, ALIGN(8)) :
   {
     __cluster_text_start = .;
     *(.cluster.text)
@@ -345,6 +354,71 @@ SECTIONS
     . = ALIGN(4);
   } > L2
 
-  __l2_shared_end = LOADADDR(.l2_data) + SIZEOF(.l2_data);
+    /*
+     * Following sections are keeping the cluster data
+     * in L2 until the cluster is powered up.
+     */
+  __l1_preload_start_inL2 = .;
 
+  .data_tiny_l1 (ORIGIN(L1)) :
+  {
+    . = ALIGN(16);
+    __l1_preload_start = .;
+    *(.data_tiny_l1)
+    *(.data_tiny_l1.*)
+    *(.data_alias_l1)
+    *(.data_alias_l1.*)
+    *(.l1clusterTiny)
+    *(.l1clusterTiny.*)
+    . = ALIGN(16);
+    __data_tiny_l1_end = .;
+  } > L1 AT> L2
+
+  .l1cluster_g (__data_tiny_l1_end):
+  {
+    . = ALIGN(16);
+    __printf_lock_ptr_l1 = .;
+    . = __printf_lock_ptr_l1 + 0x4;
+    *(.l1cluster_g)
+    *(.l1cluster_g.*)
+    *(.data_l1)
+    *(.data_l1.*)
+    . = ALIGN(16);
+    __l1_cluster_g_end = .;
+  } > L1 AT> L2
+
+  .heap_l1_cluster (__l1_cluster_g_end):
+  {
+    . = ALIGN(16);
+    *(.heap_l1_cluster)
+    *(.heap_l1_cluster.*)
+    *(.heapsram)
+    *(.heapsram.*)
+     . = ALIGN(16);
+    __heap_l1_cluster_start = .;
+    __heapsram_start = .;
+    __l1_heapsram_start = .;
+  } > L1
+
+  /* L1 heap size. */
+  __heapsram_size = ORIGIN(L1) + LENGTH(L1) - __heapsram_start;
+  __l1_heapsram_size = ORIGIN(L1) + LENGTH(L1) - __l1_heapsram_start;
+  __heap_l1_cluster_size = ORIGIN(L1) + LENGTH(L1) - __heap_l1_cluster_start;
+  __l1_preload_size = SIZEOF(.data_tiny_l1) + SIZEOF(.l1cluster_g);
+
+  .heap_l2_shared (__l1_preload_start_inL2 + __l1_preload_size) :
+  {
+    . = ALIGN(16);
+    *(.heapl2ram)
+    *(.heapl2ram.*)
+    *(.heap_l2_shared)
+    *(.heap_l2_shared.*)
+    . = ALIGN(16);
+    __heapl2ram_start = .;
+    __heap_l2_shared_start = .;
+  } > L2
+
+  /* L2 heap size. */
+  __heapl2ram_size = ORIGIN(L2) + LENGTH(L2) - __heapl2ram_start;
+  __heap_l2_shared_size = ORIGIN(L2) + LENGTH(L2) - __heap_l2_shared_start;
 }

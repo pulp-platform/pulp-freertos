@@ -17,3 +17,8 @@
 
 SRCS += $(dir)/syscalls.c
 SRCS += $(dir)/pulp_malloc.c
+ifeq ($(CONFIG_CLUSTER),y)
+SRCS += $(dir)/malloc/cl_l1_malloc.c
+SRCS += $(dir)/malloc/malloc_internal.c
+CV_CPPFLAGS += -I"$(dir)/malloc/include"
+endif

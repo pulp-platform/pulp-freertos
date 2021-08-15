@@ -25,3 +25,5 @@ export FREERTOS_CONFIG_FAMILY="pulp"
 export CONFIG_TARGET="pulp"
 
 source "$ROOT/env/default-config.sh"
+
+export CONFIG_CLUSTER=y

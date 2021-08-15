@@ -86,7 +86,7 @@
 #define ARCHI_MCHAN_DEMUX_OFFSET       (0x00400)
 
 #define ARCHI_DEMUX_PERIPHERALS_ADDR                                           \
-	(ARCHI_CLUSTER_GLOBAL_ADDR(0) + ARCHI_DEMUX_PERIPHERALS_OFFSET)
+	(ARCHI_CLUSTER_ADDR + ARCHI_DEMUX_PERIPHERALS_OFFSET)
 #define ARCHI_EU_DEMUX_ADDR                                                    \
 	(ARCHI_DEMUX_PERIPHERALS_ADDR + ARCHI_EU_DEMUX_OFFSET)
 #define ARCHI_MCHAN_DEMUX_ADDR                                                 \
@@ -143,5 +143,14 @@
 	(UDMA_PERIPH_BASE_ADDR + (UDMA_I2S_ID(id) << UDMA_PERIPH_SIZE_LOG2))
 #define UDMA_CPI(id)                                                           \
 	(UDMA_PERIPH_BASE_ADDR + (UDMA_CPI_ID(id) << UDMA_PERIPH_SIZE_LOG2))
+
+
+#define CL_CTRL_GLOB_ADDR(cid) ARCHI_CLUSTER_CTRL_ADDR
+#define CL_GLOB_ICACHE_ADDR(cid) ARCHI_ICACHE_CTRL_ADDR
+#define CL_GLOB_EU_CORE_ADDR(cid) (ARCHI_CLUSTER_PERIPHERALS_GLOBAL_ADDR(cid) + ARCHI_EU_OFFSET)
+
+#define CL_MCHAN_ADDR  ARCHI_MCHAN_EXT_ADDR
+#define CL_EU_BASE ARCHI_EU_ADDR
+#define CL_EU_DEMUX_BASE ARCHI_DEMUX_PERIPHERALS_ADDR
 
 #endif /* __MEMORY_MAP_H__ */

@@ -59,6 +59,9 @@ endif
 # testbench configuration for spim_verif dpi
 DPI_CONFIG=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))rtl_config.json
 
+# disable cluster
+CONFIG_CLUSTER=n
+
 # rtos, pulp and pmsis ources
 include $(PROJ_ROOT)/default_srcs.mk
 

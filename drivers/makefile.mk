@@ -24,6 +24,10 @@ SRCS += $(dir)/clkdiv.c
 else
 $(error no driver for clock configuration enabled. Choose FLL or CLKDIV)
 endif
+ifeq ($(CONFIG_CLUSTER),y)
+SRCS += $(dir)/cluster/cl_to_fc_delegate.c
+SRCS += $(dir)/cluster/fc_to_cl_delegate.c
+endif
 SRCS += $(dir)/timer_irq.c
 SRCS += $(dir)/irq.c
 SRCS += $(dir)/soc_eu.c
@@ -35,3 +39,7 @@ SRCS += $(dir)/pmsis_task.c
 SRCS += $(dir)/device.c
 
 CV_CPPFLAGS += -I"$(dir)/include"
+ifeq ($(CONFIG_CLUSTER),y)
+CV_CPPFLAGS += -I"$(dir)/include/cluster"
+CV_CPPFLAGS += -DCONFIG_CLUSTER
+endif

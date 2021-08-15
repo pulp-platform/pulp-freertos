@@ -42,6 +42,16 @@ void irq_disable(uint32_t mask)
 	writew(mask, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_CLEAR_OFFSET));
 }
 
+void irq_pend(uint32_t mask)
+{
+	writew(mask, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_INT_SET_OFFSET));
+}
+
+void irq_clear(uint32_t mask)
+{
+	writew(mask, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_INT_CLEAR_OFFSET));
+}
+
 /* utility functions for the core level interrupt (CLINT) described in the
  * RISC-V privileged specification */
 

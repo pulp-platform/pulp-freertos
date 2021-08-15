@@ -25,6 +25,7 @@
 #include <FreeRTOS.h>
 #include "FreeRTOSConfig.h"
 
+#include "cluster/cl_to_fc_delegate.h"
 #include "fll.h"
 #include "fc_event.h"
 #include "properties.h"
@@ -56,6 +57,7 @@ BaseType_t xTaskIncrementTick(void);
 void vTaskSwitchContext(void);
 
 /* interrupt handling */
+void cl_notify_fc_event_handler(void);
 void timer_irq_handler(void);
 void undefined_handler(void);
 void (*isr_table[32])(void);
@@ -76,6 +78,9 @@ void system_init(void)
 	/* Hook up isr table. This table is temporary until we figure out how to
 	 * do proper vectored interrupts.
 	 */
+#ifdef CONFIG_CLUSTER
+	isr_table[0x2] = cl_notify_fc_event_handler;
+#endif
 	isr_table[0xa] = timer_irq_handler;
 	isr_table[0x1a] = fc_soc_event_handler; // 26
 

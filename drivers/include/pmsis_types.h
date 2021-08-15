@@ -20,80 +20,102 @@
 #include "inttypes.h"
 #include "sys/types.h"
 
+/**
+ * @defgroup groupDrivers Drivers
+ */
+
+
+/// @cond IMPLEM
+
+/**
+ * @ingroup PMSIS_OS
+ */
+
+/**
+ * @defgroup PMSISTypes PMSIS common types
+ */
+
+/**
+ * @addtogroup PMSISTypes
+ * @{
+ */
+
+/**@{*/
+
 struct pi_device;
 struct pmsis_event_kernel_wrap;
 
-/* device type placed at the top of conf */
+// device type placed at the top of conf
 typedef enum {
-	PI_DEVICE_UNKWN_TYPE,
-	PI_DEVICE_CLUSTER_TYPE,
-	PI_DEVICE_HYPERBUS_TYPE,
-	PI_DEVICE_SPI_TYPE,
-	PI_DEVICE_CPI_TYPE,
-	PI_DEVICE_I2C_TYPE,
-	PI_DEVICE_GPIO_TYPE,
-	PI_DEVICE_PWM_TYPE
+    PI_DEVICE_UNKWN_TYPE,
+    PI_DEVICE_CLUSTER_TYPE,
+    PI_DEVICE_HYPERBUS_TYPE,
+    PI_DEVICE_SPI_TYPE,
+    PI_DEVICE_CPI_TYPE,
+    PI_DEVICE_I2C_TYPE,
+    PI_DEVICE_GPIO_TYPE,
+    PI_DEVICE_PWM_TYPE
 } pi_device_e;
 
 typedef struct pi_task pi_task_t;
 
-typedef void (*callback_t)(void *arg);
+typedef void (* pi_callback_func_t)(void *arg);
 
 typedef struct spinlock {
-	int32_t *lock_ptr;    /* with test and set mask */
-	int32_t *release_ptr; /* standard pointer */
+    int32_t *lock_ptr; // with test and set mask
+    int32_t *release_ptr; // standard pointer
 } spinlock_t;
 
 typedef struct pi_device_config {
-	const char *name; /* to open, FIXME: device tree */
-	/* initialize the device struct (api+ init data) using init_conf */
-	int (*init)(struct pi_device *device);
-	const void *init_conf;
+    const char *name; // to open, FIXME: device tree
+    // initialize the device struct (api+ init data) using init_conf
+    int (*init)(struct pi_device *device);
+    const void *init_conf;
 } pi_device_config_t;
 
-/* device struct, it wont stay here */
+// device struct, it wont stay here
 typedef struct pi_device {
-	struct pi_device_api *api; /* function pointers */
-	void *config; /* driver conf: might be filled either using device tree
-			 or manually */
-	void *data;   /* driver data */
+    struct pi_device_api *api; // function pointers
+    void *config; // driver conf: might be filled either using device tree or manually
+    void *data; // driver data
 } pi_device_t;
 
 
 typedef uint32_t (*device_rw_func)(struct pi_device *device, uintptr_t size,
-				   const void *addr, const void *buffer);
+        const void *addr, const void *buffer);
 
 typedef uint32_t (*device_ioctl_func)(struct pi_device *device,
-				      uint32_t func_id, void *arg);
+        uint32_t func_id,
+        void *arg);
 
 typedef uint32_t (*device_rw_func_async)(struct pi_device *device,
-					 uintptr_t size, const void *addr,
-					 const void *buffer, pi_task_t *async);
+        uintptr_t size, const void *addr, const void *buffer, pi_task_t *async);
 
 typedef uint32_t (*device_ioctl_func_async)(struct pi_device *device,
-					    uint32_t func_id, void *arg,
-					    pi_task_t *async);
+        uint32_t func_id, void *arg, pi_task_t *async);
 
 typedef int (*open_func)(struct pi_device *device);
 typedef int (*close_func)(struct pi_device *device);
 
-typedef int (*open_func_async)(struct pi_device *device, pi_task_t *async);
+typedef int (*open_func_async)(struct pi_device *device,
+        pi_task_t *async);
 typedef int (*close_func_async)(struct pi_device *device, pi_task_t *async);
 
-/* pmsis device minimal api: used for basic inheritance */
-typedef struct pi_device_api {
-	int (*open)(struct pi_device *device);
-	int (*close)(struct pi_device *device);
-	int (*open_async)(struct pi_device *device, pi_task_t *async);
-	int (*close_async)(struct pi_device *device, pi_task_t *async);
-	ssize_t (*read)(struct pi_device *device, uint32_t ext_addr,
-			void *buffer, uint32_t size, pi_task_t *async);
-	ssize_t (*write)(struct pi_device *device, uint32_t ext_addr,
-			 const void *buffer, uint32_t size, pi_task_t *async);
-	int (*ioctl)(struct pi_device *device, uint32_t func_id, void *arg);
-	int (*ioctl_async)(struct pi_device *device, uint32_t func_id,
-			   void *arg, pi_task_t *async);
-	void *specific_api;
+// pmsis device minimal api: used for basic inheritance
+typedef struct pi_device_api
+{
+    int (*open)(struct pi_device *device);
+    int (*close)(struct pi_device *device);
+    int (*open_async)(struct pi_device *device, pi_task_t *async);
+    int (*close_async)(struct pi_device *device, pi_task_t *async);
+    ssize_t (*read)(struct pi_device *device, uint32_t ext_addr,
+                    void *buffer, uint32_t size, pi_task_t *async);
+    ssize_t (*write)(struct pi_device *device, uint32_t ext_addr,
+                     const void *buffer, uint32_t size, pi_task_t *async);
+    int (*ioctl)(struct pi_device *device, uint32_t func_id, void *arg);
+    int (*ioctl_async)(struct pi_device *device, uint32_t func_id,
+                       void *arg, pi_task_t *async);
+    void *specific_api;
 } pi_device_api_t;
 
 #ifndef IMPLEM_MUTEX_OBJECT_TYPE
@@ -127,24 +149,32 @@ typedef struct pi_sem {
 } pi_sem_t;
 
 typedef struct pmsis_spinlock {
-	uint32_t lock;
+    uint32_t lock;
 } pmsis_spinlock_t;
 
 struct pmsis_event_kernel_wrap {
-	void *__os_native_task;
-	void (*event_kernel_main)(struct pmsis_event_kernel_wrap *);
-	/* real event kernel (might be just an api stub for pulpOS) */
-	void *priv;
+    void *__os_native_task;
+    void (*event_kernel_main)(struct pmsis_event_kernel_wrap*);
+    // real event kernel (might be just an api stub for pulpOS)
+    void *priv;
 };
 
 enum pi_task_id {
-	PI_TASK_CALLBACK_ID,
-	PI_TASK_NONE_ID,
+    PI_TASK_CALLBACK_ID,
+    PI_TASK_NONE_ID,
 };
 
 #ifndef PI_TASK_IMPLEM
 #define PI_TASK_IMPLEM int8_t destroy;
 #endif
+
+typedef struct pi_callback_s
+{
+    struct pi_task *next;
+    pi_callback_func_t entry;
+    void *arg;
+} pi_callback_t;
+
 
 #ifndef PI_TASK_IMPLEM_NB_DATA
 #define PI_TASK_IMPLEM_NB_DATA 8
@@ -164,4 +194,5 @@ typedef struct pi_task {
 	PI_TASK_IMPLEM;
 } pi_task_t;
 
+/// @endcond
 #endif

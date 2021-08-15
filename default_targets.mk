@@ -211,7 +211,7 @@ $(SIMDIR)/trace_%_postproc.log: $(SIMDIR)/trace_core_%.log
 	$(PULPTRACE) --time --stats --cycles $^ $(PROG) -o $@
 
 ## Symbolize simulation instruction trace log using the the original executable
-trace-symbolize: $(SIMDIR)/trace_1f_0_postproc.log
+trace-symbolize: $(SIMDIR)/trace_000003e0_postproc.log
 
 $(SIMDIR)/trace_%_simplify.log: $(SIMDIR)/trace_%_postproc.log
 	sed -e '/: <_start>/a [...]' -e '1,/: <_start>/d' \
@@ -243,7 +243,7 @@ $(SIMDIR)/trace_%_simplify.log: $(SIMDIR)/trace_%_postproc.log
 		-e '/: <__swsetup_r+0x[a-f0-9]\+>/d' -e '/: <__swsetup_r>/a [...]' \
 		$^ > $@
 ## Simplify simulation instruction trace log. This collapses some function calls.
-trace-simplify: $(SIMDIR)/trace_1f_0_simplify.log
+trace-simplify: $(SIMDIR)/trace_000003e0_simplify.log
 
 .PHONY: backup
 ## Backup current simulation folder

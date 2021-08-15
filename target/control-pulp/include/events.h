@@ -35,6 +35,7 @@
 #define NB_SW_EVENTS (8)
 
 /*! @brief FC events (aka IRQ lines)*/
+#define FC_IRQ_SW_EVT(id) (id & (NB_SW_EVENTS - 1))
 #define FC_EVENT_SW(id)	 (id & (NB_SW_EVENTS - 1))
 #define FC_EVENT_DMA_EVT (8)
 #define FC_EVENT_DMA	 (9)
@@ -130,21 +131,54 @@
 #define SOC_EVENT_SW(id)	  (160 + (id & (NB_SW_EVENTS - 1)))
 #define SOC_EVENT_REF32K_CLK_RISE (168)
 
-/* @brief Cluster events */
-#define CL_EVENT_SW(id)	   (id & (NB_SW_EVENTS - 1))
-#define CL_EVENT_DMA0	   (8)
-#define CL_EVENT_DMA1	   (9)
-#define CL_EVENT_TIMER0_LO (10)
-#define CL_EVENT_TIMER0_HI (11)
-#define CL_EVENT_ACC0	   (12)
-#define CL_EVENT_ACC1	   (13)
-#define CL_EVENT_ACC2	   (14)
-#define CL_EVENT_ACC3	   (15)
-#define CL_EVENT_BAR	   (16)
-#define CL_EVENT_MUTEX	   (17)
-#define CL_EVENT_DISPATCH  (18)
-/* #define CL_EVENT_CLUSTER0               (22) */
-/* #define CL_EVENT_CLUSTER1               (23) */
+/**
+ * \brief Cluster IRQ
+ *
+ * Below are listed cluster IRQ.
+ */
+#define CL_IRQ_SW_EVT(id)               (id & (NB_SW_EVENTS - 1))
+#define CL_IRQ_DMA0                     (8)
+#define CL_IRQ_DMA1                     (9)
+#define CL_IRQ_TIMER0_LO                (10)
+#define CL_IRQ_TIMER0_HI                (11)
+#define CL_IRQ_ACC_EVT_0                (12) /* HW Acc. */
+#define CL_IRQ_ACC_EVT_1                (13) /* HW Acc. */
+#define CL_IRQ_ACC_EVT_2                (14) /* HW Acc. */
+#define CL_IRQ_ACC_EVT_3                (15) /* HW Acc. */
+#define CL_IRQ_BARRIER_EVT              (16)
+#define CL_IRQ_HW_MUTEX_EVT             (17)
+#define CL_IRQ_DISPATCH_EVT             (18)
+/* #define CL_IRQ_CLUSTER_EVT_0            (22) */
+/* #define CL_IRQ_CLUSTER_EVT_1            (23) */
+/* #define CL_IRQ_SOC_FIFO_EVT             (27) */
 #define CL_EVENT_SOC_EVT (30) /* adapted */
+
+
+
+#define CLUSTER_TO_FC_NOTIFY_IRQN       FC_IRQ_SW_EVT(2) /*!< IRQ sent by cluster to FC.
+                                                          *   IRQ handler is needed.
+                                                          *   Asynchronous.
+                                                          */
+#define FC_SOC_EVENT_NOTIFY_IRQ         FC_IRQ_SW_EVT(3) /*!< IRQ used by RTC. */
+
+
+#define FC_TO_CLUSTER_NOTIFY_EVENT      CL_IRQ_SW_EVT(1) /*!< Event sent by FC to cluster.
+                                                          *   A cluster core is waiting for this
+                                                          *   event.
+                                                          *   Synchronous.
+                                                          */
+#define DMA_SW_IRQN                     CL_IRQ_SW_EVT(2) /*!< Event used when emulating 2D DMA
+                                                          *   transfers or large 1D ttransfers.
+                                                          *   Master core waits for this SW event,
+                                                          *   triggered by CL_IRQ_DMA1 handler.
+                                                          */
+#define PRINTF_LOCK_IRQN                CL_IRQ_SW_EVT(3) /*!< IRQ used to sync FC and cluster cores
+                                                          *   to lock/unlock printf.
+                                                          */
+#define CL_USER_EVENT                   CL_IRQ_SW_EVT(7) /*!< Event used by user to sync cluster with
+                                                          *   FC.
+                                                          */
+
+#define FC_NOTIFY_CLUSTER_EVENT         FC_TO_CLUSTER_NOTIFY_EVENT
 
 #endif /* __EVENTS_H__ */
