@@ -95,6 +95,7 @@
 #define IRQ_FC_EVT_PERIPH1 BIT(31)
 
 /* TODO: doc */
+void irq_set_handler(int id, void (*handler)(void));
 void irq_mask(uint32_t mask);
 void irq_enable(uint32_t mask);
 void irq_disable(uint32_t mask);

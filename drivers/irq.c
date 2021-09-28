@@ -20,11 +20,21 @@
 /* Driver to control and configure the PULP IRQ (apb_interrupt_control)*/
 
 #include <stdint.h>
+#include <assert.h>
 
 #include "pulp_mem_map.h"
 #include "io.h"
 #include "irq.h"
 #include "csr.h"
+
+void (*isr_table[32])(void);
+
+/* set interrupt handler for given interrupt id */
+void irq_set_handler(int id, void (*handler)(void))
+{
+	assert (0 <= id < 32);
+	isr_table[id] = handler;
+}
 
 /* utility functions for PULPs external interrupt controller */
 void irq_mask(uint32_t mask)
