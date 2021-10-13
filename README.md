@@ -171,15 +171,14 @@ See `env/default-config.sh`
 Out-of-Tree builds and by extension custom build directories are supported using
 GNU Make's `VPATH` feature, though a bit unwieldy. You need to cd into the
 desired build directory and invoke `make` from there pointing to the program's
-Makefile with by providing an appropriate argument to the `-f` switch and
-setting `VPATH` to point to the program's source directory.
+Makefile with by providing an appropriate argument to the `-f` switch.
 
 Example of using a custom build directory:
 ```bash
 cd nortos/hello_world
 mkdir build
 cd build
-make -f ../makefile all VPATH=..
+make -f ../makefile all
 ```
 
 ## Developer Notes

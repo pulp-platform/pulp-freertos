@@ -20,7 +20,7 @@
 
 # general OS
 ifeq ($(CONFIG_FREERTOS_KERNEL),y)
-dir := $(FREERTOS_PROJ_ROOT)/kernel
+dir := kernel
 
 SRCS += $(dir)/event_groups.c
 SRCS += $(dir)/list.c
@@ -36,38 +36,38 @@ SRCS += $(dir)/portable/MemMang/heap_3.c
 # freertos macro
 CV_CPPFLAGS += -DCONFIG_FREERTOS_KERNEL
 # freertos generic headers
-CV_CPPFLAGS += -I"$(dir)/include"
-CV_CPPFLAGS += -I"$(dir)/portable/GCC/RISC-V"
+CV_CPPFLAGS += -I"$(FREERTOS_PROJ_ROOT)/$(dir)/include"
+CV_CPPFLAGS += -I"$(FREERTOS_PROJ_ROOT)/$(dir)/portable/GCC/RISC-V"
 # freertos header for assembler
 ifeq ($(CONFIG_FREERTOS_CHIP_INCLUDE),)
 $(error "CONFIG_FREERTOS_CHIP_INCLUDE is unset. Set to your target platform. See README.md.")
 endif
-CV_CPPFLAGS += -I"$(dir)/portable/GCC/RISC-V/chip_specific_extensions/$(CONFIG_FREERTOS_CHIP_INCLUDE)"
+CV_CPPFLAGS += -I"$(FREERTOS_PROJ_ROOT)/$(dir)/portable/GCC/RISC-V/chip_specific_extensions/$(CONFIG_FREERTOS_CHIP_INCLUDE)"
 endif
 
 # arch (RISC-V) specific
-dir := $(FREERTOS_PROJ_ROOT)/target/arch
-include $(dir)/makefile.mk
+dir := target/arch
+include $(FREERTOS_PROJ_ROOT)/$(dir)/makefile.mk
 
 # c runtime and init
 ifeq ($(CONFIG_USE_NEWLIB),y)
 # syscall shims / implementation
-dir := $(FREERTOS_PROJ_ROOT)/libc
-include $(dir)/makefile.mk
+dir := libc
+include $(FREERTOS_PROJ_ROOT)/$(dir)/makefile.mk
 endif
 
 # metal drivers and runtime
 # target dependend files
-dir := $(FREERTOS_PROJ_ROOT)/target/$(CONFIG_TARGET)
-include $(dir)/makefile.mk
+dir := target/$(CONFIG_TARGET)
+include $(FREERTOS_PROJ_ROOT)/$(dir)/makefile.mk
 
 # drivers
 # TODO: currently the drivers are not properly decoupled from the kernel so we
 # depend on the kernel until this is fixed
-dir := $(FREERTOS_PROJ_ROOT)/drivers
+dir := drivers
 ifeq ($(CONFIG_FREERTOS_KERNEL),y)
-include $(dir)/makefile.mk
+include $(FREERTOS_PROJ_ROOT)/$(dir)/makefile.mk
 else
 # TODO: this part of the workaround above
-CV_CPPFLAGS += -I$(dir)/include
+CV_CPPFLAGS += -I$(FREERTOS_PROJ_ROOT)/$(dir)/include
 endif

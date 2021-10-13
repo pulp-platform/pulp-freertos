@@ -55,7 +55,7 @@ PROG = helloworld
 USER_SRCS = helloworld.c
 
 # system_metal_conf.h
-CPPFLAGS += $(addprefix -I$(VPATH)/, ".")
+CPPFLAGS += $(addprefix -I$(USER_DIR)/, ".")
 
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=undefined_handler
 

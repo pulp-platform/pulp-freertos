@@ -37,6 +37,15 @@ endif
 
 include $(SUPPORT_ROOT)/support.mk
 
+# Get path to calling makefile. This is the user program.
+MAKEFILE_DIR = $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+# Alias for user
+USER_DIR = $(MAKEFILE_DIR)
+
+# Add the user's program root and the freertos projects root to the search path
+VPATH += $(FREERTOS_PROJ_ROOT)
+VPATH += $(MAKEFILE_DIR)
+
 # derived variables for compiling
 SRCS += $(RTOS_SRCS) $(USER_SRCS)
 OBJS = $(addsuffix .o, $(basename $(SRCS))) # .S and .c replaced
@@ -45,17 +54,36 @@ DEPS = $(addsuffix .d, $(basename $(SRCS)))
 # other possibly generated files
 SU  = $(addsuffix .su, $(basename $(SRCS)))
 
+# List of directories to put the object files in. Drop duplicates and ".".
+OBJS_DIRS := $(filter-out ./,$(sort $(dir $(OBJS))))
+
+# # rules on how to create these directories
+# define CREATE_OBJ_DIR =
+# $(1):
+# 	mkdir -p -- $(1)
+# endef
+
+# $(foreach dir,$(OBJS_DIRS),$(eval $(call CREATE_OBJ_DIR,$(dir))))
+
+# define CREATE_OBJ_DEP =
+# $(1): $(OBJS_DIRS)
+# endef
+
+# $(foreach obj,$(OBJS),$(eval $(call CREATE_OBJ_DEP,$(obj))))
 
 ## Compile and link executable. Obeys standard GNU variables used by implicit rules.
 all: $(PROG) $(PROG).stim misc-info
 
 %.o: %.S
+	@mkdir -p $(@D)
 	$(CC) $(CV_ASFLAGS) $(ASFLAGS) $(CV_CPPFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 %.o: %.c
+	@mkdir -p $(@D)
 	$(CC) $(CV_CFLAGS) $(CFLAGS) $(CV_CPPFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 $(PROG): $(OBJS)
+	@mkdir -p $(@D)
 	$(CC) $(CV_CFLAGS) $(CFLAGS) $(CV_LDFLAGS) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
 
@@ -259,6 +287,7 @@ clean:
 	$(RM) $(OBJS) $(PROG) $(DEPS) $(SU) \
 		$(PROG).hex $(PROG).lst $(PROG).siz memory.map $(PROG).veri \
 		$(PROG).stim $(SIMDIR)/vectors/stim.txt
+	$(RM) -r $(OBJS_DIRS) target/
 
 .PHONY: distclean
 ## Clean object files and all support dependencies

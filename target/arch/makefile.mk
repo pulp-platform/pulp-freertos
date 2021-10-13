@@ -15,4 +15,4 @@
 # SPDX-License-Identifier: Apache-2.0
 # Author: Robert Balas (balasr@iis.ee.ethz.ch)
 
-CV_CPPFLAGS += -I"$(dir)"
+CV_CPPFLAGS += -I"$(FREERTOS_PROJ_ROOT)/$(dir)"

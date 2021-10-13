@@ -24,6 +24,6 @@ SRCS += $(dir)/system_metal.c
 SRCS += $(dir)/vectors_metal.S
 endif
 
-CV_CPPFLAGS += -I$(dir)/include
+CV_CPPFLAGS += -I$(FREERTOS_PROJ_ROOT)/$(dir)/include
 
-CV_LDFLAGS += -T$(dir)/link.ld
+CV_LDFLAGS += -T$(FREERTOS_PROJ_ROOT)/$(dir)/link.ld
