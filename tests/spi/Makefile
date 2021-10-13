@@ -72,7 +72,7 @@ PROG = spi_test
 USER_SRCS = spi_test.c
 
 # FreeRTOS.h
-CPPFLAGS += $(addprefix -I$(VPATH)/, ".")
+CPPFLAGS += $(addprefix -I$(USER_DIR)/, ".")
 
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
 

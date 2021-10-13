@@ -38,8 +38,8 @@ SRCS += $(dir)/fc_event.c
 SRCS += $(dir)/pmsis_task.c
 SRCS += $(dir)/device.c
 
-CV_CPPFLAGS += -I"$(dir)/include"
+CV_CPPFLAGS += -I"$(FREERTOS_PROJ_ROOT)/$(dir)/include"
 ifeq ($(CONFIG_CLUSTER),y)
-CV_CPPFLAGS += -I"$(dir)/include/cluster"
+CV_CPPFLAGS += -I"$(FREERTOS_PROJ_ROOT)/$(dir)/include/cluster"
 CV_CPPFLAGS += -DCONFIG_CLUSTER
 endif

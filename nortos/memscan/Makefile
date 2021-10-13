@@ -52,7 +52,7 @@ PROG = memscan
 USER_SRCS = memscan.c
 
 # system_metal_conf.h
-CPPFLAGS += $(addprefix -I$(VPATH)/, ".")
+CPPFLAGS += $(addprefix -I$(USER_DIR)/, ".")
 
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=undefined_handler
 

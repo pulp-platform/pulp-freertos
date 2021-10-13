@@ -20,5 +20,5 @@ SRCS += $(dir)/pulp_malloc.c
 ifeq ($(CONFIG_CLUSTER),y)
 SRCS += $(dir)/malloc/cl_l1_malloc.c
 SRCS += $(dir)/malloc/malloc_internal.c
-CV_CPPFLAGS += -I"$(dir)/malloc/include"
+CV_CPPFLAGS += -I"$(FREERTOS_PROJ_ROOT)/$(dir)/malloc/include"
 endif

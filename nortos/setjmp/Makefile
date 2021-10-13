@@ -52,7 +52,7 @@ PROG = setjmptest
 USER_SRCS = setjmptest.c
 
 # system_metal_conf.h
-CPPFLAGS += $(addprefix -I$(VPATH)/, ".")
+CPPFLAGS += $(addprefix -I$(USER_DIR)/, ".")
 
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=undefined_handler
 

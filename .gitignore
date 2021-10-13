@@ -5,6 +5,7 @@
 *.map
 *.su
 *.veri
+*.log
 rtosdemo*
 gvsim/
 sim/

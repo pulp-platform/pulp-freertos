@@ -48,7 +48,7 @@ CFLAGS = \
 	-Wno-unused-parameter -Wno-unused-variable \
 	-Og -g3 \
 	-DFEATURE_CLUSTER=0 -D__PULP__=1 -DDEBUG \
-        -fstack-usage -Wstack-usage=1024
+        -Wstack-usage=1024
 
 CONFIG_CLUSTER=n
 # rtos, pulp and pmsis sources
@@ -61,7 +61,7 @@ PROG = hello_world_pmsis
 USER_SRCS = hello_world_pmsis.c
 
 # FreeRTOS.h
-CPPFLAGS += $(addprefix -I$(VPATH)/, ".")
+CPPFLAGS += $(addprefix -I$(USER_DIR)/, ".")
 
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
 CPPFLAGS += -DUSE_STDIO

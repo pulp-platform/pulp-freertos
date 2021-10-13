@@ -62,7 +62,7 @@ PROG = cluster_fork
 USER_SRCS = cluster_fork.c
 
 # FreeRTOS.h
-CPPFLAGS += $(addprefix -I$(VPATH)/, ".")
+CPPFLAGS += $(addprefix -I$(USER_DIR)/, ".")
 
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
 CPPFLAGS += -DUSE_STDIO
