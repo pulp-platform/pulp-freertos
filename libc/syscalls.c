@@ -293,7 +293,7 @@ ssize_t _write(int file, const void *ptr, size_t len)
 		errno = ENOSYS;
 		return -1;
 	}
-
+#if CONFIG_STDIO == STDIO_FAKE
 	const void *eptr = ptr + len;
 	while (ptr != eptr)
 		writew(*(unsigned char *)(ptr++),
@@ -301,6 +301,13 @@ ssize_t _write(int file, const void *ptr, size_t len)
 				   (pulp_core_id() << 3) +
 				   (pulp_cluster_id() << 7)));
 	return len;
+#elif CONFIG_STDIO == STDIO_UART
+#error "UART as stdio is unimplemented"
+#elif CONFIG_STDIO == STDIO_NULL
+	/* just nop */
+#else
+#error "CONFIG_STDIO is undefined"
+#endif
 }
 
 extern char __heap_start[];

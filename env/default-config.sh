@@ -4,6 +4,7 @@
 export CONFIG_FREERTOS_KERNEL=y
 export CONFIG_FREERTOS_CHIP_INCLUDE=PULPissimo
 export CONFIG_USE_NEWLIB=y
+export CONFIG_STDIO=fake
 
 # divers
 export CONFIG_DRIVER_FLL=y

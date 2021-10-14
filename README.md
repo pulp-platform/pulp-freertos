@@ -157,6 +157,8 @@ See `env/default-config.sh`
   include directory
 * `CONFIG_USE_NEWLIB=y/n` (default y) Use newlib libc
 
+* `CONFIG_STDIO=fake/uart/null` (default fake) Send printf/read/write through
+  testbench printf (fake), udma uart (uart) or ignore (null.
 * `CONFIG_DRIVER_PLIC=y/n` (default n) Use the PLIC driver
 * `CONFIG_DRIVER_FLL=y/n` (default y) Use the FLL driver
 * `CONFIG_DRIVER_CLKDIV=y/n` (default n) Use the clock divider driver (control-pulp)
