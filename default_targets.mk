@@ -287,7 +287,11 @@ clean:
 	$(RM) $(OBJS) $(PROG) $(DEPS) $(SU) \
 		$(PROG).hex $(PROG).lst $(PROG).siz memory.map $(PROG).veri \
 		$(PROG).stim $(SIMDIR)/vectors/stim.txt
-	$(RM) -r $(OBJS_DIRS) target/
+	for dirs in $(OBJS_DIRS); do \
+		if [[ -d $$dirs ]]; then \
+			rmdir -p --ignore-fail-on-non-empty $$dirs; \
+		fi; \
+	done
 
 .PHONY: distclean
 ## Clean object files and all support dependencies
