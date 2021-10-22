@@ -21,6 +21,8 @@ ifeq ($(CONFIG_DRIVER_FLL),y)
 SRCS += $(dir)/fll.c
 else ifeq ($(CONFIG_DRIVER_CLKDIV),y)
 SRCS += $(dir)/clkdiv.c
+else ifeq ($(CONFIG_DRIVER_CLKCONST),y)
+SRCS += $(dir)/clkconst.c
 else
 $(error no driver for clock configuration enabled. Choose FLL or CLKDIV)
 endif
