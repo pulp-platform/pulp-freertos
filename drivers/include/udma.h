@@ -39,6 +39,27 @@ typedef enum {
 	COMMAND_CHANNEL = 2
 } udma_channel_e;
 
+/**< Offset for RX part */
+#define UDMA_CHANNEL_RX_OFFSET      0x00
+
+/**< Offset for TX part */
+#define UDMA_CHANNEL_TX_OFFSET      0x10
+
+/**< Offset for peripheral specific part */
+#define UDMA_CHANNEL_CUSTOM_OFFSET  0x20
+
+/**< RX/TX/CMD Channel uDMA transfer address of associated buffer */
+#define UDMA_CHANNEL_SADDR_OFFSET        (0x0)
+
+/**< RX/TX/CMD Channel uDMA transfer size of buffer */
+#define UDMA_CHANNEL_SIZE_OFFSET         (0x4)
+
+/**< RX/TX/CMD Channel uDMA transfer configuration */
+#define UDMA_CHANNEL_CFG_OFFSET          (0x8)
+
+/**< Not used. */
+#define UDMA_CHANNEL_INTCFG_OFFSET       (0xC)
+
 
 /*! @name RX_SADDR */
 /* Configure pointer to memory buffer:
