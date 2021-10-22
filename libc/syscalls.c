@@ -53,6 +53,11 @@
 #include "apb_soc.h"
 #include "stdout.h"
 
+#if CONFIG_STDIO == STDIO_UART
+#include "udma.h"
+#include "udma_uart.h"
+#endif
+
 /* FreeRTOS */
 #ifdef CONFIG_FREERTOS_KERNEL
 #include "FreeRTOS.h"
@@ -136,6 +141,17 @@ int _execve(const char *name, char *const argv[], char *const env[])
 
 void _exit(int exit_status)
 {
+#if CONFIG_STDIO == STDIO_UART
+	/* wait for the udma stdout to be emptied */
+	while (readw((UDMA_UART(STDIO_UART_DEVICE_ID) +
+		      UDMA_CHANNEL_TX_OFFSET +
+		      UDMA_CHANNEL_CFG_OFFSET)) & UDMA_CORE_RX_CFG_EN_MASK) {
+	}
+	/* there is no way to check when the udma output fifo is empty so we
+	 * just wait a few cycles */
+	for (volatile int i = 0; i < 1024 * 3; i++)
+	    ;
+#endif
 	writew(exit_status | (1 << APB_SOC_STATUS_EOC_BIT),
 	       (uintptr_t)(PULP_APB_SOC_CTRL_ADDR + APB_SOC_CORESTATUS_OFFSET));
 	for (;;)
@@ -293,6 +309,7 @@ ssize_t _write(int file, const void *ptr, size_t len)
 		errno = ENOSYS;
 		return -1;
 	}
+
 #if CONFIG_STDIO == STDIO_FAKE
 	const void *eptr = ptr + len;
 	while (ptr != eptr)
@@ -302,9 +319,34 @@ ssize_t _write(int file, const void *ptr, size_t len)
 				   (pulp_cluster_id() << 7)));
 	return len;
 #elif CONFIG_STDIO == STDIO_UART
-#error "UART as stdio is unimplemented"
+	/* direct writes to uart udma*/
+	static char copyout_buf[STDIO_UART_BUFSIZE] = {0};
+
+	/* make sure we can issue a dma transfer, so wait until tx is done */
+	while (readw((UDMA_UART(STDIO_UART_DEVICE_ID) +
+		      UDMA_CHANNEL_TX_OFFSET +
+		      UDMA_CHANNEL_CFG_OFFSET)) & UDMA_CORE_RX_CFG_EN_MASK) {
+	}
+	/* TODO: there is a race condition here when multiple threads start
+	 * executing from here */
+
+	/* copy to tmp buffer so that when we later functions don't clobber our
+	 * buffer */
+	memcpy(copyout_buf, ptr, len < STDIO_UART_BUFSIZE ? len : STDIO_UART_BUFSIZE);
+
+	hal_uart_enqueue(STDIO_UART_DEVICE_ID, (uint32_t)copyout_buf, len,
+			 UDMA_CORE_TX_CFG_EN_MASK |
+			 REG_SET(UDMA_CORE_TX_CFG_DATASIZE, UDMA_CORE_CFG_DATASIZE_8),
+			 TX_CHANNEL);
+
+	/* We don't wait for the dma transfer to finish despite _write()'s
+	 * blocking semantics. This should be ok since we are the only one's
+	 * writing to uart */
+
+	return len < STDIO_UART_BUFSIZE ? len : STDIO_UART_BUFSIZE;
 #elif CONFIG_STDIO == STDIO_NULL
 	/* just nop */
+	return len;
 #else
 #error "CONFIG_STDIO is undefined"
 #endif

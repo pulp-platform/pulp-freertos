@@ -27,9 +27,13 @@
 
 #include "cluster/cl_to_fc_delegate.h"
 #include "fc_event.h"
+#include "freq.h"
 #include "properties.h"
 #include "irq.h"
 #include "soc_eu.h"
+#include "udma_ctrl.h"
+#include "udma_uart.h"
+#include "uart_periph.h"
 
 /* test some assumptions we make about compiler settings */
 static_assert(sizeof(uintptr_t) == 4,
@@ -95,7 +99,23 @@ void system_init(void)
 	/* enable soc_events to propagate to core */
 	irq_clint_enable(IRQ_FC_EVT_SOC_EVT);
 
-	/* TODO: enable uart */
+	/* enable uart as stdio*/
+#if CONFIG_STDIO == STDIO_UART
+	udma_ctrl_cg_disable(UDMA_UART_ID(STDIO_UART_DEVICE_ID));
+
+	int baudrate = STDIO_UART_BAUDRATE;
+	uint32_t div = (pi_freq_get(PI_FREQ_DOMAIN_PERIPH) + baudrate / 2) / baudrate;
+	uint32_t val = 0;
+
+	val |= REG_SET(UART_SETUP_TX_ENA, 1);
+	val |= REG_SET(UART_SETUP_RX_ENA, 1);
+	val |= REG_SET(UART_SETUP_BIT_LENGTH, 0x3); /* 8 bits */
+	val |= REG_SET(UART_SETUP_PARITY_ENA, 0);
+	val |= REG_SET(UART_SETUP_CLKDIV, div - 1);
+	val |= REG_SET(UART_SETUP_POLLING_EN, 1);
+
+	uart_setup_set(UDMA_UART_ID(STDIO_UART_DEVICE_ID), val);
+#endif
 }
 
 void system_core_clock_update(void)
