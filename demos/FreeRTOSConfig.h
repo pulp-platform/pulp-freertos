@@ -66,7 +66,7 @@
 #define configMAX_PRIORITIES			 ( 5 )
 #define configMINIMAL_STACK_SIZE		 ( ( unsigned short ) 200 ) /* Can be as low as 60 but some of the demo tasks that use this constant require it to be higher. */
 #define configAPPLICATION_ALLOCATED_HEAP 1 /* we want to put the heap into special section */
-#define configTOTAL_HEAP_SIZE			 ( ( size_t ) ( 16 * 1024 ) )
+#define configTOTAL_HEAP_SIZE			 ( ( size_t ) ( 256 * 1024 ) )
 #define configMAX_TASK_NAME_LEN			 ( 16 )
 #define configUSE_TRACE_FACILITY		 1 /* TODO: 0 */
 #define configUSE_16_BIT_TICKS			 0
