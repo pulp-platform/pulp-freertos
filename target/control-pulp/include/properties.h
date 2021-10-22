@@ -35,8 +35,8 @@
 #define ARCHI_NUM_TIMER 1
 #define ARCHI_NUM_FLL	2
 
-#define ARCHI_REF_CLOCK_LOG2 15
-#define ARCHI_REF_CLOCK	     (1 << ARCHI_REF_CLOCK_LOG2)
+/* exactly 32khz on control-pulp */
+#define ARCHI_REF_CLOCK	     (320000)
 
 #define ARCHI_NB_FLL 0
 
