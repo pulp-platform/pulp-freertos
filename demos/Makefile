@@ -37,24 +37,14 @@
 # USER_SRCS  Add your source files here (use +=)
 # CPPFLAGS   Add your include search paths and macro definitions (use +=)
 
-# Adding common compile flags when using default_flags.mk.
-# Compile options (passed to make) e.g. make NDEBUG=yes
-# NDEBUG    Make release build
-# LIBC      Link against libc
-# LTO       Enable link time optimization
-# SANITIZE  Enable gcc sanitizer for debugging memory access problems
-# STACKDBG  Enable stack debugging information and warnings.
-#           By default 1 KiB but can be changed with MAXSTACKSIZE=your_value
-
-
 # indicate this repository's root folder
 PROJ_ROOT = $(shell git rev-parse --show-toplevel)
 
 # good defaults for many environment variables
-include $(PROJ_ROOT)/common/default_flags.mk
+include $(PROJ_ROOT)/default_flags.mk
 
 # rtos and pulp sources
-include $(PROJ_ROOT)/common/freertos_metal_srcs.mk
+include $(PROJ_ROOT)/default_srcs.mk
 
 # application name
 PROG = rtosdemo
@@ -68,14 +58,17 @@ USER_SRCS = main.c blinky_demo/main_blinky.c full_demo/RegTest.S \
 	shared/Minimal/TimerDemo.c shared/Minimal/countsem.c \
 	shared/Minimal/blocktim.c shared/Minimal/recmutex.c \
 	shared/Minimal/AbortDelay.c shared/Minimal/death.c \
-	shared/Minimal/MessageBufferDemo.c
+	shared/Minimal/MessageBufferDemo.c \
+	full_demo/main_full.c
+
+CONFIG_CLUSTER=n
 
 # user headers
-CPPFLAGS += $(addprefix -I$(VPATH)/, "shared/include" ".")
+CPPFLAGS += $(addprefix -I$(USER_DIR)/, "shared/include" ".")
 
 # point to irq handler
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
-CPPFLAGS += -DmainCREATE_SIMPLE_BLINKY_DEMO_ONLY=1
+CPPFLAGS += -DmainCREATE_SIMPLE_BLINKY_DEMO_ONLY=0
 
 # compile, simulation and analysis targets
-include $(PROJ_ROOT)/common/default_targets.mk
+include $(PROJ_ROOT)/default_targets.mk

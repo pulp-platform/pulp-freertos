@@ -45,8 +45,7 @@
 /* c stdlib */
 #include <stdio.h>
 
-/* PULPissimo includes. */
-#include "system_pulpissimo_ri5cy.h"
+#include "system.h"
 #include "timer_irq.h"
 #include "fll.h"
 #include "irq.h"
@@ -119,7 +118,7 @@ int main( void )
 static void prvSetupHardware( void )
 {
 	/* Init board hardware. */
-	pulp_sys_init();
+	system_init();
 
 	/* configure led0 (spim_csn1) as gpio */
 	gpio_pin_configure(0x5, GPIO_OUTPUT_LOW);
