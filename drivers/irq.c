@@ -27,7 +27,7 @@
 #include "irq.h"
 #include "csr.h"
 
-void (*isr_table[32])(void);
+extern void (*isr_table[32])(void);
 
 /* set interrupt handler for given interrupt id */
 void irq_set_handler(int id, void (*handler)(void))
