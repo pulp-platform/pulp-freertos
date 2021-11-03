@@ -120,6 +120,13 @@ ifndef VSIM_PATH
 endif
 	ln -s $(VSIM_PATH)/modelsim.ini $@
 
+$(SIMDIR)/work:
+ifndef VSIM_PATH
+	$(error "VSIM_PATH is undefined. Either call \
+	'source $$YOUR_HW_DIR/setup/vsim.sh' or set it manually.")
+endif
+	ln -s $(VSIM_PATH)/work $@
+
 $(SIMDIR)/boot:
 ifndef VSIM_PATH
 	$(error "VSIM_PATH is undefined. Either call \
@@ -190,7 +197,7 @@ run-sim: run
 .PHONY: run
 run: $(SIMDIR)/modelsim.ini $(SIMDIR)/boot $(SIMDIR)/tcl_files \
 	$(SIMDIR)/waves $(SIMDIR)/vectors/stim.txt \
-	$(SIMDIR)/stdout $(SIMDIR)/fs \
+	$(SIMDIR)/stdout $(SIMDIR)/fs $(SIMDIR)/work \
 	$(DPI_LIBS) $(RUN_MORE)
 ifndef VSIM_PATH
 	$(error "VSIM_PATH is undefined. Either call \
