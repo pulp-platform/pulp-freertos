@@ -38,6 +38,53 @@
 #include "io.h"
 #include "pinmux.h"
 
+/* ControlPULP GPIO list */
+
+/* SLP_S3 */
+#define GPIO_SLP_S3 0
+
+/* SLP_S4 */
+#define GPIO_SLP_S4 1
+
+/* SLP_S4 */
+#define GPIO_SLP_S5 2
+
+/* CPU_PWRGD_OUT */
+#define GPIO_CPU_PWRGD_OUT 3
+
+/* CPU_THERMTRIP */
+#define GPIO_CPU_THERMTRIP 4
+
+/* CPU_ERRCODE */
+#define GPIO_ERRCODE(N) (5 + N)
+
+/* CPU_RESET_OUT */
+#define GPIO_RESET_OUT 9
+
+/* SYS_RESET */
+#define GPIO_SYS_RESET 10
+
+/* SYS_RSMRST */
+#define GPIO_SYS_RSMRST 11
+
+/* SYS_PWR_BTN */
+#define GPIO_SYS_PWR_BTN 12
+
+/* SYS_PWRGD_IN */
+#define GPIO_SYS_PWRGD_IN 13
+
+/* SYS_WAKE */
+#define GPIO_SYS_WAKE 14
+
+/* CPU_THROTTLE */
+#define GPIO_CPU_THROTTLE(N) (15 + N)
+
+/* CPU_SOCKET_ID */
+#define GPIO_CPU_SOCKET_ID(N) (18 + N)
+
+/* CPU_STRAP */
+#define GPIO_CPU_STRAP(N) (20 + N)
+
 /* Registers */
 
 /* GPIO pad direction configuration register. */
