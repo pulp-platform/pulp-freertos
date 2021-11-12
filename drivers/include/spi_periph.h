@@ -26,9 +26,9 @@
 
 /** SPI_Type Register Layout Typedef */
 typedef struct {
-	udma_channel_t rx; /**< UDMA RX channels struct. */
-	udma_channel_t tx; /**< UDMA RX channels struct. */
-	udma_channel_t cmd; /**< UDMA RX channels struct. */
+	udma_channel_t rx; /**< UDMA RX channel struct. */
+	udma_channel_t tx; /**< UDMA TX channel struct. */
+	udma_channel_t cmd; /**< UDMA CMD channel struct. */
 } spi_t;
 
 /* ----------------------------------------------------------------------------

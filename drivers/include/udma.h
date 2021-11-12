@@ -39,6 +39,7 @@ typedef enum {
 	COMMAND_CHANNEL = 2
 } udma_channel_e;
 
+
 /**< Offset for RX part */
 #define UDMA_CHANNEL_RX_OFFSET      0x00
 
@@ -213,5 +214,16 @@ typedef enum {
 #define UDMA_CORE_CFG_DATASIZE_8  (0x0)
 #define UDMA_CORE_CFG_DATASIZE_16 (0x1)
 #define UDMA_CORE_CFG_DATASIZE_32 (0x2)
+
+/* TODO: remove this legacy glue code */
+#define UDMA_CORE_TX_CFG_EN(val)                                               \
+	(((uint32_t)(((uint32_t)(val)) << UDMA_CORE_TX_CFG_EN_SHIFT)) &        \
+	 UDMA_CORE_TX_CFG_EN_MASK)
+#define UDMA_CORE_TX_CFG_DATASIZE(val)                                         \
+	(((uint32_t)(((uint32_t)(val)) << UDMA_CORE_TX_CFG_DATASIZE_SHIFT)) &  \
+	 UDMA_CORE_TX_CFG_DATASIZE_MASK)
+#define UDMA_CORE_RX_CFG_EN(val)                                               \
+	(((uint32_t)(((uint32_t)(val)) << UDMA_CORE_RX_CFG_EN_SHIFT)) &        \
+	 UDMA_CORE_RX_CFG_EN_MASK)
 
 #endif /* __UDMA_H__ */

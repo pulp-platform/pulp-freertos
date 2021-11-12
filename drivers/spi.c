@@ -42,15 +42,6 @@
 #define DBG_PRINTF(...)	  ((void)0)
 #endif /* DEBUG */
 
-/* TODO: remove this glue */
-
-#define UDMA_CORE_TX_CFG_EN(val)                                               \
-	(((uint32_t)(((uint32_t)(val)) << UDMA_CORE_TX_CFG_EN_SHIFT)) &        \
-	 UDMA_CORE_TX_CFG_EN_MASK)
-#define UDMA_CORE_TX_CFG_DATASIZE(val)                                         \
-	(((uint32_t)(((uint32_t)(val)) << UDMA_CORE_TX_CFG_DATASIZE_SHIFT)) &  \
-	 UDMA_CORE_TX_CFG_DATASIZE_MASK)
-
 #define SPIM_CS_DATA_GET_DRV_DATA(cs_data) (cs_data->drv_data)
 
 struct spim_driver_data *__g_spim_drv_data[UDMA_NB_SPIM] = {0};
