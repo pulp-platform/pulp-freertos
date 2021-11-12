@@ -22,6 +22,8 @@ TESTS = tests/hello_world_pmsis tests/uart tests/queue tests/semaphore \
 #	tests/cluster/cluster_fork_gvsim # does not work with gvsoc
 TEST_LOGS = test.log
 
+CTAGS = ctags
+
 check: test
 
 ## Run tests. Use separate build trees.
@@ -44,3 +46,7 @@ test:
 	  popd > /dev/null; \
 	done; \
 	exit $$err;
+
+.PHONY: TAGS
+TAGS:
+	$(CTAGS) -R -e --exclude=support/* --exclude=template/* --exclude=*sim/* .
