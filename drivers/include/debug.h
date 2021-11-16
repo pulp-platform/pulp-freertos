@@ -45,6 +45,14 @@
 #define UART_TRACE_ERR(...) ((void)0)
 #endif /* TRACE_UART */
 
+#if defined(TRACE_I2C)
+#define I2C_TRACE(...)             PI_LOG_DBG(__func__, __VA_ARGS__)
+#define I2C_TRACE_ERR(...)         PI_LOG_ERR(__func__, __VA_ARGS__)
+#else
+#define I2C_TRACE(...)             ((void) 0)
+#define I2C_TRACE_ERR(...)         ((void) 0)
+#endif  /* TRACE_I2C */
+
 /* Debug helper. */
 #if defined (DEBUG_TASKS)
 #define DEBUG_PRINTF printf

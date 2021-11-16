@@ -17,6 +17,7 @@
 
 SRCS += $(dir)/uart.c
 SRCS += $(dir)/spi.c
+SRCS += $(dir)/i2c.c
 ifeq ($(CONFIG_DRIVER_FLL),y)
 SRCS += $(dir)/fll.c
 else ifeq ($(CONFIG_DRIVER_CLKDIV),y)
