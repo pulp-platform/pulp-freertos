@@ -27,9 +27,11 @@
 typedef struct i2c {
 	udma_channel_t rx; /**< UDMA RX channel struct. */
 	udma_channel_t tx; /**< UDMA TX channel struct. */
-	udma_channel_t cmd; /**< UDMA CMD channel struct. */
+	/* this is a i2c v3 feature, but we have a v2 driver */
+	/* udma_channel_t cmd; /\**< UDMA CMD channel struct. *\/ */
 	volatile uint32_t status; /**< Status register. */
 	volatile uint32_t setup;  /**< Configuration register. */
+	volatile uint32_t ack;  /**< Nack register (optional). */
 } i2c_t;
 
 
@@ -64,6 +66,15 @@ typedef struct i2c {
 	(((uint32_t)(((uint32_t)(val)) << I2C_SETUP_DO_RST_SHIFT)) & I2C_SETUP_DO_RST_MASK)
 
 
+#ifdef CONFIG_UDMA_I2C_ACK
+/*! @name NACK */
+/* Read out ACK/NACK status of a the i2c slave */
+#define I2C_ACK_NACK_MASK  (0x1)
+#define I2C_ACK_NACK_SHIFT (0)
+#define I2C_ACK_NACK(val)                                                                      \
+	(((uint32_t)(((uint32_t)(val)) << I2C_ACK_NACK_SHIFT)) & I2C_ACK_NACK_MASK)
+
+#endif
 
 /* ----------------------------------------------------------------------------
    -- CMD IDs and macros --
