@@ -21,8 +21,9 @@
 #include "properties.h"
 
 /* Events offsets. */
-#define UDMA_EVENT_OFFSET_RX (0)
-#define UDMA_EVENT_OFFSET_TX (1)
+#define UDMA_EVENT_OFFSET_RX  (0)
+#define UDMA_EVENT_OFFSET_TX  (1)
+#define UDMA_EVENT_OFFSET_EOT (3)
 
 #define UDMA_EVENT_OFFSET_SPI_CMD (2)
 #define UDMA_EVENT_OFFSET_SPI_EOT (3)
@@ -96,6 +97,9 @@
 #define SOC_EVENT_UDMA_I2C_TX(id)                                              \
 	((UDMA_I2C_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) +                    \
 	 UDMA_EVENT_OFFSET_TX)
+#define SOC_EVENT_UDMA_I2C_EOT(id)                                             \
+	((UDMA_I2C_ID(id) << UDMA_CHANNEL_NB_EVENTS_LOG2) +                    \
+	 UDMA_EVENT_OFFSET_EOT)
 /* DMACPY */
 /* #define SOC_EVENT_UDMA_DMACPY_RX(id)    ((UDMA_DMACPY_ID(id) <<
  * UDMA_CHANNEL_NB_EVENTS_LOG2) + UDMA_EVENT_OFFSET_RX) */
