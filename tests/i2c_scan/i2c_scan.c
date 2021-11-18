@@ -80,8 +80,9 @@ static uint8_t i2c_write(uint8_t *buf, uint16_t size)
 {
 	int res = pi_i2c_write(&i2c, buf, size,
 			       PI_I2C_XFER_START | PI_I2C_XFER_STOP);
-	/* TODO: note this is currently buggy since the hardware doesn't support
-	 * ACK/NACK detection */
+#ifndef CONFIG_UDMA_I2C_ACK
+	#error "This test requires the I2C ACK feature support in the udma"
+#endif
 	if (res == PI_OK) {
 		/* we received an ACK */
 		return 1;
@@ -101,9 +102,12 @@ int scan(uint8_t itf)
 	int found = 0;
 	for (int i = 0; i < 128; i++) {
 		i2c_init(itf, i);
-		peripherals[i] = i2c_write(buf, 1);
+		peripherals[i] = i2c_write(buf, 0);
 		if (peripherals[i] != 0) {
 			found = 1;
+			printf("interface %d: *found* peripheral at addr %d\n", itf, i);
+		} else {
+			printf("interface %d: nothing at addr %d\n", itf, i);
 		}
 		i2c_close();
 	}
@@ -123,7 +127,19 @@ int scan(uint8_t itf)
 		printf("interface %d: No peripheral found\n", itf);
 	}
 
+#ifdef CHECK_EEPROM_PRESENT
+	/* note that the eeprom appears on two addresses */
+	printf("checking whether eeprom is present\n");
+	if (peripherals[0x50] && peripherals[0x54]) {
+		printf("ok\n");
+		return 0;
+	} else {
+		printf("eeprom not found at addr 0x80 and 0x84\n");
+		return 1;
+	}
+#else
 	return 0;
+#endif
 }
 
 void test_kickoff()

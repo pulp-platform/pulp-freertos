@@ -64,9 +64,6 @@ USER_SRCS = i2c_scan.c
 CPPFLAGS += $(addprefix -I$(USER_DIR)/, ".")
 
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
-CPPFLAGS += -DUSE_STDIO
-## number of error check polls before the tests is conclueded as being successful
-CPPFLAGS += -DSTREAM_CHECK_ITERATIONS=2
 
 # Uncomment to disable Additional reigsters (HW Loops)
 #CPPFLAGS += -DportasmSKIP_ADDITIONAL_REGISTERS
