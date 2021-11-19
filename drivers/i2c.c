@@ -584,8 +584,9 @@ static void __pi_i2c_copy_exec_write(struct i2c_itf_data_s *driver_data, struct 
 	hal_i2c_enqueue(driver_data->device_id, TX_CHANNEL,
 			(uint32_t)driver_data->i2c_cmd_seq, index, UDMA_CORE_TX_CFG_EN(1));
 	/* Transfer data. */
-	hal_i2c_enqueue(driver_data->device_id, TX_CHANNEL, buffer, size,
-			UDMA_CORE_TX_CFG_EN(1));
+	if (size > 0)
+		hal_i2c_enqueue(driver_data->device_id, TX_CHANNEL, buffer, size,
+				UDMA_CORE_TX_CFG_EN(1));
 }
 
 static void __pi_i2c_cs_data_add(struct i2c_itf_data_s *driver_data, struct i2c_cs_data_s *cs_data)
