@@ -32,6 +32,7 @@
 #define I2C_CMD_RPT	(0xC << I2C_CMD_OFFSET)
 #define I2C_CMD_CFG	(0xE << I2C_CMD_OFFSET)
 #define I2C_CMD_WAIT_EV (0x1 << I2C_CMD_OFFSET)
+#define I2C_CMD_EOT     (0x9 << I2C_CMD_OFFSET)
 
 
 #define I2C(id) ((i2c_t *) UDMA_I2C(id))
@@ -47,9 +48,6 @@ static inline void i2c_udma_channel_set(uint32_t device_id, udma_channel_e chann
 		break;
 	case(TX_CHANNEL):
 		udma_enqueue_channel(&(I2C(device_id)->tx), l2buf, size, cfg);
-		break;
-	case(COMMAND_CHANNEL):
-		udma_enqueue_channel(&(I2C(device_id)->cmd), l2buf, size, cfg);
 		break;
 	}
 }
@@ -78,6 +76,18 @@ static inline uint32_t i2c_setup_get(uint32_t device_id)
 	return hal_read32(&(I2C(device_id)->setup));
 }
 
+#ifdef CONFIG_UDMA_I2C_ACK
+/* NACK register. */
+static inline void i2c_ack_set(uint32_t device_id, uint32_t val)
+{
+	hal_write32(&(I2C(device_id)->ack), val);
+}
+
+static inline uint32_t i2c_ack_get(uint32_t device_id)
+{
+	return hal_read32(&(I2C(device_id)->ack));
+}
+#endif
 
 /*! STATUS. */
 /* i2c busy check. */

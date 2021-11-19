@@ -31,3 +31,7 @@ export CONFIG_FREERTOS_CHIP_INCLUDE=ControlPULP_CV32E40P
 export CONFIG_CLUSTER=y
 export CONFIG_DRIVER_FLL=n
 export CONFIG_DRIVER_CLKDIV=y
+
+# control-pulp has an I2C acknowledge register/interrupt feature
+export CONFIG_UDMA_I2C_ACK=y
+export CONFIG_UDMA_I2C_EOT=y

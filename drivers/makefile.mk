@@ -18,6 +18,12 @@
 SRCS += $(dir)/uart.c
 SRCS += $(dir)/spi.c
 SRCS += $(dir)/i2c.c
+ifeq ($(CONFIG_UDMA_I2C_ACK),y)
+CV_CPPFLAGS += -DCONFIG_UDMA_I2C_ACK
+endif
+ifeq ($(CONFIG_UDMA_I2C_EOT),y)
+CV_CPPFLAGS += -DCONFIG_UDMA_I2C_EOT
+endif
 ifeq ($(CONFIG_DRIVER_FLL),y)
 SRCS += $(dir)/fll.c
 else ifeq ($(CONFIG_DRIVER_CLKDIV),y)
