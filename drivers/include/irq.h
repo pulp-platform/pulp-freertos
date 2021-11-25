@@ -105,6 +105,9 @@ uint32_t irq_clint_global_disable();
 uint32_t irq_clint_global_enable();
 uint32_t irq_clint_disable(int mask);
 uint32_t irq_clint_enable(int mask);
+#ifdef CONFIG_CLIC
+void irq_set_lvl_and_prio(int id, int lvl, int prio);
+#endif
 void pulp_irq_init();
 
 /** Interrupt Number Definitions */
