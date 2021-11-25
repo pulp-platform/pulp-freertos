@@ -63,7 +63,7 @@ void vTaskSwitchContext(void);
 void cl_notify_fc_event_handler(void);
 void timer_irq_handler(void);
 void undefined_handler(void);
-void (*isr_table[32])(void);
+void (*isr_table[ISR_TABLE_SIZE])(void);
 
 /**
  * Board init code. Always call this before anything else.
@@ -163,6 +163,6 @@ void vPortSetupTimerInterrupt(void)
 
 void vSystemIrqHandler(uint32_t mcause)
 {
-	extern void (*isr_table[32])(void);
-	isr_table[mcause & 0x1f]();
+	extern void (*isr_table[ISR_TABLE_SIZE])(void);
+	isr_table[mcause & (ISR_TABLE_SIZE-1)]();
 }

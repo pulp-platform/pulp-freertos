@@ -29,4 +29,8 @@ endif
 
 CV_CPPFLAGS += -I$(FREERTOS_PROJ_ROOT)/$(dir)/include
 
+ifeq ($(CONFIG_DRIVER_INT),clic)
+CV_LDFLAGS += -T$(FREERTOS_PROJ_ROOT)/$(dir)/link_clic.ld
+else
 CV_LDFLAGS += -T$(FREERTOS_PROJ_ROOT)/$(dir)/link.ld
+endif

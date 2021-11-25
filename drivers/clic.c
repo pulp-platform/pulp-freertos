@@ -121,8 +121,8 @@ uint32_t irq_clint_enable(int id)
 
 void pulp_irq_init()
 {
-	/* max threshold, thereby propagating all interrupts */
-	csr_write(CSR_MINTTHRESH, 0xff);
+	/* min threshold, thereby propagating all interrupts */
+	csr_write(CSR_MINTTHRESH, 0x0);
 	/* set nlbits to four which gives 4 bits for level and priority */
 	/* TODO: implement freertos level interrupts */
 	writeb((0x4 << CLIC_CLICCFG_NLBITS_OFFSET), PULP_CLIC_ADDR + CLIC_CLICCFG_REG_OFFSET);

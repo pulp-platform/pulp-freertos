@@ -20,6 +20,7 @@
 #include <stddef.h>
 #include "fc_event.h"
 #include "memory_map.h"
+#include "pulp_mem_map.h"
 #include "riscv.h"
 
 
@@ -39,7 +40,7 @@ void pi_fc_event_handler_init(uint32_t fc_event_irq)
 	for (int i = 0; i < NB_SOC_EVENTS; i++) {
 		pi_fc_event_handler_clear((uint32_t)i);
 	}
-	irqn_enable(fc_event_irq);
+	irq_enable((int)fc_event_irq);
 }
 
 void pi_fc_event_handler_set(uint32_t event_id,
@@ -57,10 +58,19 @@ void pi_fc_event_handler_clear(uint32_t event_id)
 /* TODO: fix */
 __attribute__((section(".text"))) void fc_soc_event_handler(void)
 {
+	uint32_t event = 0;
+	/* When we are using the clic, we don't have the SIMPLE_IRQ FIFO
+	 * register anymore. Instead, we have a minimal event_to_level_int
+	 * convertor that takes over the role of generating a level sensitive
+	 * interrupt on the CLIC and contains a small register storing the event
+	 * data. This data needs to be read to clear the interrupt */
+#ifdef CONFIG_CLIC
+	event = readw((uintptr_t)PULP_EVENT_TO_INT_ADDR);
+#else
 	/* Pop one event element from the FIFO */
-	uint32_t event = SIMPLE_IRQ->FIFO;
-
-	event &= 0xFF;
+	event = SIMPLE_IRQ->FIFO;
+#endif
+	event &= 0xff;
 
 	/* redirect to handler with jump table */
 	if (fc_event_handlers[event] != NULL) {

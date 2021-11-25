@@ -107,6 +107,14 @@
 #define UDMA_SPIM_ID(id) (1 + (id))
 #define UDMA_I2C_ID(id)	 (9 + (id))
 
+/* interrupt configuration */
+#ifdef CONFIG_CLIC
+#define ISR_TABLE_SIZE 256 /* needs to be power of two */
+#define CLIC_PARAM_NUM_SRC 256
+#define CLIC_PARAM_CLIC_INT_CTL_BITS 8
+#else
+#define ISR_TABLE_SIZE 32 /* needs to be power of two */
+#endif
 
 /* Pads & GPIO. */
 #define ARCHI_NB_PAD  (0)

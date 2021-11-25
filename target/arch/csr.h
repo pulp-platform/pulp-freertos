@@ -30,6 +30,7 @@
 #define CSR_MISA     0x301
 #define CSR_MIE	     0x304
 #define CSR_MTVEC    0x305
+#define CSR_MTVT     0x307
 #define CSR_MSCRATCH 0x340
 #define CSR_MEPC     0x341
 #define CSR_MCAUSE   0x342
@@ -38,6 +39,8 @@
 #define CSR_PMPCFG0  0x3a0
 #define CSR_PMPADDR0 0x3b0
 #define CSR_MHARTID  0xf14
+#define CSR_MINTSTATUS 0x346
+#define CSR_MINTTHRESH 0x347
 
 /* TODO: complete this */
 #define MSTATUS_IE BIT(3)
