@@ -163,6 +163,7 @@ See `env/default-config.sh`
 * `CONFIG_DRIVER_FLL=y/n` (default y) Use the FLL driver
 * `CONFIG_DRIVER_CLKDIV=y/n` (default n) Use the clock divider driver (control-pulp)
 * `CONFIG_DRIVER_CLKCONST=y/n` (default n) Use the constant clock driver
+* `CONFIG_DRIVER_INT=pclint/clic` (default clint) Select the interrupt module
 
 * `CONFIG_CC_LTO=y/n` (default n) Use link-time optimizations
 * `CONFIG_CC_SANITIZE=y/n` (default n) Use address sanitizers

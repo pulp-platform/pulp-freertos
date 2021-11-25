@@ -17,7 +17,8 @@
  * Author: Robert Balas (balasr@iis.ee.ethz.ch)
  */
 
-/* Driver to control and configure the PULP IRQ (apb_interrupt_control)*/
+/* Driver to control and configure the PULP IRQ (apb_interrupt_control) and
+ * CLINT. */
 
 #include <stdint.h>
 #include <assert.h>

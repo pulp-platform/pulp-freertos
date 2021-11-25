@@ -31,14 +31,23 @@ SRCS += $(dir)/clkdiv.c
 else ifeq ($(CONFIG_DRIVER_CLKCONST),y)
 SRCS += $(dir)/clkconst.c
 else
-$(error no driver for clock configuration enabled. Choose FLL or CLKDIV)
+$(error no driver for clock configuration enabled.)
 endif
 ifeq ($(CONFIG_CLUSTER),y)
 SRCS += $(dir)/cluster/cl_to_fc_delegate.c
 SRCS += $(dir)/cluster/fc_to_cl_delegate.c
 endif
+
 SRCS += $(dir)/timer_irq.c
-SRCS += $(dir)/irq.c
+ifeq ($(CONFIG_DRIVER_INT),pclint)
+SRCS += $(dir)/pclint.c
+else ifeq ($(CONFIG_DRIVER_INT),clic)
+SRCS += $(dir)/clic.c
+CV_CPPFLAGS += -DCONFIG_CLIC
+else
+$(error no driver for interrupt controller enabled. Set CONFIG_DRIVER_INT)
+endif
+
 SRCS += $(dir)/soc_eu.c
 SRCS += $(dir)/gpio.c
 SRCS += $(dir)/pinmux.c
