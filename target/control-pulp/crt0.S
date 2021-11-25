@@ -57,6 +57,9 @@ _start:
 	la a0, __vector_start
 	or a0, a0, 1 /* enable vectored mode (hardcoded anyway for RI5CY) */
 	csrw mtvec, a0
+#ifdef CONFIG_CLIC
+	csrw 0x307, a0 /* mtvt=0x307 */ /* enable vectored mode TODO: should be clic mode */
+#endif
 
 /* clear the bss segment */
 	la t0, __bss_start

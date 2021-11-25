@@ -17,7 +17,8 @@
  * Author: Robert Balas (balasr@iis.ee.ethz.ch)
  */
 
-/* Driver to control and configure the PULP IRQ (apb_interrupt_control)*/
+/* Driver to control and configure the PULP IRQ (apb_interrupt_control) and
+ * CLINT. */
 
 #include <stdint.h>
 #include <assert.h>
@@ -32,7 +33,7 @@ extern void (*isr_table[32])(void);
 /* set interrupt handler for given interrupt id */
 void irq_set_handler(int id, void (*handler)(void))
 {
-	assert (0 <= id < 32);
+	assert (0 <= id && id < 32);
 	isr_table[id] = handler;
 }
 
@@ -42,24 +43,28 @@ void irq_mask(uint32_t mask)
 	writew(mask, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_OFFSET));
 }
 
-void irq_enable(uint32_t mask)
+void irq_enable(int id)
 {
-	writew(mask, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_SET_OFFSET));
+	assert (0 <= id && id < 32);
+	writew(1ul << id, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_SET_OFFSET));
 }
 
-void irq_disable(uint32_t mask)
+void irq_disable(int id)
 {
-	writew(mask, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_CLEAR_OFFSET));
+	assert (0 <= id && id < 32);
+	writew(1ul << id , (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_CLEAR_OFFSET));
 }
 
-void irq_pend(uint32_t mask)
+void irq_pend(int id)
 {
-	writew(mask, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_INT_SET_OFFSET));
+	assert (0 <= id && id < 32);
+	writew(1ul << id, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_INT_SET_OFFSET));
 }
 
-void irq_clear(uint32_t mask)
+void irq_clear(int id)
 {
-	writew(mask, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_INT_CLEAR_OFFSET));
+	assert (0 <= id && id < 32);
+	writew(1ul << id, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_INT_CLEAR_OFFSET));
 }
 
 /* utility functions for the core level interrupt (CLINT) described in the
@@ -79,15 +84,15 @@ uint32_t irq_clint_global_enable()
 }
 
 /* enable/disable interrupts selectively (in mie csr) */
-uint32_t irq_clint_disable(int32_t mask)
+uint32_t irq_clint_disable(int id)
 {
-	uint32_t val = csr_read_clear(CSR_MIE, mask);
+	uint32_t val = csr_read_clear(CSR_MIE, 1ul << id);
 	return val;
 }
 
-uint32_t irq_clint_enable(int32_t mask)
+uint32_t irq_clint_enable(int id)
 {
- 	uint32_t val = csr_read_set(CSR_MIE, mask);
+ 	uint32_t val = csr_read_set(CSR_MIE, 1ul << id);
 	return val;
 }
 
@@ -98,5 +103,5 @@ void pulp_irq_init()
 	/* the debug module could have enabled irq so we disable it during
 	 * initialization
 	 */
-	irq_disable(0xffffffff);
+	writew(0xffffffff, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_CLEAR_OFFSET));
 }

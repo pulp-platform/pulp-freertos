@@ -18,6 +18,7 @@ export CONFIG_STDIO_UART_BUFSIZE=256
 export CONFIG_DRIVER_FLL=y
 export CONFIG_DRIVER_CLKDIV=n
 export CONFIG_DRIVER_PLIC=n
+export CONFIG_DRIVER_INT=pclint
 
 # compilation options
 export CONFIG_CC_LTO=n

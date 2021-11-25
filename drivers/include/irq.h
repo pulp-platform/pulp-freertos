@@ -46,29 +46,29 @@
  * signaled through (muxed) EU SoC interrupts (IRQ_FC_EVT_SOC_EVT) and need
  * additional handling by the user through the Event Unit.
  */
-#define IRQ_FC_EVT_SW0	      BIT(0)
-#define IRQ_FC_EVT_SW1	      BIT(1)
-#define IRQ_FC_EVT_SW2	      BIT(2)
-#define IRQ_FC_EVT_SW3	      BIT(3)
-#define IRQ_FC_EVT_SW4	      BIT(4)
-#define IRQ_FC_EVT_SW5	      BIT(5)
-#define IRQ_FC_EVT_SW6	      BIT(6)
-#define IRQ_FC_EVT_SW7	      BIT(7)
-#define IRQ_FC_EVT_DMA_PE_EVT BIT(8)
-#define IRQ_FC_EVT_DMA_PE_IRQ BIT(9)
-#define IRQ_FC_EVT_TIMER0_LO  BIT(10)
-#define IRQ_FC_EVT_TIMER0_HI  BIT(11)
-#define IRQ_FC_EVT_PF	      BIT(12)
-#define IRQ_FC_EVT_CLK_REF    BIT(14)
-#define IRQ_FC_EVT_GPIO	      BIT(15)
+#define IRQ_FC_EVT_SW0	      (0)
+#define IRQ_FC_EVT_SW1	      (1)
+#define IRQ_FC_EVT_SW2	      (2)
+#define IRQ_FC_EVT_SW3	      (3)
+#define IRQ_FC_EVT_SW4	      (4)
+#define IRQ_FC_EVT_SW5	      (5)
+#define IRQ_FC_EVT_SW6	      (6)
+#define IRQ_FC_EVT_SW7	      (7)
+#define IRQ_FC_EVT_DMA_PE_EVT (8)
+#define IRQ_FC_EVT_DMA_PE_IRQ (9)
+#define IRQ_FC_EVT_TIMER0_LO  (10)
+#define IRQ_FC_EVT_TIMER0_HI  (11)
+#define IRQ_FC_EVT_PF	      (12)
+#define IRQ_FC_EVT_CLK_REF    (14)
+#define IRQ_FC_EVT_GPIO	      (15)
 
 /* is not in PULPissimo */
 /*#define IRQ_FC_EVT_RTC		   16 */
 
-#define IRQ_FC_EVT_ADV_TIMER0 BIT(17)
-#define IRQ_FC_EVT_ADV_TIMER1 BIT(18)
-#define IRQ_FC_EVT_ADV_TIMER2 BIT(19)
-#define IRQ_FC_EVT_ADV_TIMER3 BIT(20)
+#define IRQ_FC_EVT_ADV_TIMER0 (17)
+#define IRQ_FC_EVT_ADV_TIMER1 (18)
+#define IRQ_FC_EVT_ADV_TIMER2 (19)
+#define IRQ_FC_EVT_ADV_TIMER3 (20)
 
 /* is not in PULPissimo */
 /* #define IRQ_FC_EVT_CLUSTER_NOT_BUSY 21 */
@@ -82,29 +82,32 @@
  * A user that gets such an interrupt has to check the event unit's registers to
  * see what happened
  */
-#define IRQ_FC_EVT_SOC_EVT BIT(26)
+#define IRQ_FC_EVT_SOC_EVT (26)
 /*
  * Event queue error: If we don't process event unit events quickly enough
  * internal fifos can overflow and we get this error interrupt
  */
-#define IRQ_FC_EVT_QUIRQE_ERROR BIT(29)
+#define IRQ_FC_EVT_QUIRQE_ERROR (29)
 /* High priority peripheral events: these are hardcoded to directly go to the
  * core using a dedicated interrupt line
  */
-#define IRQ_FC_EVT_PERIPH0 BIT(30)
-#define IRQ_FC_EVT_PERIPH1 BIT(31)
+#define IRQ_FC_EVT_PERIPH0 (30)
+#define IRQ_FC_EVT_PERIPH1 (31)
 
 /* TODO: doc */
 void irq_set_handler(int id, void (*handler)(void));
 void irq_mask(uint32_t mask);
-void irq_enable(uint32_t mask);
-void irq_disable(uint32_t mask);
-void irq_pend(uint32_t mask);
-void irq_clear(uint32_t mask);
+void irq_enable(int id);
+void irq_disable(int id);
+void irq_pend(int id);
+void irq_clear(int id);
 uint32_t irq_clint_global_disable();
 uint32_t irq_clint_global_enable();
-uint32_t irq_clint_disable(int32_t mask);
-uint32_t irq_clint_enable(int32_t mask);
+uint32_t irq_clint_disable(int mask);
+uint32_t irq_clint_enable(int mask);
+#ifdef CONFIG_CLIC
+void irq_set_lvl_and_prio(int id, int lvl, int prio);
+#endif
 void pulp_irq_init();
 
 /** Interrupt Number Definitions */
@@ -195,27 +198,27 @@ typedef struct {
  * signaled through (muxed) EU SoC interrupts (IRQ_FC_EVT_SOC_EVT) and need
  * additional handling by the user through the Event Unit.
  */
-#define IRQ_FC_EVT_SW0	      BIT(0)
-#define IRQ_FC_EVT_SW1	      BIT(1)
-#define IRQ_FC_EVT_SW2	      BIT(2)
-#define IRQ_FC_EVT_SW3	      BIT(3)
-#define IRQ_FC_EVT_SW4	      BIT(4)
-#define IRQ_FC_EVT_SW5	      BIT(5)
-#define IRQ_FC_EVT_SW6	      BIT(6)
-#define IRQ_FC_EVT_SW7	      BIT(7)
-#define IRQ_FC_EVT_DMA_PE_EVT BIT(8)
-#define IRQ_FC_EVT_DMA_PE_IRQ BIT(9)
-#define IRQ_FC_EVT_TIMER0_LO  BIT(10)
-#define IRQ_FC_EVT_TIMER0_HI  BIT(11)
-#define IRQ_FC_EVT_PF	      BIT(12)
-#define IRQ_FC_EVT_CLK_REF    BIT(14)
-#define IRQ_FC_EVT_GPIO	      BIT(15)
+#define IRQ_FC_EVT_SW0	      (0)
+#define IRQ_FC_EVT_SW1	      (1)
+#define IRQ_FC_EVT_SW2	      (2)
+#define IRQ_FC_EVT_SW3	      (3)
+#define IRQ_FC_EVT_SW4	      (4)
+#define IRQ_FC_EVT_SW5	      (5)
+#define IRQ_FC_EVT_SW6	      (6)
+#define IRQ_FC_EVT_SW7	      (7)
+#define IRQ_FC_EVT_DMA_PE_EVT (8)
+#define IRQ_FC_EVT_DMA_PE_IRQ (9)
+#define IRQ_FC_EVT_TIMER0_LO  (10)
+#define IRQ_FC_EVT_TIMER0_HI  (11)
+#define IRQ_FC_EVT_PF	      (12)
+#define IRQ_FC_EVT_CLK_REF    (14)
+#define IRQ_FC_EVT_GPIO	      (15)
 /* doesn't exist in pulp */
 /*#define IRQ_FC_EVT_RTC		   16 */
-#define IRQ_FC_EVT_ADV_TIMER0 BIT(17)
-#define IRQ_FC_EVT_ADV_TIMER1 BIT(18)
-#define IRQ_FC_EVT_ADV_TIMER2 BIT(19)
-#define IRQ_FC_EVT_ADV_TIMER3 BIT(20)
+#define IRQ_FC_EVT_ADV_TIMER0 (17)
+#define IRQ_FC_EVT_ADV_TIMER1 (18)
+#define IRQ_FC_EVT_ADV_TIMER2 (19)
+#define IRQ_FC_EVT_ADV_TIMER3 (20)
 /* doesn't exist in pulp */
 /* #define IRQ_FC_EVT_CLUSTER_NOT_BUSY 21 */
 /* #define IRQ_FC_EVT_CLUSTER_POK	   22 */
@@ -227,17 +230,17 @@ typedef struct {
  * A user that gets such an interrupt has to check the event unit's registers to
  * see what happened
  */
-#define IRQ_FC_EVT_SOC_EVT BIT(26)
+#define IRQ_FC_EVT_SOC_EVT (26)
 /*
  * Event queue error: If we don't process event unit events quickly enough
  * internal fifos can overflow and we get this error interrupt
  */
-#define IRQ_FC_EVT_QUIRQE_ERROR BIT(29)
+#define IRQ_FC_EVT_QUIRQE_ERROR (29)
 /* High priority peripheral events: these are hardcoded to directly go to the
  * core using a dedicated interrupt line
  */
-#define IRQ_FC_EVT_PERIPH0 BIT(30)
-#define IRQ_FC_EVT_PERIPH1 BIT(31)
+#define IRQ_FC_EVT_PERIPH0 (30)
+#define IRQ_FC_EVT_PERIPH1 (31)
 
 
 #define SIMPLE_IRQ                                                             \

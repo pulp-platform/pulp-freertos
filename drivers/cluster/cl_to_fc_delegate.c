@@ -67,8 +67,8 @@ void pi_cl_send_task_to_fc(pi_task_t *task)
 void mc_fc_delegate_init(void *arg)
 {
 	/* Activate interrupt handler for FC when cluster want to push a task to FC */
-	irq_enable(1 << CLUSTER_TO_FC_NOTIFY_IRQN);
-	irq_clint_enable(1 << CLUSTER_TO_FC_NOTIFY_IRQN);
+	irq_enable(CLUSTER_TO_FC_NOTIFY_IRQN);
+	irq_clint_enable(CLUSTER_TO_FC_NOTIFY_IRQN);
 }
 
 void cl_wait_task(uint8_t *done)

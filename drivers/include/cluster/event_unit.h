@@ -406,7 +406,7 @@ static inline void hal_eu_cluster_evt_trig_set(int event_num, uint32_t value)
 static inline void hal_eu_fc_evt_trig_set(int event_num, uint32_t value)
 {
 	/* pend software interrupt in fc */
-	irq_pend(1 << event_num);
+	irq_pend(event_num);
 }
 
 /*
