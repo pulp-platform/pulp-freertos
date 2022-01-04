@@ -22,6 +22,9 @@
 #include "memory_map.h"
 #include "pulp_mem_map.h"
 #include "riscv.h"
+#ifdef CONFIG_CLIC
+#include "clic.h"
+#endif
 
 
 static void fc_event_null_event(void *arg);
@@ -41,6 +44,9 @@ void pi_fc_event_handler_init(uint32_t fc_event_irq)
 		pi_fc_event_handler_clear((uint32_t)i);
 	}
 	irq_enable((int)fc_event_irq);
+#ifdef CONFIG_CLIC
+	irq_set_trigger_type((int)fc_event_irq, CLIC_TRIG_LEVEL | CLIC_TRIG_POSITIVE);
+#endif
 }
 
 void pi_fc_event_handler_set(uint32_t event_id,
