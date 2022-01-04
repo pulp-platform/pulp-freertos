@@ -107,6 +107,7 @@ uint32_t irq_clint_disable(int mask);
 uint32_t irq_clint_enable(int mask);
 #ifdef CONFIG_CLIC
 void irq_set_lvl_and_prio(int id, int lvl, int prio);
+void irq_set_trigger_type(int id, int flags);
 #endif
 void pulp_irq_init();
 
