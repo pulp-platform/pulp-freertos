@@ -17,6 +17,9 @@
  * Author: Robert Balas (balasr@iis.ee.ethz.ch)
  */
 
+#ifndef __CLIC_H__
+#define __CLIC_H__
+
 /* Number of interrupt sources */
 /* taken from target configuration */
 /* #define CLIC_PARAM_NUM_SRC 256 */
@@ -66,7 +69,16 @@
 #define CLIC_CLICINTATTR_MODE_MASK	0x3
 #define CLIC_CLICINTATTR_MODE_OFFSET	6
 
+enum clic_trig {
+	CLIC_TRIG_LEVEL = 0,
+	CLIC_TRIG_EDGE = 1,
+	CLIC_TRIG_POSITIVE = 0 << 1,
+	CLIC_TRIG_NEGATIVE = 1 << 1
+};
+
 /* CLIC interrupt id control */
 #define CLIC_CLICINTCTL_REG_OFFSET(id)	  (0x100c + 0x10 * id)
 #define CLIC_CLICINTCTL_CLICINTCTL_MASK	  0xff
 #define CLIC_CLICINTCTL_CLICINTCTL_OFFSET 0
+
+#endif /* __CLIC_H__ */
