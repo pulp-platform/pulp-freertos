@@ -316,7 +316,6 @@ SECTIONS
     /* . = ALIGN(16); */
     KEEP(*(.heap))
     __heap_end = .;
-    ASSERT((__heap_start + __heap_size < __heap_end), "Error (Linkerscript): Heap is too large");
   } > L2
 
 
