@@ -42,13 +42,6 @@ static_assert(sizeof(uintptr_t) == 4,
  */
 __attribute__((section(".heap"), used)) uint8_t ucHeap[configTOTAL_HEAP_SIZE];
 
-/* Inform linker script about .heap section size. Note: GNU ld seems to
- * internally represent integers with the bfd_vma type, that is a type that can
- * contain memory addresses (typdefd to some int type depending on the
- * architecture). uint32_t seems to me the most fitting candidate for rv32.
- */
-uint32_t __heap_size = configTOTAL_HEAP_SIZE;
-
 uint32_t volatile system_core_clock = DEFAULT_SYSTEM_CLOCK;
 
 /**
@@ -56,11 +49,6 @@ uint32_t volatile system_core_clock = DEFAULT_SYSTEM_CLOCK;
  */
 void system_init(void)
 {
-	/* init flls */
-	for (int i = 0; i < ARCHI_NB_FLL; i++) {
-		pi_fll_init(i, 0);
-	}
-
 	/* make sure irq (itc) is a good state */
 	pulp_irq_init();
 

@@ -167,7 +167,7 @@ $(SIMDIR)/preload/elf.veri &: $(PROG).veri
 
 # default vsim flags for simulation
 VSIM_RUN_FLAGS = +ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG \
-		-dpicpppath $(CXX) -permit_unmatched_virtual_intf \
+		-permit_unmatched_virtual_intf \
 		-gBAUDRATE=115200
 
 # signal to simulator to preload the binary

@@ -86,3 +86,17 @@ _fini:
 	ret
 .size  _init, .-_init
 .size _fini, .-_fini
+
+/* indicate expected heap size to linker script, otherwise fall back to linker
+script default */
+#ifdef __HEAP_SIZE
+.global __heap_size
+	.equ __heap_size, __HEAP_SIZE
+#endif
+
+/* indicate (main) stack size to linker script, otherwise fall back to
+linker script default */
+#ifdef __STACK_SIZE
+.global __stack_size
+	.equ __stack_size, __STACK_SIZE
+#endif
