@@ -49,11 +49,6 @@ uint32_t volatile system_core_clock = DEFAULT_SYSTEM_CLOCK;
  */
 void system_init(void)
 {
-	/* init flls */
-	for (int i = 0; i < ARCHI_NB_FLL; i++) {
-		pi_fll_init(i, 0);
-	}
-
 	/* make sure irq (itc) is a good state */
 	pulp_irq_init();
 
