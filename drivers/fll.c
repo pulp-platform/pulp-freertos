@@ -21,6 +21,7 @@
 #include "bits.h"
 #include "fll.h"
 #include "irq.h"
+#include "properties.h"
 
 /*
  * Fll control
