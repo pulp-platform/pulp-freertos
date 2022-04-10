@@ -25,3 +25,6 @@ export FREERTOS_CONFIG_FAMILY="pulpissimo"
 export CONFIG_TARGET="pulpissimo"
 
 source "$ROOT/env/default-config.sh"
+
+export CONFIG_FREERTOS_CHIP_INCLUDE=PULPissimo
+
