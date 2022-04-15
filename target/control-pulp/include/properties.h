@@ -133,6 +133,7 @@
 
 #define ARCHI_HAS_CLUSTER_CLK_GATE  (1)
 #define ARCHI_CLUSTER_SIZE          (0x00400000)
+#define ARCHI_HAS_DMA_DEMUX         (1)
 
 /* Memories. */
 /* L1 cluster memory. */
