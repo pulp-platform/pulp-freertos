@@ -65,9 +65,9 @@ void __pi_task_wait_on(pi_task_t *task)
 	while (!task->done) {
 		/* if the underlying scheduler support it, deschedule the task
 		 */
-		if (task->wait_on.sem_object != NULL) {
-			pi_sem_take(&task->wait_on);
-		}
+		//if (task->wait_on.sem_object != NULL) {
+		//	pi_sem_take(&task->wait_on);
+		//}
 		DEBUG_PRINTF("[%s] waited on sem %p\n", __func__,
 			     &(task->wait_on));
 	}
