@@ -113,12 +113,6 @@ $(shell mkdir -p $(SIMDIR))
 $(shell mkdir -p $(GVSIMDIR))
 
 # creating symlink farm because PULP/PULPissimo relies on hardcoded paths
-$(SIMDIR)/modelsim.ini:
-ifndef VSIM_PATH
-	$(error "VSIM_PATH is undefined. Either call \
-	'source $$YOUR_HW_DIR/setup/vsim.sh' or set it manually.")
-endif
-	ln -s $(VSIM_PATH)/modelsim.ini $@
 
 $(SIMDIR)/work:
 ifndef VSIM_PATH
@@ -195,7 +189,7 @@ VSIM_RUN_FLAGS += -gCONFIG_FILE=$(DPI_CONFIG)
 run-sim: run
 
 .PHONY: run
-run: $(SIMDIR)/modelsim.ini $(SIMDIR)/boot $(SIMDIR)/tcl_files \
+run: $(SIMDIR)/boot $(SIMDIR)/tcl_files \
 	$(SIMDIR)/waves $(SIMDIR)/vectors/stim.txt \
 	$(SIMDIR)/stdout $(SIMDIR)/fs $(SIMDIR)/work \
 	$(DPI_LIBS) $(RUN_MORE)
