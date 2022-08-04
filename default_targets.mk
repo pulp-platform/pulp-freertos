@@ -188,12 +188,15 @@ ifeq ($(DPI),yes)
   ifeq ($(strip $(DPI_CONFIG)),)
   $(warning "DPI_CONFIG is unset, but requested DPI sim. Using default rtl_config.json")
   DPI_CONFIG = "rtl_config.json"
+  VSIM_RUN_FLAGS += -gCONFIG_FILE=$(DPI_CONFIG)
   endif
 else
   DPI_CONFIG = "NONE"
+  ifndef CONFIG_PLUSARG_SIM
+    VSIM_RUN_FLAGS += -gCONFIG_FILE=$(DPI_CONFIG)
+  endif
 endif
 
-VSIM_RUN_FLAGS += -gCONFIG_FILE=$(DPI_CONFIG)
 
 .PHONY:
 ## Run RTL simulation. Append gui=1 or interactive=1 for vsim gui or vsim shell respectively
@@ -213,28 +216,14 @@ endif
 	cp $(PROG).lst $(SIMDIR)
 	cp memory.map $(SIMDIR)
 	if [[ -f $(PROG).veri ]]; then cp $(PROG).veri $(SIMDIR); fi;
-ifdef gui
 	cd $(SIMDIR) && \
 	export LD_LIBRARY_PATH="$(SUPPORT_LIB_DIR)" && \
 	export VSIM_RUNNER_FLAGS="$(VSIM_RUN_FLAGS) $(VSIM_DPI) $(VSIM_ARGS)" && \
 	export VOPT_ACC_ENA="YES" && \
-	$(VSIM) -64 -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
-		-do 'source $(VSIM_PATH)/tcl_files/run.tcl; ' $(VSIM_ARGS)
-else
-ifdef interactive
-	cd $(SIMDIR) && \
-	export LD_LIBRARY_PATH="$(SUPPORT_LIB_DIR)" && \
-	export VSIM_RUNNER_FLAGS="$(VSIM_RUN_FLAGS) $(VSIM_DPI) $(VSIM_ARGS)" && \
-	$(VSIM) -64 -c -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
-		-do 'source $(VSIM_PATH)/tcl_files/run.tcl;' $(VSIM_ARGS)
-else
-	cd $(SIMDIR) && \
-	export LD_LIBRARY_PATH="$(SUPPORT_LIB_DIR)" && \
-	export VSIM_RUNNER_FLAGS="$(VSIM_RUN_FLAGS) $(VSIM_DPI) $(VSIM_ARGS)" && \
-	$(VSIM) -64 -c -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
-		-do 'source $(VSIM_PATH)/tcl_files/run.tcl; run_and_exit;' $(VSIM_ARGS)
-endif
-endif
+	$(VSIM) -64 $(if $(gui),,-c) -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
+		-do $(if $(or $(gui),$(interactive)), \
+				'source $(VSIM_PATH)/tcl_files/run.tcl; ', \
+				'source $(VSIM_PATH)/tcl_files/run.tcl; run_and_exit; ') $(VSIM_ARGS)
 
 GVSOC=$(SUPPORT_ROOT)/egvsoc.sh
 .PHONY: run-gvsoc
