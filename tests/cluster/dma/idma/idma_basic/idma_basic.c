@@ -44,6 +44,9 @@
 
 /* system includes */
 #include "system.h"
+#include "io.h"
+#include "timer.h"
+#include "timer_hal.h"
 #include "timer_irq.h"
 #include "fll.h"
 #include "irq.h"
@@ -89,9 +92,9 @@ int test_idma(unsigned int dst_addr, unsigned int src_addr,
 		*(volatile unsigned char *)(dst_addr + i) = 0;
 	}
 	// DMA data copy
-	unsigned int dma_id = pulp_idma_memcpy(dst_addr, src_addr, num_bytes);
+	unsigned int dma_id = pulp_cl_idma_memcpy(dst_addr, src_addr, num_bytes);
 
-	plp_dma_wait(dma_id);
+	plp_cl_dma_wait(dma_id);
 
 	// DMA data copy check
 	unsigned int test, read;
