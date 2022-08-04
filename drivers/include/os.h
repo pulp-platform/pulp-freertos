@@ -59,9 +59,6 @@ static inline int pmsis_kickoff(void *arg)
 	/* pmsis_event_set_default_scheduler(wrap); */
 
 	/* TODO:handle case when uart is being used before initialized */
-#ifdef DEBUG
-	puts("pmsis_kickoff: starting scheduler\n");
-#endif
 	/* Start the kernel. From here on only tasks and interrupts will run. */
 	vTaskStartScheduler();
 
