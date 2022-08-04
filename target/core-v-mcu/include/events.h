@@ -38,9 +38,9 @@
 #define FC_EVENT_SW(id)	 (id & (NB_SW_EVENTS - 1))
 #define FC_EVENT_DMA_EVT (8)
 #define FC_EVENT_DMA	 (9)
-#define FC_EVENT_TIMER0	 (10) /* Timer low.  */
+#define FC_EVENT_TIMER0_LO	 (10) /* Timer low.  */
 /* #define SYSTICK_IRQN                    FC_EVENT_TIMER0 */
-#define FC_EVENT_TIMER1 (11) /* Timer high. */
+#define FC_EVENT_TIMER0_HI (11) /* Timer high. */
 /* #define FC_EVENT_EU_HWCE                (12) */
 
 /*

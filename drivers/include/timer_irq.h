@@ -22,9 +22,7 @@
 #define __TIMER_IRQ_H__
 #include <stdint.h>
 
-int timer_irq_init(uint32_t ticks);
-
-int timer_irq_set_timeout(uint32_t ticks, bool idle);
+int timer_irq_init_fc(uint32_t ticks, unsigned int timer_cfg, timer_id_t timer_id);
 
 uint32_t timer_irq_clock_elapsed();
 

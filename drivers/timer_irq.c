@@ -24,51 +24,45 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "pulp_mem_map.h"
+#include "memory_map.h"
 #include "io.h"
 #include "bits.h"
 
 #include "timer.h"
+#include "timer_hal.h"
 #include "timer_irq.h"
 
-int timer_irq_init(uint32_t ticks)
+int timer_irq_init_fc(uint32_t ticks, unsigned int timer_cfg, timer_id_t timer_id)
 {
-	/* TODO: enable soc_eu timer interrupt */
+	/* set the interrupt interval (tick rate) */
+	set_timer_irq_freq(ticks, timer_id);
 
-	/* set the interrupt interval */
-	timer_irq_set_timeout(ticks, false);
-
-	/* We use only one of the 32-bit timer, leaving the other half available
+	/* We use only one of the 32-bit timer (LO, HI), leaving the other half available
 	 * as an additional timer. We didn't opt for using both together as
 	 * 64-bit timer.
-	 *
-	 * Enable timer, use 32khz ref clock as source. Timer will reset
-	 * automatically to zero after causing an interrupt.
+
+	 * `timer_id` indicates the 32-bit timer in use
+	 * `timer_cfg` indicates the timer configuration of said timer
+
+	 * Enable timer (TIMER_CFG_XX_ENABLE_MASK), use 32khz ref clock as
+	 * source (TIMER_CFG_XX_CLKCFG_MASK). Timer will reset automatically
+	 * (TIMER_CFG_XX_MODE_MASK) to zero after causing an interrupt
+	 * (TIMER_CFG_XX_IRQEN_MASK). Also reset timer to start from a clean
+	 * state (TIMER_CFG_XX_RESET_MASK).
 	 */
-	writew(TIMER_CFG_LO_ENABLE_MASK | TIMER_CFG_LO_RESET_MASK |
-		       TIMER_CFG_LO_CCFG_MASK | TIMER_CFG_LO_MODE_MASK |
-		       TIMER_CFG_LO_IRQEN_MASK,
-	       (uintptr_t)(PULP_FC_TIMER_ADDR + TIMER_CFG_LO_OFFSET));
 
-	return 0;
-}
+	set_timer_cfg(timer_cfg, timer_id);
 
-int timer_irq_set_timeout(uint32_t ticks, bool idle)
-{
-	(void)idle;
-	/* fast reset, value doesn't matter */
-	writew(1, (uintptr_t)(PULP_FC_TIMER_ADDR + TIMER_RESET_LO_OFFSET));
-	writew(ticks, (uintptr_t)(PULP_FC_TIMER_ADDR + TIMER_CMP_LO_OFFSET));
 	return 0;
 }
 
 /* TODO: implement */
-uint32_t timer_irq_clock_elapsed()
+uint32_t timer_irq_clock_elapsed_fc()
 {
 	return 0;
 }
 
-uint32_t timer_irq_cycle_get_32()
+uint32_t timer_irq_cycle_get_32_fc()
 {
-	return readw((uintptr_t)(PULP_FC_TIMER_ADDR + TIMER_CNT_LO_OFFSET));
+	return readw((uintptr_t)(FC_TIMER_ADDR + TIMER_CNT_LO_OFFSET));
 }

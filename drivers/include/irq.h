@@ -127,9 +127,9 @@ typedef enum {
 	/* Device specific interrupts */
 	DMA_EVT_IRQN = 8,    /**< DMA event interrupt */
 	DMA_IRQN = 9,	     /**< DMA interrupt */
-	FC_TIMER0_IRQN = 10, /**< FC timer0 event interrupt */
+	FC_TIMER0_LO_IRQN = 10, /**< FC timer0 event interrupt */
 	SYSTICK_IRQN = 10,   /**< PULP U -> M System Tick Interrupt */
-	FC_TIMER1_IRQN = 11, /**< FC timer1 interrupt */
+	FC_TIMER0_HI_IRQN = 11, /**< FC timer1 interrupt */
 
 	/* misc */
 	FC_CLK_REF_EVENT = 14, /**< Reference clock edge event */

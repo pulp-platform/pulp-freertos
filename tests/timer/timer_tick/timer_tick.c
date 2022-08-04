@@ -34,7 +34,9 @@
 
 /* system includes */
 #include "system.h"
+#include "io.h"
 #include "timer.h"
+#include "timer_hal.h"
 #include "timer_irq.h"
 #include "fll.h"
 #include "irq.h"
@@ -74,6 +76,8 @@ int main(void)
 	/* Init board hardware. */
 	system_init();
 
+	timer_id_t timer_id = TIMER_HI_ID;
+
 	/* create a dummy task */
 	BaseType_t xTask;
 	xTask = xTaskCreate(some_busy_task, "dummy",
@@ -84,27 +88,24 @@ int main(void)
 		exit(1);
 	}
 
+	/* Using timer 1 (HI) */
+
 	/* hook up timer1 interrupt */
-	irq_set_handler(FC_TIMER1_IRQN, timer1_handler);
+	irq_set_handler(FC_TIMER0_HI_IRQN, timer1_handler);
 
 	/* reset timer (not really necessary in this case) */
-	writew(1, (uintptr_t)(PULP_FC_TIMER_ADDR + TIMER_RESET_HI_OFFSET));
+	reset_timer_fc(timer_id);
 
 	/* set interrupt frequency to TIMER1_TICK_RATE_HZ */
 #define TIMER1_TICK_RATE_HZ ((TickType_t)2000)
-	writew(ARCHI_REF_CLOCK / TIMER1_TICK_RATE_HZ,
-	       (uintptr_t)(PULP_FC_TIMER_ADDR + TIMER_CMP_HI_OFFSET));
 
-	/* Enable timer (TIMER_CFG_HI_ENABLE_MASK), use 32khz ref clock as
-	 * source (TIMER_CFG_HI_CLKCFG_MASK). Timer will reset automatically
-	 * (TIMER_CFG_HI_MODE_MASK) to zero after causing an interrupt
-	 * (TIMER_CFG_HI_IRQEN_MASK). Also reset timer to start from a clean
-	 * slate (TIMER_CFG_HI_RESET_MASK).
-	 */
-	writew(TIMER_CFG_HI_ENABLE_MASK | TIMER_CFG_HI_RESET_MASK |
-		       TIMER_CFG_HI_CLKCFG_MASK | TIMER_CFG_HI_MODE_MASK |
-		       TIMER_CFG_HI_IRQEN_MASK,
-	       (uintptr_t)(PULP_FC_TIMER_ADDR + TIMER_CFG_HI_OFFSET));
+	/* set the timer to reset after the configred tick, and trigger an interrupt */
+	unsigned int timer_cfg = TIMER_CFG_HI_ENABLE_MASK | TIMER_CFG_HI_RESET_MASK |
+	    TIMER_CFG_HI_CLKCFG_MASK | TIMER_CFG_HI_MODE_MASK |
+	    TIMER_CFG_HI_IRQEN_MASK;
+	
+	/* configure the timer */
+	timer_irq_init_fc(ARCHI_REF_CLOCK / TIMER1_TICK_RATE_HZ, timer_cfg, timer_id);
 
 	/* Enable timer1 interrupt. Need to enable this in the CV32E40P and the
 	 * apb_interrupt controller. In RI5CY we didn't need to touch the clint
