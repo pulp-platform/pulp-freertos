@@ -24,7 +24,6 @@
 
 #include "apb_soc.h"
 #include "io.h"
-#include "pulp_mem_map.h"
 
 #define PINMUX_FUNC_A 0
 #define PINMUX_FUNC_B 1

@@ -34,7 +34,7 @@
 #include <stdint.h>
 #include <assert.h>
 
-#include "pulp_mem_map.h"
+#include "memory_map.h"
 #include "io.h"
 #include "pinmux.h"
 

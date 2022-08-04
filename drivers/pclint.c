@@ -23,7 +23,7 @@
 #include <stdint.h>
 #include <assert.h>
 
-#include "pulp_mem_map.h"
+#include "memory_map.h"
 #include "io.h"
 #include "irq.h"
 #include "csr.h"
@@ -40,31 +40,31 @@ void irq_set_handler(int id, void (*handler)(void))
 /* utility functions for PULPs external interrupt controller */
 void irq_mask(uint32_t mask)
 {
-	writew(mask, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_OFFSET));
+	writew(mask, (uintptr_t)(FC_IRQ_ADDR + IRQ_REG_MASK_OFFSET));
 }
 
 void irq_enable(int id)
 {
 	assert (0 <= id && id < 32);
-	writew(1ul << id, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_SET_OFFSET));
+	writew(1ul << id, (uintptr_t)(FC_IRQ_ADDR + IRQ_REG_MASK_SET_OFFSET));
 }
 
 void irq_disable(int id)
 {
 	assert (0 <= id && id < 32);
-	writew(1ul << id , (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_CLEAR_OFFSET));
+	writew(1ul << id , (uintptr_t)(FC_IRQ_ADDR + IRQ_REG_MASK_CLEAR_OFFSET));
 }
 
 void irq_pend(int id)
 {
 	assert (0 <= id && id < 32);
-	writew(1ul << id, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_INT_SET_OFFSET));
+	writew(1ul << id, (uintptr_t)(FC_IRQ_ADDR + IRQ_REG_INT_SET_OFFSET));
 }
 
 void irq_clear(int id)
 {
 	assert (0 <= id && id < 32);
-	writew(1ul << id, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_INT_CLEAR_OFFSET));
+	writew(1ul << id, (uintptr_t)(FC_IRQ_ADDR + IRQ_REG_INT_CLEAR_OFFSET));
 }
 
 /* utility functions for the core level interrupt (CLINT) described in the
@@ -103,5 +103,5 @@ void pulp_irq_init()
 	/* the debug module could have enabled irq so we disable it during
 	 * initialization
 	 */
-	writew(0xffffffff, (uintptr_t)(PULP_FC_IRQ_ADDR + IRQ_REG_MASK_CLEAR_OFFSET));
+	writew(0xffffffff, (uintptr_t)(FC_IRQ_ADDR + IRQ_REG_MASK_CLEAR_OFFSET));
 }

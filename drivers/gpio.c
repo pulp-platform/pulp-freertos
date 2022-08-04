@@ -22,7 +22,7 @@
 #include <stdint.h>
 #include <assert.h>
 
-#include "pulp_mem_map.h"
+#include "memory_map.h"
 #include "io.h"
 #include "pinmux.h"
 #include "bits.h"
@@ -38,7 +38,7 @@ int gpio_pin_conf_pad(int pin, uint32_t flags)
 	 */
 	uintptr_t pad_conf_reg =
 		(((uintptr_t)pin & 0xf) >> 3) * 4 +
-		(uintptr_t)(PULP_GPIO_ADDR + GPIO_PADCFG0_OFFSET);
+		(uintptr_t)(GPIO_ADDR + GPIO_PADCFG0_OFFSET);
 	uint32_t pad_shift = (pin & 0x3) << 3; /* (0,1) (8,9) (16,17) (24,25) */
 	uint32_t val = (flags & GPIO_PULL_ENABLE) |
 		       (flags & GPIO_DRIVE_STRENGTH_HIGH) << 1;
@@ -61,9 +61,9 @@ int gpio_pin_configure(int pin, uint32_t flags)
 	gpio_pin_conf_pad(pin, flags);
 
 	/* configure direction */
-	uint32_t pads = readw((uintptr_t)(PULP_GPIO_ADDR + GPIO_PADDIR_OFFSET));
+	uint32_t pads = readw((uintptr_t)(GPIO_ADDR + GPIO_PADDIR_OFFSET));
 	WRITE_BIT(pads, pin, flags & GPIO_OUTPUT);
-	writew(pads, (uintptr_t)(PULP_GPIO_ADDR + GPIO_PADDIR_OFFSET));
+	writew(pads, (uintptr_t)(GPIO_ADDR + GPIO_PADDIR_OFFSET));
 
 	/* default value to prevent glitches */
 	if (flags & GPIO_OUTPUT_INIT_HIGH)
@@ -73,9 +73,9 @@ int gpio_pin_configure(int pin, uint32_t flags)
 		gpio_pin_set_raw(pin, 0);
 
 	/* control pad clock gating: need to enable clock for inputs */
-	uint32_t en = readw((uintptr_t)(PULP_GPIO_ADDR + GPIO_GPIOEN_OFFSET));
+	uint32_t en = readw((uintptr_t)(GPIO_ADDR + GPIO_GPIOEN_OFFSET));
 	WRITE_BIT(en, pin, GPIO_INPUT);
-	writew(en, (uintptr_t)(PULP_GPIO_ADDR + GPIO_GPIOEN_OFFSET));
+	writew(en, (uintptr_t)(GPIO_ADDR + GPIO_GPIOEN_OFFSET));
 
 	return 0;
 }
@@ -85,7 +85,7 @@ inline int gpio_port_get_raw(uint32_t *value)
 	/* this api is a bit dumb but the return value is mean to signal an
 	 * error. This never happens in our implementation.
 	 */
-	*value = readw((uintptr_t)(PULP_GPIO_ADDR + GPIO_PADIN_OFFSET));
+	*value = readw((uintptr_t)(GPIO_ADDR + GPIO_PADIN_OFFSET));
 
 	return 0;
 }
@@ -93,9 +93,9 @@ inline int gpio_port_get_raw(uint32_t *value)
 inline int gpio_port_set_masked_raw(uint32_t mask, uint32_t value)
 {
 	uint32_t outval =
-		readw((uintptr_t)(PULP_GPIO_ADDR + GPIO_PADOUT_OFFSET));
+		readw((uintptr_t)(GPIO_ADDR + GPIO_PADOUT_OFFSET));
 	writew((outval & ~mask) | (value & mask),
-	       (uintptr_t)(PULP_GPIO_ADDR + GPIO_PADOUT_OFFSET));
+	       (uintptr_t)(GPIO_ADDR + GPIO_PADOUT_OFFSET));
 
 	return 0;
 }
@@ -103,8 +103,8 @@ inline int gpio_port_set_masked_raw(uint32_t mask, uint32_t value)
 inline int gpio_port_set_bits_raw(uint32_t mask)
 {
 	uint32_t outval =
-		readw((uintptr_t)(PULP_GPIO_ADDR + GPIO_PADOUT_OFFSET));
-	writew(outval | mask, (uintptr_t)(PULP_GPIO_ADDR + GPIO_PADOUT_OFFSET));
+		readw((uintptr_t)(GPIO_ADDR + GPIO_PADOUT_OFFSET));
+	writew(outval | mask, (uintptr_t)(GPIO_ADDR + GPIO_PADOUT_OFFSET));
 
 	return 0;
 }
@@ -112,9 +112,9 @@ inline int gpio_port_set_bits_raw(uint32_t mask)
 inline int gpio_port_clear_bits_raw(uint32_t mask)
 {
 	uint32_t outval =
-		readw((uintptr_t)(PULP_GPIO_ADDR + GPIO_PADOUT_OFFSET));
+		readw((uintptr_t)(GPIO_ADDR + GPIO_PADOUT_OFFSET));
 	writew(outval & ~mask,
-	       (uintptr_t)(PULP_GPIO_ADDR + GPIO_PADOUT_OFFSET));
+	       (uintptr_t)(GPIO_ADDR + GPIO_PADOUT_OFFSET));
 
 	return 0;
 }
@@ -122,8 +122,8 @@ inline int gpio_port_clear_bits_raw(uint32_t mask)
 inline int gpio_port_toggle_bits(uint32_t mask)
 {
 	uint32_t outval =
-		readw((uintptr_t)(PULP_GPIO_ADDR + GPIO_PADOUT_OFFSET));
-	writew(outval ^ mask, (uintptr_t)(PULP_GPIO_ADDR + GPIO_PADOUT_OFFSET));
+		readw((uintptr_t)(GPIO_ADDR + GPIO_PADOUT_OFFSET));
+	writew(outval ^ mask, (uintptr_t)(GPIO_ADDR + GPIO_PADOUT_OFFSET));
 
 	return 0;
 }

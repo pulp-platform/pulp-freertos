@@ -20,7 +20,6 @@
 #include <stddef.h>
 #include "fc_event.h"
 #include "memory_map.h"
-#include "pulp_mem_map.h"
 #include "riscv.h"
 #ifdef CONFIG_CLIC
 #include "clic.h"
@@ -71,7 +70,7 @@ __attribute__((section(".text"))) void fc_soc_event_handler(void)
 	 * interrupt on the CLIC and contains a small register storing the event
 	 * data. This data needs to be read to clear the interrupt */
 #ifdef CONFIG_CLIC
-	event = readw((uintptr_t)PULP_EVENT_TO_INT_ADDR);
+	event = readw((uintptr_t)EVENT_TO_INT_ADDR);
 #else
 	/* Pop one event element from the FIFO */
 	event = SIMPLE_IRQ->FIFO;

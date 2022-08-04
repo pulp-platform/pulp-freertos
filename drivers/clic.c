@@ -22,7 +22,7 @@
 #include <stdint.h>
 #include <assert.h>
 
-#include "pulp_mem_map.h"
+#include "memory_map.h"
 #include "properties.h"
 #include "io.h"
 #include "irq.h"
@@ -45,9 +45,9 @@ void irq_enable(int id)
 	/* TODO: enable selective hardware vectoring for interrupt. We might later
 	 * make this configurable */
 	writew(1 << CLIC_CLICINTATTR_SHV_BIT,
-	       (uintptr_t)(PULP_CLIC_ADDR + CLIC_CLICINTATTR_REG_OFFSET(id)));
+	       (uintptr_t)(CLIC_ADDR + CLIC_CLICINTATTR_REG_OFFSET(id)));
 
-	writew(1ul, (uintptr_t)(PULP_CLIC_ADDR + CLIC_CLICINTIE_REG_OFFSET(id)));
+	writew(1ul, (uintptr_t)(CLIC_ADDR + CLIC_CLICINTIE_REG_OFFSET(id)));
 
 	/* TODO: fix this quick hack which is there just to get going */
 	irq_set_lvl_and_prio(id, 1, 1);
@@ -59,26 +59,26 @@ void irq_disable(int id)
 {
 	assert(0 <= id && id < CLIC_PARAM_NUM_SRC);
 	writew(0 << CLIC_CLICINTATTR_SHV_BIT,
-	       (uintptr_t)(PULP_CLIC_ADDR + CLIC_CLICINTATTR_REG_OFFSET(id)));
-	writew(0ul, (uintptr_t)(PULP_CLIC_ADDR + CLIC_CLICINTIE_REG_OFFSET(id)));
+	       (uintptr_t)(CLIC_ADDR + CLIC_CLICINTATTR_REG_OFFSET(id)));
+	writew(0ul, (uintptr_t)(CLIC_ADDR + CLIC_CLICINTIE_REG_OFFSET(id)));
 }
 
 void irq_pend(int id)
 {
 	assert(0 <= id && id < CLIC_PARAM_NUM_SRC);
-	writew(1ul, (uintptr_t)(PULP_CLIC_ADDR + CLIC_CLICINTIP_REG_OFFSET(id)));
+	writew(1ul, (uintptr_t)(CLIC_ADDR + CLIC_CLICINTIP_REG_OFFSET(id)));
 }
 
 void irq_clear(int id)
 {
 	assert(0 <= id && id < CLIC_PARAM_NUM_SRC);
-	writew(0ul, (uintptr_t)(PULP_CLIC_ADDR + CLIC_CLICINTIP_REG_OFFSET(id)));
+	writew(0ul, (uintptr_t)(CLIC_ADDR + CLIC_CLICINTIP_REG_OFFSET(id)));
 }
 
 void irq_set_lvl_and_prio(int id, int lvl, int prio)
 {
 	/* TODO: probe CLICINTCTLBITS */
-	uint32_t nlbits = readw((uintptr_t)(PULP_CLIC_ADDR + CLIC_CLICCFG_REG_OFFSET)) >>
+	uint32_t nlbits = readw((uintptr_t)(CLIC_ADDR + CLIC_CLICCFG_REG_OFFSET)) >>
 				  CLIC_CLICCFG_NLBITS_OFFSET &
 			  CLIC_CLICCFG_NLBITS_MASK;
 
@@ -86,15 +86,15 @@ void irq_set_lvl_and_prio(int id, int lvl, int prio)
 	uint32_t val = ((((uint32_t)lvl & BIT_MASK(nlbits)) << shift |
 			 ((uint32_t)prio & BIT_MASK(shift))) &
 			0xff);
-	writew(val, (uintptr_t)(PULP_CLIC_ADDR + CLIC_CLICINTCTL_REG_OFFSET(id)));
+	writew(val, (uintptr_t)(CLIC_ADDR + CLIC_CLICINTCTL_REG_OFFSET(id)));
 }
 
 void irq_set_trigger_type(int id, int flags)
 {
-	uint32_t reg = readw((uintptr_t)(PULP_CLIC_ADDR + CLIC_CLICINTATTR_REG_OFFSET(id)));
-	reg &= ~((uint32_t)CLIC_CLICINTATTR_TRIG_MASK << CLIC_CLICINTATTR_TRIG_OFFSET);
-	reg |= ((uint32_t)flags & CLIC_CLICINTATTR_TRIG_MASK) << CLIC_CLICINTATTR_TRIG_OFFSET;
-	writew(reg, (uintptr_t)(PULP_CLIC_ADDR + CLIC_CLICINTATTR_REG_OFFSET(id)));
+	uint32_t reg = readw((uintptr_t)(CLIC_ADDR + CLIC_CLICINTATTR_REG_OFFSET(id)));
+	reg &= ~(CLIC_CLICINTATTR_TRIG_MASK << CLIC_CLICINTATTR_TRIG_OFFSET);
+	reg |= (flags & CLIC_CLICINTATTR_TRIG_MASK) << CLIC_CLICINTATTR_TRIG_OFFSET;
+	writew(reg, (uintptr_t)(CLIC_ADDR + CLIC_CLICINTATTR_REG_OFFSET(id)));
 }
 
 /* utility functions for the core level interrupt (CLINT) described in the
@@ -135,5 +135,5 @@ void pulp_irq_init()
 	csr_write(CSR_MINTTHRESH, 0x0);
 	/* set nlbits to four which gives 4 bits for level and priority */
 	/* TODO: implement freertos level interrupts */
-	writeb((0x4 << CLIC_CLICCFG_NLBITS_OFFSET), PULP_CLIC_ADDR + CLIC_CLICCFG_REG_OFFSET);
+	writeb((0x4 << CLIC_CLICCFG_NLBITS_OFFSET), CLIC_ADDR + CLIC_CLICCFG_REG_OFFSET);
 }

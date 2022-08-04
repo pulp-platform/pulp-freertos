@@ -23,7 +23,7 @@
 #include <assert.h>
 
 #include "io.h"
-#include "pulp_mem_map.h"
+#include "memory_map.h"
 #include "apb_soc.h"
 #include "pinmux.h"
 
@@ -35,7 +35,7 @@ int pinmux_pin_set(int pin, uint32_t func)
 
 	uintptr_t padfun_reg =
 		((pin & 0xf) >> 4) * 4 +
-		(PULP_APB_SOC_CTRL_ADDR + APB_SOC_PADFUN0_OFFSET);
+		(APB_SOC_CTRL_ADDR + APB_SOC_PADFUN0_OFFSET);
 	uint32_t padfun_shift = (pin & 0x7) << 1; /* 16 pads a 2 bits per reg */
 	writew((func & 0x3) << padfun_shift, padfun_reg);
 
@@ -48,7 +48,7 @@ int pinmux_pin_get(int pin, uint32_t *func)
 
 	uintptr_t padfun_reg =
 		((pin & 0xf) >> 4) * 4 +
-		(PULP_APB_SOC_CTRL_ADDR + APB_SOC_PADFUN0_OFFSET);
+		(APB_SOC_CTRL_ADDR + APB_SOC_PADFUN0_OFFSET);
 	uint32_t padfun_shift = (pin & 0x7) << 1; /* 16 pads a 2 bits per reg */
 	uint32_t padfunval = readw(padfun_reg);
 	*func = (padfunval >> padfun_shift) & 0x3;

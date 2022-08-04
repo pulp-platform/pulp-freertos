@@ -47,7 +47,7 @@
 #include <utime.h>
 
 /* Drivers */
-#include "pulp_mem_map.h"
+#include "memory_map.h"
 #include "io.h"
 #include "csr.h"
 #include "apb_soc.h"
@@ -152,8 +152,8 @@ void _exit(int exit_status)
 	for (volatile int i = 0; i < 1024 * 3; i++)
 	    ;
 #endif
-	writew((uint32_t)exit_status | (1ul << APB_SOC_STATUS_EOC_BIT),
-	       (uintptr_t)(PULP_APB_SOC_CTRL_ADDR + APB_SOC_CORESTATUS_OFFSET));
+	writew(exit_status | (1 << APB_SOC_STATUS_EOC_BIT),
+	       (uintptr_t)(APB_SOC_CTRL_ADDR + APB_SOC_CORESTATUS_OFFSET));
 	for (;;)
 	    asm volatile("wfi");
 }
@@ -314,7 +314,7 @@ ssize_t _write(int file, const void *ptr, size_t len)
 	const void *eptr = ptr + len;
 	while (ptr != eptr)
 		writew(*(unsigned char *)(ptr++),
-		       (uintptr_t)(PULP_STDOUT_ADDR + STDOUT_PUTC_OFFSET +
+		       (uintptr_t)(STDOUT_ADDR + STDOUT_PUTC_OFFSET +
 				   (pulp_core_id() << 3) +
 				   (pulp_cluster_id() << 7)));
 	return (ssize_t)len;

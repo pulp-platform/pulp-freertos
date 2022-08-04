@@ -19,18 +19,18 @@
  */
 
 #include <stdint.h>
-#include "pulp_mem_map.h"
+#include "memory_map.h"
 #include "io.h"
 #include "soc_eu_metal.h"
 
 void soc_eu_mask_set(uint32_t offset, uint32_t mask)
 {
-	writew(mask, (uintptr_t)(PULP_SOC_EU_ADDR + offset));
+	writew(mask, (uintptr_t)(SOC_EU_ADDR + offset));
 }
 
 uint32_t soc_eu_mask_get(uint32_t offset)
 {
-	return readw((uintptr_t)(PULP_SOC_EU_ADDR + offset));
+	return readw((uintptr_t)(SOC_EU_ADDR + offset));
 }
 
 /* void soc_eu_irq_mask_set(uint32_t mask) */
