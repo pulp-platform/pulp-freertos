@@ -72,7 +72,7 @@ OBJS_DIRS := $(filter-out ./,$(sort $(dir $(OBJS))))
 # $(foreach obj,$(OBJS),$(eval $(call CREATE_OBJ_DEP,$(obj))))
 
 ## Compile and link executable. Obeys standard GNU variables used by implicit rules.
-all: $(PROG) $(PROG).stim misc-info
+all: $(PROG) $(PROG).stim $(PROG).srec misc-info
 
 %.o: %.S
 	@mkdir -p $(@D)
@@ -89,6 +89,9 @@ $(PROG): $(OBJS)
 
 # objdump, listing and size of binary
 misc-info: $(PROG).hex $(PROG).lst $(PROG).siz
+
+$(PROG).srec: $(PROG)
+	$(OBJCOPY) -O srec $(PROG) $@
 
 $(PROG).stim: $(PROG)
 	$(PLPSTIM) -o $@ $<
@@ -160,9 +163,17 @@ $(SIMDIR)/preload/elf.veri &: $(PROG).veri
 	$(MEMCONV) $(PROG).veri $(SIMDIR)/preload
 
 # default vsim flags for simulation
-VSIM_RUN_FLAGS = +ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG \
-		-permit_unmatched_virtual_intf \
-		-gBAUDRATE=115200
+VSIM_RUN_FLAGS = -permit_unmatched_virtual_intf
+
+
+# Newer testbenches use plusargs for runtime settings since floatingparams are
+# notoriously buggy
+ifdef CONFIG_PLUSARG_SIM
+  # srec already has entry point information
+  VSIM_RUN_FLAGS += +srec=prog.srec +jtag_load_tap=pulp
+else
+  VSIM_RUN_FLAGS += +ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG -gBAUDRATE=115200
+endif
 
 # signal to simulator to preload the binary
 ifdef preload
@@ -198,6 +209,7 @@ ifndef VSIM_PATH
 	'source $$YOUR_HW_DIR/setup/vsim.sh' or set it manually.")
 endif
 	cp $(PROG) $(SIMDIR)
+	cp $(PROG).srec $(SIMDIR)/prog.srec
 	cp $(PROG).lst $(SIMDIR)
 	cp memory.map $(SIMDIR)
 	if [[ -f $(PROG).veri ]]; then cp $(PROG).veri $(SIMDIR); fi;
@@ -287,7 +299,7 @@ backup:
 clean:
 	$(RM) $(OBJS) $(PROG) $(DEPS) $(SU) \
 		$(PROG).hex $(PROG).lst $(PROG).siz memory.map $(PROG).veri \
-		$(PROG).stim $(SIMDIR)/vectors/stim.txt
+		$(PROG).stim $(PROG).srec $(SIMDIR)/vectors/stim.txt
 	for dirs in $(OBJS_DIRS); do \
 		if [[ -d $$dirs ]]; then \
 			rmdir -p --ignore-fail-on-non-empty $$dirs; \
