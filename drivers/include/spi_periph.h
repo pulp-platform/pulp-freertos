@@ -22,31 +22,33 @@
 
 /* ----------------------------------------------------------------------------
    -- SPI Peripheral Access Layer --
-   ---------------------------------------------------------------------------- */
+   ----------------------------------------------------------------------------
+ */
 
 /** SPI_Type Register Layout Typedef */
 typedef struct {
-	udma_channel_t rx; /**< UDMA RX channel struct. */
-	udma_channel_t tx; /**< UDMA TX channel struct. */
+	udma_channel_t rx;  /**< UDMA RX channel struct. */
+	udma_channel_t tx;  /**< UDMA TX channel struct. */
 	udma_channel_t cmd; /**< UDMA CMD channel struct. */
 } spi_t;
 
 /* ----------------------------------------------------------------------------
    -- SPI Register Bitfield Access --
-   ---------------------------------------------------------------------------- */
+   ----------------------------------------------------------------------------
+ */
 
 /* SPI command fields offset, mask, value definition */
 /* SPI commands fields offsets */
 #define SPI_CMD_ID_OFFSET 28
 
 /* COMMON definitions */
-#define SPI_CMD_QPI_ENA		  1
-#define SPI_CMD_QPI_DIS		  0
-#define SPI_CMD_LSB_FIRST	  1
-#define SPI_CMD_MSB_FIRST	  0
-#define SPI_CMD_4_WORD_PER_TRANSF 2
-#define SPI_CMD_2_WORD_PER_TRANSF 1
-#define SPI_CMD_1_WORD_PER_TRANSF 0
+#define SPI_CMD_QPI_ENA		  1ul
+#define SPI_CMD_QPI_DIS		  0ul
+#define SPI_CMD_LSB_FIRST	  1ul
+#define SPI_CMD_MSB_FIRST	  0ul
+#define SPI_CMD_4_WORD_PER_TRANSF 2ul
+#define SPI_CMD_2_WORD_PER_TRANSF 1ul
+#define SPI_CMD_1_WORD_PER_TRANSF 0ul
 #define SPI_CMD_DATA_WITDH(val)	  (val)
 #define SPI_CMD_CMD_SIZE(val)	  (val)
 
@@ -164,13 +166,15 @@ typedef struct {
 
 /* ----------------------------------------------------------------------------
    -- SPI CMD IDs and macros --
-   ---------------------------------------------------------------------------- */
+   ----------------------------------------------------------------------------
+ */
 
 /*! @name CMD_CFG */
 /* Channel continuous mode:
   - 1'b0: disable
   - 1'b1: enable
-  At the end of the buffer the uDMA reloads the address and size and starts a new transfer. */
+  At the end of the buffer the uDMA reloads the address and size and starts a
+  new transfer. */
 #define UDMA_CORE_CMD_CFG_CONTINOUS_MASK  (0x1)
 #define UDMA_CORE_CMD_CFG_CONTINOUS_SHIFT (0)
 #define UDMA_CORE_CMD_CFG_CONTINOUS(val)                                       \
@@ -242,23 +246,24 @@ typedef struct {
 		     << UDMA_CORE_CMD_INITCFG_RESERVED_0_SHIFT)) &             \
 	 UDMA_CORE_CMD_INITCFG_RESERVED_0_MASK)
 
-#define SPI_CMD_CFG_ID	     0x0 /* Sets the configuration for the SPI Master IP. */
-#define SPI_CMD_SOT_ID	     0x1 /* Sets the Chip Select (CS). */
-#define SPI_CMD_SEND_CMD_ID  0x2 /* Transmits a configurable size command. */
-#define SPI_CMD_SEND_BITS_ID 0x2 /* Transmits a configurable size command. */
-#define SPI_CMD_SEND_ADDR_ID 0x3 /* Transmits a configurable size address. */
+#define SPI_CMD_CFG_ID	     0x0ul /* Sets the configuration for the SPI Master IP. */
+#define SPI_CMD_SOT_ID	     0x1ul /* Sets the Chip Select (CS). */
+#define SPI_CMD_SEND_CMD_ID  0x2ul /* Transmits a configurable size command. */
+#define SPI_CMD_SEND_BITS_ID 0x2ul /* Transmits a configurable size command. */
+#define SPI_CMD_SEND_ADDR_ID 0x3ul /* Transmits a configurable size address. */
 #define SPI_CMD_DUMMY_ID                                                       \
-	0x4 /* Receives a number of dummy bits (not sent to the rx interface). */
+	0x4ul /* Receives a number of dummy bits (not sent to the rx interface). \
+	     */
 #define SPI_CMD_WAIT_ID                                                        \
-	0x5 /* Waits an external event to move to the next instruction. */
-#define SPI_CMD_TX_DATA_ID 0x6 /* Sends data (max 64Kbits). */
-#define SPI_CMD_RX_DATA_ID 0x7 /* Receives data (max 64Kbits). */
-#define SPI_CMD_RPT_ID	   0x8 /* Repeat the next transfer N times. */
-#define SPI_CMD_EOT_ID	   0x9 /* Clears the Chip Select (CS). */
-#define SPI_CMD_RPT_END_ID 0xA /* End of the repeat loop command. */
+	0x5ul /* Waits an external event to move to the next instruction. */
+#define SPI_CMD_TX_DATA_ID 0x6ul /* Sends data (max 64Kbits). */
+#define SPI_CMD_RX_DATA_ID 0x7ul /* Receives data (max 64Kbits). */
+#define SPI_CMD_RPT_ID	   0x8ul /* Repeat the next transfer N times. */
+#define SPI_CMD_EOT_ID	   0x9ul /* Clears the Chip Select (CS). */
+#define SPI_CMD_RPT_END_ID 0xAul /* End of the repeat loop command. */
 #define SPI_CMD_RX_CHECK_ID                                                    \
-	0xB /* Check up ot 16 bits of data against an expected value. */
-#define SPI_CMD_FULL_DUPL_ID 0xC /* Activate full duplex mode. */
+	0xBul /* Check up ot 16 bits of data against an expected value. */
+#define SPI_CMD_FULL_DUPL_ID 0xCul /* Activate full duplex mode. */
 
 #define SPI_CMD_CFG(clockDiv, cpol, cpha)                                      \
 	((SPI_CMD_CFG_ID << SPI_CMD_ID_OFFSET) |                               \
@@ -271,14 +276,14 @@ typedef struct {
 #define SPI_CMD_SEND_CMD(cmd, bits, qpi)                                       \
 	((SPI_CMD_SEND_CMD_ID << SPI_CMD_ID_OFFSET) |                          \
 	 ((qpi) << SPI_CMD_SEND_CMD_QPI_OFFSET) |                              \
-	 (((bits)-1) << SPI_CMD_SEND_CMD_SIZE_OFFSET) | (cmd & 0xFFFF))
+	 (((bits)-1ul) << SPI_CMD_SEND_CMD_SIZE_OFFSET) | (cmd & 0xFFFF))
 #define SPI_CMD_SEND_BITS(data, bits, qpi)                                     \
 	((SPI_CMD_SEND_CMD_ID << SPI_CMD_ID_OFFSET) |                          \
 	 ((qpi) << SPI_CMD_SEND_CMD_QPI_OFFSET) |                              \
-	 (((bits)-1) << SPI_CMD_SEND_CMD_SIZE_OFFSET) | (data & 0xFFFF))
+	 (((bits)-1ul) << SPI_CMD_SEND_CMD_SIZE_OFFSET) | (data & 0xFFFF))
 #define SPI_CMD_DUMMY(cycles)                                                  \
 	((SPI_CMD_DUMMY_ID << SPI_CMD_ID_OFFSET) |                             \
-	 (((cycles)-1) << SPI_CMD_DUMMY_CYCLE_OFFSET))
+	 (((cycles)-1ul) << SPI_CMD_DUMMY_CYCLE_OFFSET))
 
 #define SPI_CMD_SETUP_UCA(txrxen, ds, addr)                                    \
 	((SPI_CMD_SETUP_UCA_ID << SPI_CMD_ID_OFFSET) |                         \
@@ -292,15 +297,15 @@ typedef struct {
 	((SPI_CMD_TX_DATA_ID << SPI_CMD_ID_OFFSET) |                           \
 	 ((qpi) << SPI_CMD_TX_DATA_QPI_OFFSET) |                               \
 	 ((wordstrans) << SPI_CMD_TX_DATA_WORDTRANS_OFFSET) |                  \
-	 ((bitsword - 1) << SPI_CMD_TX_DATA_BITSWORD_OFFSET) |                 \
-	 (((words)-1) << SPI_CMD_TX_DATA_SIZE_OFFSET) |                        \
+	 ((bitsword - 1ul) << SPI_CMD_TX_DATA_BITSWORD_OFFSET) |               \
+	 (((words)-1ul) << SPI_CMD_TX_DATA_SIZE_OFFSET) |                      \
 	 ((lsbfirst) << SPI_CMD_TX_DATA_LSBFIRST_OFFSET))
 #define SPI_CMD_RX_DATA(words, wordstrans, bitsword, qpi, lsbfirst)            \
 	((SPI_CMD_RX_DATA_ID << SPI_CMD_ID_OFFSET) |                           \
 	 ((qpi) << SPI_CMD_RX_DATA_QPI_OFFSET) |                               \
 	 ((wordstrans) << SPI_CMD_RX_DATA_WORDTRANS_OFFSET) |                  \
-	 ((bitsword - 1) << SPI_CMD_RX_DATA_BITSWORD_OFFSET) |                 \
-	 (((words)-1) << SPI_CMD_RX_DATA_SIZE_OFFSET) |                        \
+	 ((bitsword - 1ul) << SPI_CMD_RX_DATA_BITSWORD_OFFSET) |               \
+	 (((words)-1ul) << SPI_CMD_RX_DATA_SIZE_OFFSET) |                      \
 	 ((lsbfirst) << SPI_CMD_RX_DATA_LSBFIRST_OFFSET))
 #define SPI_CMD_RPT(iter)                                                      \
 	((SPI_CMD_RPT_ID << SPI_CMD_ID_OFFSET) |                               \
@@ -314,7 +319,7 @@ typedef struct {
 	((SPI_CMD_RX_CHECK_ID << SPI_CMD_ID_OFFSET) |                          \
 	 ((value) << SPI_CMD_RX_CHECK_VALUE_OFFSET) |                          \
 	 ((mode) << SPI_CMD_RX_CHECK_MODE_OFFSET) |                            \
-	 (((bits)-1) << SPI_CMD_RX_CHECK_SIZE_OFFSET) |                        \
+	 (((bits)-1ul) << SPI_CMD_RX_CHECK_SIZE_OFFSET) |                      \
 	 ((byte_align) << SPI_CMD_RX_CHECK_BYTE_ALIGN_OFFSET) |                \
 	 ((qpi) << SPI_CMD_RX_CHECK_QPI_OFFSET))
 
@@ -325,8 +330,8 @@ typedef struct {
 #define SPI_CMD_FUL(words, wordstrans, bitsword, lsbfirst)                     \
 	((SPI_CMD_FUL_ID << SPI_CMD_ID_OFFSET) |                               \
 	 ((wordstrans) << SPI_CMD_FUL_WORDTRANS_OFFSET) |                      \
-	 ((bitsword - 1) << SPI_CMD_FUL_BITSWORD_OFFSET) |                     \
-	 (((words)-1) << SPI_CMD_FUL_SIZE_OFFSET) |                            \
+	 ((bitsword - 1ul) << SPI_CMD_FUL_BITSWORD_OFFSET) |                   \
+	 (((words)-1ul) << SPI_CMD_FUL_SIZE_OFFSET) |                          \
 	 ((lsbfirst) << SPI_CMD_FUL_LSBFIRST_OFFSET))
 
 #endif /* __SPI_PERIPH_H__ */

@@ -132,7 +132,7 @@ void pi_task_wait_on_no_mutex(pi_task_t *task)
 
 void pi_task_push_delayed_us(pi_task_t *task, uint32_t delay)
 {
-	pi_time_wait_us(delay);
+	pi_time_wait_us((int)delay);
 	uint32_t irq = disable_irq();
 	/* TODO: unimplemented callback */
 	/* pmsis_event_push(pmsis_event_get_default_scheduler(), task); */

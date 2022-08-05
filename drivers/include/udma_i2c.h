@@ -21,19 +21,6 @@
 #include "udma_core.h"
 #include "i2c_periph.h"
 
-/* I2C command IDS definition */
-#define I2C_CMD_OFFSET	4
-#define I2C_CMD_START	(0x0 << I2C_CMD_OFFSET)
-#define I2C_CMD_STOP	(0x2 << I2C_CMD_OFFSET)
-#define I2C_CMD_RD_ACK	(0x4 << I2C_CMD_OFFSET)
-#define I2C_CMD_RD_NACK (0x6 << I2C_CMD_OFFSET)
-#define I2C_CMD_WR	(0x8 << I2C_CMD_OFFSET)
-#define I2C_CMD_WAIT	(0xA << I2C_CMD_OFFSET)
-#define I2C_CMD_RPT	(0xC << I2C_CMD_OFFSET)
-#define I2C_CMD_CFG	(0xE << I2C_CMD_OFFSET)
-#define I2C_CMD_WAIT_EV (0x1 << I2C_CMD_OFFSET)
-#define I2C_CMD_EOT     (0x9 << I2C_CMD_OFFSET)
-
 
 #define I2C(id) ((i2c_t *) UDMA_I2C(id))
 
@@ -49,6 +36,10 @@ static inline void i2c_udma_channel_set(uint32_t device_id, udma_channel_e chann
 	case(TX_CHANNEL):
 		udma_enqueue_channel(&(I2C(device_id)->tx), l2buf, size, cfg);
 		break;
+
+	case (COMMAND_CHANNEL):
+	    /* no command channel in this i2c version */
+	    break;
 	}
 }
 

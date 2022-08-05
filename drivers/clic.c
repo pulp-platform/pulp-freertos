@@ -92,8 +92,8 @@ void irq_set_lvl_and_prio(int id, int lvl, int prio)
 void irq_set_trigger_type(int id, int flags)
 {
 	uint32_t reg = readw((uintptr_t)(PULP_CLIC_ADDR + CLIC_CLICINTATTR_REG_OFFSET(id)));
-	reg &= ~(CLIC_CLICINTATTR_TRIG_MASK << CLIC_CLICINTATTR_TRIG_OFFSET);
-	reg |= (flags & CLIC_CLICINTATTR_TRIG_MASK) << CLIC_CLICINTATTR_TRIG_OFFSET;
+	reg &= ~((uint32_t)CLIC_CLICINTATTR_TRIG_MASK << CLIC_CLICINTATTR_TRIG_OFFSET);
+	reg |= ((uint32_t)flags & CLIC_CLICINTATTR_TRIG_MASK) << CLIC_CLICINTATTR_TRIG_OFFSET;
 	writew(reg, (uintptr_t)(PULP_CLIC_ADDR + CLIC_CLICINTATTR_REG_OFFSET(id)));
 }
 

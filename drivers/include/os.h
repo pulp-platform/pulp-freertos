@@ -52,13 +52,14 @@ static inline int pmsis_kickoff(void *arg)
 
 	__enable_irq();
 
-	struct pmsis_event_kernel_wrap *wrap;
 	/* TODO: blocks everything because priority too high */
 	/* TODO: spawn event loop for callbacks or use FreeRTOS callback api */
+
+	/* struct pmsis_event_kernel_wrap *wrap; */
 	/* pmsis_event_kernel_init(&wrap, pmsis_event_kernel_main); */
 	/* pmsis_event_set_default_scheduler(wrap); */
 
-	/* TODO:handle case when uart is being used before initialized */
+	/* TODO: handle case when uart is being used before initialized */
 	/* Start the kernel. From here on only tasks and interrupts will run. */
 	vTaskStartScheduler();
 
@@ -72,7 +73,7 @@ static inline void *pmsis_task_create(void (*entry)(void *), void *arg,
 	TaskHandle_t task_handle = NULL;
 	BaseType_t task_ret;
 	task_ret = xTaskCreate(entry, name, 2 * configMINIMAL_STACK_SIZE, arg,
-			       tskIDLE_PRIORITY + 1 + priority, &task_handle);
+			       tskIDLE_PRIORITY + 1u + (UBaseType_t)priority, &task_handle);
 	if (task_ret != pdPASS) {
 		return NULL;
 	} else {
@@ -244,7 +245,7 @@ static inline void pmsis_spinlock_release(pmsis_spinlock_t *spinlock)
 	restore_irq(irq_enabled);
 }
 
-static void pi_time_wait_us(int time_us)
+__attribute__((unused)) static void pi_time_wait_us(int time_us)
 {
 	/* Wait less than 1 ms. */
 	if (time_us < 1000) {
