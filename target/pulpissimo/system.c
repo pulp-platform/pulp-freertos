@@ -25,6 +25,10 @@
 #include <FreeRTOS.h>
 #include "FreeRTOSConfig.h"
 
+#include "io.h"
+#include "timer.h"
+#include "timer_hal.h"
+#include "timer_irq.h"
 #include "fll.h"
 #include "freq.h"
 #include "fc_event.h"
@@ -149,11 +153,19 @@ void undefined_handler(void)
 
 void vPortSetupTimerInterrupt(void)
 {
-	extern int timer_irq_init(uint32_t ticks);
+    extern int timer_irq_init_fc(uint32_t ticks, unsigned int timer_cfg, timer_id_t timer_id);
 
 	/* No CLINT so use the PULP timer to generate the tick interrupt. */
 	/* TODO: configKERNEL_INTERRUPT_PRIORITY - 1 ? */
-	timer_irq_init(ARCHI_REF_CLOCK / configTICK_RATE_HZ);
+
+        timer_id_t timer_id = TIMER_LO_ID;
+
+	/* set the timer to reset after the configred tick, and trigger an interrupt */
+	unsigned int timer_cfg = TIMER_CFG_LO_ENABLE_MASK | TIMER_CFG_LO_RESET_MASK |
+	    TIMER_CFG_LO_CCFG_MASK | TIMER_CFG_LO_MODE_MASK |
+	    TIMER_CFG_LO_IRQEN_MASK;
+
+	timer_irq_init_fc(ARCHI_REF_CLOCK / configTICK_RATE_HZ, timer_cfg, timer_id);
 	/* TODO: allow setting interrupt priority (to super high(?)) */
 	irq_enable(IRQ_FC_EVT_TIMER0_LO);
 }

@@ -36,6 +36,9 @@
 
 /* system includes */
 #include "system.h"
+#include "io.h"
+#include "timer.h"
+#include "timer_hal.h"
 #include "timer_irq.h"
 #include "fll.h"
 #include "irq.h"
