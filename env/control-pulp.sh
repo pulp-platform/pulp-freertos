@@ -28,6 +28,8 @@ source "$ROOT/env/default-config.sh"
 
 export CONFIG_FREERTOS_CHIP_INCLUDE=ControlPULP_CV32E40P
 
+export CONFIG_PLUSARG_SIM=y
+
 export CONFIG_CLUSTER=y
 export CONFIG_DRIVER_FLL=n
 export CONFIG_DRIVER_CLKDIV=y

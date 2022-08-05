@@ -47,8 +47,8 @@ CFLAGS = \
 	-Wall -Wextra -Wshadow -Wformat=2 -Wundef \
 	-Wno-unused-parameter -Wno-unused-variable \
 	-Og -g3 \
-	-DFEATURE_CLUSTER=0 -D__PULP__=1 -DASYNC=0 -DDEBUG \
-        -fstack-usage -Wstack-usage=1024
+	-DASYNC=0
+
 
 # disable cluster
 CONFIG_CLUSTER=n

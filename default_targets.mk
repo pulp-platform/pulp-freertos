@@ -72,7 +72,7 @@ OBJS_DIRS := $(filter-out ./,$(sort $(dir $(OBJS))))
 # $(foreach obj,$(OBJS),$(eval $(call CREATE_OBJ_DEP,$(obj))))
 
 ## Compile and link executable. Obeys standard GNU variables used by implicit rules.
-all: $(PROG) $(PROG).stim misc-info
+all: $(PROG) $(PROG).stim $(PROG).srec misc-info
 
 %.o: %.S
 	@mkdir -p $(@D)
@@ -89,6 +89,9 @@ $(PROG): $(OBJS)
 
 # objdump, listing and size of binary
 misc-info: $(PROG).hex $(PROG).lst $(PROG).siz
+
+$(PROG).srec: $(PROG)
+	$(OBJCOPY) -O srec $(PROG) $@
 
 $(PROG).stim: $(PROG)
 	$(PLPSTIM) -o $@ $<
@@ -113,12 +116,6 @@ $(shell mkdir -p $(SIMDIR))
 $(shell mkdir -p $(GVSIMDIR))
 
 # creating symlink farm because PULP/PULPissimo relies on hardcoded paths
-$(SIMDIR)/modelsim.ini:
-ifndef VSIM_PATH
-	$(error "VSIM_PATH is undefined. Either call \
-	'source $$YOUR_HW_DIR/setup/vsim.sh' or set it manually.")
-endif
-	ln -s $(VSIM_PATH)/modelsim.ini $@
 
 $(SIMDIR)/work:
 ifndef VSIM_PATH
@@ -166,9 +163,17 @@ $(SIMDIR)/preload/elf.veri &: $(PROG).veri
 	$(MEMCONV) $(PROG).veri $(SIMDIR)/preload
 
 # default vsim flags for simulation
-VSIM_RUN_FLAGS = +ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG \
-		-permit_unmatched_virtual_intf \
-		-gBAUDRATE=115200
+VSIM_RUN_FLAGS = -permit_unmatched_virtual_intf
+
+
+# Newer testbenches use plusargs for runtime settings since floatingparams are
+# notoriously buggy
+ifdef CONFIG_PLUSARG_SIM
+  # srec already has entry point information
+  VSIM_RUN_FLAGS += +srec=prog.srec +jtag_load_tap=pulp
+else
+  VSIM_RUN_FLAGS += +ENTRY_POINT=0x1c000880 -gLOAD_L2=JTAG -gBAUDRATE=115200
+endif
 
 # signal to simulator to preload the binary
 ifdef preload
@@ -183,19 +188,22 @@ ifeq ($(DPI),yes)
   ifeq ($(strip $(DPI_CONFIG)),)
   $(warning "DPI_CONFIG is unset, but requested DPI sim. Using default rtl_config.json")
   DPI_CONFIG = "rtl_config.json"
+  VSIM_RUN_FLAGS += -gCONFIG_FILE=$(DPI_CONFIG)
   endif
 else
   DPI_CONFIG = "NONE"
+  ifndef CONFIG_PLUSARG_SIM
+    VSIM_RUN_FLAGS += -gCONFIG_FILE=$(DPI_CONFIG)
+  endif
 endif
 
-VSIM_RUN_FLAGS += -gCONFIG_FILE=$(DPI_CONFIG)
 
 .PHONY:
 ## Run RTL simulation. Append gui=1 or interactive=1 for vsim gui or vsim shell respectively
 run-sim: run
 
 .PHONY: run
-run: $(SIMDIR)/modelsim.ini $(SIMDIR)/boot $(SIMDIR)/tcl_files \
+run: $(SIMDIR)/boot $(SIMDIR)/tcl_files \
 	$(SIMDIR)/waves $(SIMDIR)/vectors/stim.txt \
 	$(SIMDIR)/stdout $(SIMDIR)/fs $(SIMDIR)/work \
 	$(DPI_LIBS) $(RUN_MORE)
@@ -204,31 +212,18 @@ ifndef VSIM_PATH
 	'source $$YOUR_HW_DIR/setup/vsim.sh' or set it manually.")
 endif
 	cp $(PROG) $(SIMDIR)
+	cp $(PROG).srec $(SIMDIR)/prog.srec
 	cp $(PROG).lst $(SIMDIR)
 	cp memory.map $(SIMDIR)
 	if [[ -f $(PROG).veri ]]; then cp $(PROG).veri $(SIMDIR); fi;
-ifdef gui
 	cd $(SIMDIR) && \
 	export LD_LIBRARY_PATH="$(SUPPORT_LIB_DIR)" && \
 	export VSIM_RUNNER_FLAGS="$(VSIM_RUN_FLAGS) $(VSIM_DPI) $(VSIM_ARGS)" && \
 	export VOPT_ACC_ENA="YES" && \
-	$(VSIM) -64 -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
-		-do 'source $(VSIM_PATH)/tcl_files/run.tcl; ' $(VSIM_ARGS)
-else
-ifdef interactive
-	cd $(SIMDIR) && \
-	export LD_LIBRARY_PATH="$(SUPPORT_LIB_DIR)" && \
-	export VSIM_RUNNER_FLAGS="$(VSIM_RUN_FLAGS) $(VSIM_DPI) $(VSIM_ARGS)" && \
-	$(VSIM) -64 -c -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
-		-do 'source $(VSIM_PATH)/tcl_files/run.tcl;' $(VSIM_ARGS)
-else
-	cd $(SIMDIR) && \
-	export LD_LIBRARY_PATH="$(SUPPORT_LIB_DIR)" && \
-	export VSIM_RUNNER_FLAGS="$(VSIM_RUN_FLAGS) $(VSIM_DPI) $(VSIM_ARGS)" && \
-	$(VSIM) -64 -c -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
-		-do 'source $(VSIM_PATH)/tcl_files/run.tcl; run_and_exit;' $(VSIM_ARGS)
-endif
-endif
+	$(VSIM) -64 $(if $(gui),,-c) -do 'source $(VSIM_PATH)/tcl_files/config/run_and_exit.tcl' \
+		-do $(if $(or $(gui),$(interactive)), \
+				'source $(VSIM_PATH)/tcl_files/run.tcl; ', \
+				'source $(VSIM_PATH)/tcl_files/run.tcl; run_and_exit; ') $(VSIM_ARGS)
 
 GVSOC=$(SUPPORT_ROOT)/egvsoc.sh
 .PHONY: run-gvsoc
@@ -293,7 +288,7 @@ backup:
 clean:
 	$(RM) $(OBJS) $(PROG) $(DEPS) $(SU) \
 		$(PROG).hex $(PROG).lst $(PROG).siz memory.map $(PROG).veri \
-		$(PROG).stim $(SIMDIR)/vectors/stim.txt
+		$(PROG).stim $(PROG).srec $(SIMDIR)/vectors/stim.txt
 	for dirs in $(OBJS_DIRS); do \
 		if [[ -d $$dirs ]]; then \
 			rmdir -p --ignore-fail-on-non-empty $$dirs; \

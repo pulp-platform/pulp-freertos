@@ -54,8 +54,6 @@ char msg[40];
 
 void write_uart(void)
 {
-	printf("Entering main controller\n");
-
 	uint32_t errors = 0;
 	struct pi_device uart;
 	struct pi_uart_conf conf;
@@ -97,7 +95,6 @@ int main(void)
 	/* Init board hardware. */
 	system_init();
 
-	printf("\n\n\t *** FreeRTOS Hello World *** \n\n");
 	return pmsis_kickoff((void *)write_uart);
 }
 
