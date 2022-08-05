@@ -246,14 +246,18 @@ typedef struct {
 		     << UDMA_CORE_CMD_INITCFG_RESERVED_0_SHIFT)) &             \
 	 UDMA_CORE_CMD_INITCFG_RESERVED_0_MASK)
 
-#define SPI_CMD_CFG_ID	     0x0ul /* Sets the configuration for the SPI Master IP. */
+#define SPI_CMD_CFG_ID 0x0ul /* Sets the configuration for the SPI Master IP.  \
+			      */
 #define SPI_CMD_SOT_ID	     0x1ul /* Sets the Chip Select (CS). */
 #define SPI_CMD_SEND_CMD_ID  0x2ul /* Transmits a configurable size command. */
-#define SPI_CMD_SEND_BITS_ID 0x2ul /* Transmits a configurable size command. */
-#define SPI_CMD_SEND_ADDR_ID 0x3ul /* Transmits a configurable size address. */
+#define SPI_CMD_SEND_BITS_ID 0x2ul /* Transmits a configurable size command.   \
+				    */
+#define SPI_CMD_SEND_ADDR_ID 0x3ul /* Transmits a configurable size address.   \
+				    */
 #define SPI_CMD_DUMMY_ID                                                       \
-	0x4ul /* Receives a number of dummy bits (not sent to the rx interface). \
-	     */
+	0x4ul /* Receives a number of dummy bits (not sent to the rx           \
+	       * interface).                                                   \
+	       */
 #define SPI_CMD_WAIT_ID                                                        \
 	0x5ul /* Waits an external event to move to the next instruction. */
 #define SPI_CMD_TX_DATA_ID 0x6ul /* Sends data (max 64Kbits). */
