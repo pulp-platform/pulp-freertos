@@ -38,6 +38,10 @@
 #include "events.h"
 #include "os.h"
 
+#if defined MEASURE_ACTIVE && defined PCF_ASYNC
+#include "tgt_dbg_measure.h"
+#endif
+
 #define NB_CLUSTER		  (1)
 #define CL_MASTER_CORE_STACK_SIZE (0x800) /*!< Stack size for Cluster Master core, 2kB. */
 #define CL_SLAVE_CORE_STACK_SIZE  (0x400) /*!< Stack size for Cluster Slave cores, 1kB. */
@@ -114,6 +118,10 @@ static const struct pi_cluster_conf __cluster_default_conf = {.device_type = PI_
 
 void cl_task_finish(void)
 {
+	#if defined PCF_ASYNC && defined MEASURE_ACTIVE
+    	timerBuffer[Timerindex++] = (Timer_Data_t) {'2',lMeasureReadCsr( MEASURE_ZEROING )};
+	#endif	
+
 	int id = __native_cluster_id();
 
 	// TODO: send callback if it exists
@@ -128,6 +136,10 @@ void cl_task_finish(void)
 	if (task->completion_callback) {
 		pi_cl_send_task_to_fc(task->completion_callback);
 	}
+
+	#if defined PCF_ASYNC && defined MEASURE_ACTIVE
+    	timerBuffer[Timerindex++] = (Timer_Data_t) {'3',lMeasureReadCsr( MEASURE_ZEROING )};
+	#endif	
 	// -----
 	// PRINTF("cl_task_finish: data=%p\n",data);
 }
@@ -527,11 +539,17 @@ int pi_cluster_send_task_to_cl(struct pi_device *device, struct pi_cluster_task 
 int pi_cluster_send_task_to_cl_async(struct pi_device *device, struct pi_cluster_task *task,
 				     pi_task_t *fc_task)
 {
+	#if defined PCF_ASYNC && defined MEASURE_ACTIVE
+    	timerBuffer[Timerindex++] = (Timer_Data_t) {'0',lMeasureReadCsr( MEASURE_ZEROING )};
+	#endif	
 	task->completion_callback = fc_task;
 	while (__pi_send_task_to_cl(device, task)) {
 		//__os_native_yield();
 		taskYIELD();
 	}
+	#if defined PCF_ASYNC && defined MEASURE_ACTIVE
+    	timerBuffer[Timerindex++] = (Timer_Data_t) {'1',lMeasureReadCsr( MEASURE_ZEROING )};
+	#endif
 	return 0;
 }
 

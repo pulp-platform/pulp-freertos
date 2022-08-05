@@ -23,6 +23,10 @@
 #include "irq.h"
 #include "events.h"
 
+#if defined MEASURE_ACTIVE && defined PCF_ASYNC
+#include "tgt_dbg_measure.h"
+#endif
+
 extern struct cluster_driver_data *__per_cluster_data[];
 
 void cl_notify_fc_event_handler(void)
@@ -52,6 +56,10 @@ void cl_notify_fc_event_handler(void)
 
 void pi_cl_send_task_to_fc(pi_task_t *task)
 {
+	#if defined PCF_ASYNC && defined MEASURE_ACTIVE
+    	timerBuffer[Timerindex++] = (Timer_Data_t) {'4',lMeasureReadCsr( MEASURE_ZEROING )};
+	#endif
+
 	hal_eu_mutex_lock(0);
 	struct cluster_driver_data *data = __per_cluster_data[0];
 	while (data->task_to_fc != NULL) {
@@ -62,6 +70,10 @@ void pi_cl_send_task_to_fc(pi_task_t *task)
 	data->task_to_fc = task;
 	hal_eu_fc_evt_trig_set(CLUSTER_TO_FC_NOTIFY_IRQN, 0);
 	hal_eu_mutex_unlock(0);
+
+	#if defined PCF_ASYNC && defined MEASURE_ACTIVE
+    	timerBuffer[Timerindex++] = (Timer_Data_t) {'5',lMeasureReadCsr( MEASURE_ZEROING )};
+	#endif
 }
 
 void mc_fc_delegate_init(void *arg)
