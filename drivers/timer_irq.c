@@ -31,9 +31,6 @@
 #include "timer.h"
 #include "timer_irq.h"
 
-/* TODO: used to measure elapsed time since last "visit" */
-static uint32_t last_count;
-
 int timer_irq_init(uint32_t ticks)
 {
 	/* TODO: enable soc_eu timer interrupt */

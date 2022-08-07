@@ -43,16 +43,16 @@ typedef struct i2c {
 /* I2C bus busy status flag:
   - 1'b0: no transfer on-going
   - 1'b1: transfer on-going */
-#define I2C_STATUS_BUSY_MASK  (0x1)
-#define I2C_STATUS_BUSY_SHIFT (0)
+#define I2C_STATUS_BUSY_MASK  (0x1ul)
+#define I2C_STATUS_BUSY_SHIFT (0ul)
 #define I2C_STATUS_BUSY(val)                                                                       \
 	(((uint32_t)(((uint32_t)(val)) << I2C_STATUS_BUSY_SHIFT)) & I2C_STATUS_BUSY_MASK)
 
 /* I2C arbitration lost status flag:
   - 1'b0: no error
   - 1'b1: arbitration lost error */
-#define I2C_STATUS_ARB_LOST_MASK  (0x2)
-#define I2C_STATUS_ARB_LOST_SHIFT (1)
+#define I2C_STATUS_ARB_LOST_MASK  (0x2ul)
+#define I2C_STATUS_ARB_LOST_SHIFT (1ul)
 #define I2C_STATUS_ARB_LOST(val)                                                                   \
 	(((uint32_t)(((uint32_t)(val)) << I2C_STATUS_ARB_LOST_SHIFT)) & I2C_STATUS_ARB_LOST_MASK)
 
@@ -60,8 +60,8 @@ typedef struct i2c {
 /*! @name SETUP */
 /* Reset command used to abort the on-going transfer and clear busy and arbitration lost status
  * flags. */
-#define I2C_SETUP_DO_RST_MASK  (0x1)
-#define I2C_SETUP_DO_RST_SHIFT (0)
+#define I2C_SETUP_DO_RST_MASK  (0x1ul)
+#define I2C_SETUP_DO_RST_SHIFT (0ul)
 #define I2C_SETUP_DO_RST(val)                                                                      \
 	(((uint32_t)(((uint32_t)(val)) << I2C_SETUP_DO_RST_SHIFT)) & I2C_SETUP_DO_RST_MASK)
 
@@ -69,8 +69,8 @@ typedef struct i2c {
 #ifdef CONFIG_UDMA_I2C_ACK
 /*! @name NACK */
 /* Read out ACK/NACK status of a the i2c slave */
-#define I2C_ACK_NACK_MASK  (0x1)
-#define I2C_ACK_NACK_SHIFT (0)
+#define I2C_ACK_NACK_MASK  (0x1ul)
+#define I2C_ACK_NACK_SHIFT (0ul)
 #define I2C_ACK_NACK(val)                                                                      \
 	(((uint32_t)(((uint32_t)(val)) << I2C_ACK_NACK_SHIFT)) & I2C_ACK_NACK_MASK)
 
@@ -81,16 +81,17 @@ typedef struct i2c {
    ---------------------------------------------------------------------------- */
 #define I2C_CMD_MASK  (0xF0U)
 #define I2C_CMD_SHIFT (4U)
-#define I2C_CMD_OFFSET	4
+#define I2C_CMD_OFFSET	4ul
 
-#define I2C_CMD_START	(((uint32_t)(((uint32_t)(0x0)) << I2C_CMD_SHIFT)) & I2C_CMD_MASK) // 0x00
-#define I2C_CMD_WAIT_EV (((uint32_t)(((uint32_t)(0x1)) << I2C_CMD_SHIFT)) & I2C_CMD_MASK) // 0x10
-#define I2C_CMD_STOP	(((uint32_t)(((uint32_t)(0x2)) << I2C_CMD_SHIFT)) & I2C_CMD_MASK) // 0x20
-#define I2C_CMD_RD_ACK	(((uint32_t)(((uint32_t)(0x4)) << I2C_CMD_SHIFT)) & I2C_CMD_MASK) // 0x40
-#define I2C_CMD_RD_NACK (((uint32_t)(((uint32_t)(0x6)) << I2C_CMD_SHIFT)) & I2C_CMD_MASK) // 0x60
-#define I2C_CMD_WR	(((uint32_t)(((uint32_t)(0x8)) << I2C_CMD_SHIFT)) & I2C_CMD_MASK) // 0x80
-#define I2C_CMD_WAIT	(((uint32_t)(((uint32_t)(0xA)) << I2C_CMD_SHIFT)) & I2C_CMD_MASK) // 0xA0
-#define I2C_CMD_RPT	(((uint32_t)(((uint32_t)(0xC)) << I2C_CMD_SHIFT)) & I2C_CMD_MASK) // 0xC0
-#define I2C_CMD_CFG	(((uint32_t)(((uint32_t)(0xE)) << I2C_CMD_SHIFT)) & I2C_CMD_MASK) // 0xE0
+#define I2C_CMD_START	(((uint32_t)((0x0ul) << I2C_CMD_OFFSET)) & I2C_CMD_MASK) /* 0x00 */
+#define I2C_CMD_WAIT_EV (((uint32_t)((0x1ul) << I2C_CMD_OFFSET)) & I2C_CMD_MASK) /* 0x10 */
+#define I2C_CMD_STOP	(((uint32_t)((0x2ul) << I2C_CMD_OFFSET)) & I2C_CMD_MASK) /* 0x20 */
+#define I2C_CMD_RD_ACK	(((uint32_t)((0x4ul) << I2C_CMD_OFFSET)) & I2C_CMD_MASK) /* 0x40 */
+#define I2C_CMD_RD_NACK (((uint32_t)((0x6ul) << I2C_CMD_OFFSET)) & I2C_CMD_MASK) /* 0x60 */
+#define I2C_CMD_WR	(((uint32_t)((0x8ul) << I2C_CMD_OFFSET)) & I2C_CMD_MASK) /* 0x80 */
+#define I2C_CMD_WAIT	(((uint32_t)((0xAul) << I2C_CMD_OFFSET)) & I2C_CMD_MASK) /* 0xA0 */
+#define I2C_CMD_RPT	(((uint32_t)((0xCul) << I2C_CMD_OFFSET)) & I2C_CMD_MASK) /* 0xC0 */
+#define I2C_CMD_CFG	(((uint32_t)((0xEul) << I2C_CMD_OFFSET)) & I2C_CMD_MASK) /* 0xE0 */
+#define I2C_CMD_EOT     (((uint32_t)((0x9ul) << I2C_CMD_OFFSET)) & I2C_CMD_MASK) /* 0x90 */
 
 #endif /* __I2C_PERIPH_H__ */

@@ -152,7 +152,7 @@ void _exit(int exit_status)
 	for (volatile int i = 0; i < 1024 * 3; i++)
 	    ;
 #endif
-	writew(exit_status | (1 << APB_SOC_STATUS_EOC_BIT),
+	writew((uint32_t)exit_status | (1ul << APB_SOC_STATUS_EOC_BIT),
 	       (uintptr_t)(PULP_APB_SOC_CTRL_ADDR + APB_SOC_CORESTATUS_OFFSET));
 	for (;;)
 	    asm volatile("wfi");
@@ -317,7 +317,7 @@ ssize_t _write(int file, const void *ptr, size_t len)
 		       (uintptr_t)(PULP_STDOUT_ADDR + STDOUT_PUTC_OFFSET +
 				   (pulp_core_id() << 3) +
 				   (pulp_cluster_id() << 7)));
-	return len;
+	return (ssize_t)len;
 #elif CONFIG_STDIO == STDIO_UART
 	/* direct writes to uart udma*/
 	static char copyout_buf[STDIO_UART_BUFSIZE] = {0};

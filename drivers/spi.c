@@ -261,7 +261,6 @@ extern struct pmsis_event_kernel_wrap *default_sched;
 void spim_eot_handler(void *arg)
 {
 	uint32_t event = (uint32_t)arg;
-	uint32_t channel = event & 0x1;
 	/* TODO: remove is garbage */
 	// EOT is simply 22 + id in GAP8
 	uint32_t periph_id = (event - SOC_EVENT_UDMA_SPIM_EOT(0));
@@ -310,10 +309,9 @@ void spim_eot_handler(void *arg)
 void spim_tx_handler(void *arg)
 { // if we're here, it's cs keep related
 	uint32_t event = (uint32_t)arg;
-	uint32_t channel = event & 0x1;
 	uint32_t periph_id =
 		(event >> UDMA_CHANNEL_NB_EVENTS_LOG2) - UDMA_SPIM_ID(0);
-	hal_soc_eu_clear_fc_mask(SOC_EVENT_UDMA_SPIM_TX(periph_id));
+	hal_soc_eu_clear_fc_mask((int)SOC_EVENT_UDMA_SPIM_TX(periph_id));
 	arg = (void *)(SOC_EVENT_UDMA_SPIM_EOT(0) + periph_id);
 	DBG_PRINTF("%s:%d periph_id %"PRIu32" arg:%p\n", __func__, __LINE__, periph_id,
 		   arg);
@@ -325,11 +323,10 @@ void spim_tx_handler(void *arg)
 void spim_rx_handler(void *arg)
 { // if we're here, it's cs keep related
 	uint32_t event = (uint32_t)arg;
-	uint32_t channel = event & 0x1;
 	uint32_t periph_id =
 		(event >> UDMA_CHANNEL_NB_EVENTS_LOG2) - UDMA_SPIM_ID(0);
-	hal_soc_eu_clear_fc_mask(SOC_EVENT_UDMA_SPIM_RX(periph_id));
-	arg = (void *)(SOC_EVENT_UDMA_SPIM_EOT(0) + periph_id);
+	hal_soc_eu_clear_fc_mask((int)SOC_EVENT_UDMA_SPIM_RX(periph_id));
+	arg = (void *)(SOC_EVENT_UDMA_SPIM_EOT(0ul) + periph_id);
 	DBG_PRINTF("%s:%d periph_id %"PRIu32" arg:%p\n", __func__, __LINE__, periph_id,
 		   arg);
 	spim_eot_handler(arg);
@@ -353,7 +350,7 @@ void __pi_spi_receive_async(struct spim_cs_data *cs_data, void *data,
 		system_core_clock_get() / cs_data->max_baudrate, cfg, qspi);
 	uint32_t byte_align = (cs_data->wordsize == PI_SPI_WORDSIZE_32) &&
 			      cs_data->big_endian;
-	int buffer_size = (len + 7) >> 3;
+	size_t buffer_size = (len + 7) >> 3;
 
 	if (len > 8192 * 8) {
 		DBG_PRINTF(
@@ -366,12 +363,12 @@ void __pi_spi_receive_async(struct spim_cs_data *cs_data, void *data,
 
 	if (!drv_data->end_of_transfer) {
 		cs_data->udma_cmd[0] = cfg;
-		cs_data->udma_cmd[1] = SPI_CMD_SOT(cs_data->cs);
+		cs_data->udma_cmd[1] = SPI_CMD_SOT((uint32_t)cs_data->cs);
 		cs_data->udma_cmd[2] =
-			SPI_CMD_RX_DATA(len / 32, SPI_CMD_1_WORD_PER_TRANSF, 32,
-					qspi, SPI_CMD_MSB_FIRST);
+			SPI_CMD_RX_DATA((uint32_t)len / 32, SPI_CMD_1_WORD_PER_TRANSF, 32,
+					(uint32_t)qspi, SPI_CMD_MSB_FIRST);
 		cs_data->udma_cmd[3] =
-			SPI_CMD_EOT(1, cs_mode == PI_SPI_CS_KEEP);
+			SPI_CMD_EOT(1ul, (uint32_t)(cs_mode == PI_SPI_CS_KEEP));
 		drv_data->end_of_transfer = task;
 		drv_data->repeat_transfer = NULL;
 
@@ -381,7 +378,7 @@ void __pi_spi_receive_async(struct spim_cs_data *cs_data, void *data,
 
 		/* receive data stream with 32-bit data size */
 		spim_enqueue_channel(SPIM(device_id), (uint32_t)data,
-				     buffer_size, rx_conf, RX_CHANNEL);
+				     (uint32_t)buffer_size, rx_conf, RX_CHANNEL);
 
 		uint32_t cmd_conf =
 			UDMA_CORE_TX_CFG_EN(1) |
@@ -558,7 +555,7 @@ void __pi_spi_send_async(struct spim_cs_data *cs_data, void *data, size_t len,
 			      cs_data->big_endian;
 
 	/* buffer size */
-	int buffer_size = (len + 7) >> 3;
+	size_t buffer_size = (len + 7) >> 3;
 
 	if (len > 8192 * 8) {
 		DBG_PRINTF(
@@ -573,12 +570,12 @@ void __pi_spi_send_async(struct spim_cs_data *cs_data, void *data, size_t len,
 	/* check if we already have a transfer ongoing */
 	if (!drv_data->end_of_transfer) { /* enqueue the transfer */
 		cs_data->udma_cmd[0] = cfg;
-		cs_data->udma_cmd[1] = SPI_CMD_SOT(cs_data->cs);
+		cs_data->udma_cmd[1] = SPI_CMD_SOT((uint32_t)cs_data->cs);
 		cs_data->udma_cmd[2] =
 			SPI_CMD_TX_DATA(len / 32, SPI_CMD_1_WORD_PER_TRANSF, 32,
-					qspi, SPI_CMD_MSB_FIRST);
+					(uint32_t)qspi, SPI_CMD_MSB_FIRST);
 		cs_data->udma_cmd[3] =
-			SPI_CMD_EOT(1, cs_mode == PI_SPI_CS_KEEP);
+			SPI_CMD_EOT(1ul, (uint32_t)(cs_mode == PI_SPI_CS_KEEP));
 		DBG_PRINTF("%s:%d\n", __func__, __LINE__);
 		drv_data->end_of_transfer = task;
 		drv_data->repeat_transfer = NULL;
@@ -602,7 +599,7 @@ void __pi_spi_send_async(struct spim_cs_data *cs_data, void *data, size_t len,
 
 		/* send data stream with 32-bit data size */
 		spim_enqueue_channel(SPIM(device_id), (uint32_t)data,
-				     buffer_size, tx_conf, TX_CHANNEL);
+				     (uint32_t)buffer_size, tx_conf, TX_CHANNEL);
 	} else { /* a transfer is running, append to pending transfers queue */
 		struct spim_transfer transfer;
 		transfer.data = data;
@@ -719,13 +716,13 @@ int pi_spi_open(struct pi_device *device)
 	/* struct pi_spi_conf *conf = conf; */
 	/* TODO: paste beg */
 	// disable clock gating for said device
-	udma_ctrl_cg_disable(UDMA_SPIM_ID(conf->itf));
-	hal_soc_eu_set_fc_mask(SOC_EVENT_UDMA_SPIM_EOT(conf->itf));
-	pi_fc_event_handler_set(SOC_EVENT_UDMA_SPIM_EOT(conf->itf),
+	udma_ctrl_cg_disable(UDMA_SPIM_ID((uint32_t)conf->itf));
+	hal_soc_eu_set_fc_mask(SOC_EVENT_UDMA_SPIM_EOT((int)conf->itf));
+	pi_fc_event_handler_set((uint32_t)SOC_EVENT_UDMA_SPIM_EOT((int)conf->itf),
 				spim_eot_handler);
-	pi_fc_event_handler_set(SOC_EVENT_UDMA_SPIM_TX(conf->itf),
+	pi_fc_event_handler_set((uint32_t)SOC_EVENT_UDMA_SPIM_TX((int)conf->itf),
 				spim_tx_handler);
-	pi_fc_event_handler_set(SOC_EVENT_UDMA_SPIM_RX(conf->itf),
+	pi_fc_event_handler_set((uint32_t)SOC_EVENT_UDMA_SPIM_RX((int)conf->itf),
 				spim_rx_handler);
 
 	// Take care of driver data
@@ -745,14 +742,14 @@ int pi_spi_open(struct pi_device *device)
 			restore_irq(irq);
 			return -1;
 		}
-		drv_data->device_id = conf->itf;
+		drv_data->device_id = (uint8_t)conf->itf;
 	}
 	drv_data->nb_open++;
 
 	// Take care of cs data
 	*cs_data = __pi_spim_get_cs_data(drv_data, conf->cs);
 	if (!*cs_data) {
-		uint32_t clk_div = __pi_spi_clk_div_get(conf->max_baudrate);
+		uint32_t clk_div = __pi_spi_clk_div_get((uint32_t)conf->max_baudrate);
 		// alloc a cs data, need to be in udma reachable ram
 		struct spim_cs_data *_cs_data =
 			pi_data_malloc(sizeof(struct spim_cs_data));
@@ -769,12 +766,12 @@ int pi_spi_open(struct pi_device *device)
 			return -3;
 		}
 		memset(_cs_data, 0, sizeof(struct spim_cs_data));
-		_cs_data->max_baudrate = conf->max_baudrate;
+		_cs_data->max_baudrate = (uint32_t)conf->max_baudrate;
 		_cs_data->polarity = conf->polarity;
 		_cs_data->phase = conf->phase;
-		_cs_data->big_endian = conf->big_endian;
-		_cs_data->wordsize = conf->wordsize;
-		_cs_data->cs = conf->cs;
+		_cs_data->big_endian = (uint8_t)conf->big_endian;
+		_cs_data->wordsize = (uint8_t)conf->wordsize;
+		_cs_data->cs = (uint8_t)conf->cs;
 		_cs_data->cfg = SPI_CMD_CFG(clk_div, _cs_data->phase,
 					    _cs_data->polarity);
 		*cs_data = _cs_data;
@@ -790,7 +787,6 @@ int pi_spi_open(struct pi_device *device)
 
 void pi_spi_close(struct pi_device *device)
 {
-	struct pi_spi_conf *conf = (struct pi_spi_conf *)device->config;
 	uint32_t irq = __disable_irq();
 	/* TODO: paste beg */
 	struct spim_cs_data *cs_data = device->data;
@@ -799,11 +795,10 @@ void pi_spi_close(struct pi_device *device)
 	drv_data->nb_open--;
 	if (drv_data->nb_open == 0) {
 		/* reactivate clock gating for said device */
-		udma_ctrl_cg_enable(UDMA_SPIM_ID(drv_data->device_id));
-		hal_soc_eu_clear_fc_mask(
-			SOC_EVENT_UDMA_SPIM_EOT(drv_data->device_id));
-		pi_fc_event_handler_clear(
-			SOC_EVENT_UDMA_SPIM_EOT(drv_data->device_id));
+		udma_ctrl_cg_enable((uint32_t)UDMA_SPIM_ID((int)drv_data->device_id));
+		hal_soc_eu_clear_fc_mask(SOC_EVENT_UDMA_SPIM_EOT((int)drv_data->device_id));
+		pi_fc_event_handler_clear((uint32_t)
+			SOC_EVENT_UDMA_SPIM_EOT((int)drv_data->device_id));
 		__g_spim_drv_data[drv_data->device_id] = NULL;
 		pi_default_free(drv_data->drv_fifo, sizeof(drv_data->drv_fifo));
 		pi_default_free(drv_data, sizeof(drv_data));

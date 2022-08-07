@@ -47,7 +47,8 @@ void pi_cl_send_task_to_fc(pi_task_t *task);
  *
  * \note This is an alternative to pi_cl_send_task_to_fc().
  */
-static inline void pi_cl_send_callback_to_fc(pi_callback_t *callback);
+/* TODO: implement */
+/* static inline void pi_cl_send_callback_to_fc(pi_callback_t *callback); */
 
 //!@}
 

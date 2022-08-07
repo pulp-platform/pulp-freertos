@@ -31,6 +31,8 @@
 #include "udma_uart.h"
 #include "debug.h"
 
+void *pi_l2_malloc(int size);
+void pi_l2_free(void *chunk, int size);
 
 static struct uart_itf_data_s *g_uart_itf_data[UDMA_NB_UART] = {0};
 
@@ -138,8 +140,10 @@ int pi_uart_open(struct pi_device *device)
 		pi_fc_event_handler_set(SOC_EVENT_UDMA_UART_TX(data->device_id),
 					__pi_uart_handler);
 		/* Enable SOC events propagation to FC. */
-		hal_soc_eu_set_fc_mask(SOC_EVENT_UDMA_UART_RX(data->device_id));
-		hal_soc_eu_set_fc_mask(SOC_EVENT_UDMA_UART_TX(data->device_id));
+		hal_soc_eu_set_fc_mask(
+			(int)SOC_EVENT_UDMA_UART_RX(data->device_id));
+		hal_soc_eu_set_fc_mask(
+			(int)SOC_EVENT_UDMA_UART_TX(data->device_id));
 
 		/* Disable UDMA CG and reset periph. */
 		udma_ctrl_cg_disable(UDMA_UART_ID(data->device_id));
@@ -193,9 +197,9 @@ void pi_uart_close(struct pi_device *device)
 			SOC_EVENT_UDMA_UART_TX(data->device_id));
 		/* Disable SOC events propagation to FC. */
 		hal_soc_eu_clear_fc_mask(
-			SOC_EVENT_UDMA_UART_RX(data->device_id));
+			(int)SOC_EVENT_UDMA_UART_RX(data->device_id));
 		hal_soc_eu_clear_fc_mask(
-			SOC_EVENT_UDMA_UART_TX(data->device_id));
+			(int)SOC_EVENT_UDMA_UART_TX(data->device_id));
 
 		/* Free allocated data. */
 		pi_l2_free(data, sizeof(struct uart_itf_data_s));
@@ -316,7 +320,8 @@ static int32_t __pi_uart_copy(struct uart_itf_data_s *data, uint32_t l2_buf,
 	task->data[2] = channel;
 	task->data[3] = 0; /* Repeat size ? */
 	task->next = NULL;
-	uint8_t head = (uint8_t)__pi_uart_task_fifo_enqueue(data, task, channel);
+	uint8_t head =
+		(uint8_t)__pi_uart_task_fifo_enqueue(data, task, channel);
 	if (head == 0) {
 		/* Execute the transfer. */
 		UART_TRACE(

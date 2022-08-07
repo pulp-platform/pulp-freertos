@@ -36,6 +36,9 @@
  * data[5] = repeat_size
  */
 
+void pi_l2_free(void *chunk, int size);
+void *pi_l2_malloc(int size);
+
 /* Length of i2c cmd buffer. */
 #define __PI_I2C_CMD_BUFF_SIZE (16)
 /* Lenght of i2c stop command sequence. */
@@ -49,7 +52,7 @@ struct i2c_pending_transfer_s {
 	uint32_t pending_repeat;
 	uint32_t pending_repeat_size;
 	pi_i2c_xfer_flags_e flags;
-	int8_t device_id;
+	uint8_t device_id;
 	udma_channel_e channel;
 };
 
@@ -176,7 +179,7 @@ void pi_i2c_read_async(struct pi_device *device, uint8_t *rx_buff, int length,
 	udma_channel_e channel = RX_CHANNEL;
 	I2C_TRACE("I2C(%d) : transfer %d %lx %ld %lx, task %lx\n", device_data->device_id, channel,
 		  (uint32_t)rx_buff, length, flags, task);
-	__pi_i2c_copy(device_data, (uint32_t)rx_buff, length, flags, channel, task);
+	__pi_i2c_copy(device_data, (uint32_t)rx_buff, (uint32_t)length, flags, channel, task);
 }
 
 int pi_i2c_write(struct pi_device *device, uint8_t *tx_data, int length, pi_i2c_xfer_flags_e flags)
@@ -209,7 +212,7 @@ void pi_i2c_write_async(struct pi_device *device, uint8_t *tx_data, int length,
 	udma_channel_e channel = TX_CHANNEL;
 	I2C_TRACE("I2C(%d) : transfer %d %lx %ld %lx, task %lx\n", device_data->device_id, channel,
 		  (uint32_t)tx_data, length, flags, task);
-	__pi_i2c_copy(device_data, (uint32_t)tx_data, length, flags, channel, task);
+	__pi_i2c_copy(device_data, (uint32_t)tx_data, (uint32_t)length, flags, channel, task);
 }
 
 int pi_i2c_get_request_status(pi_task_t *task)
@@ -243,7 +246,11 @@ int pi_i2c_detect(struct pi_device *device, struct pi_i2c_conf *conf, uint8_t *r
 static struct i2c_itf_data_s *g_i2c_itf_data[UDMA_NB_I2C] = {NULL};
 
 /* IRQ handler. */
-static void __pi_i2c_handler(void *arg);
+static void __pi_i2c_rx_handler(void *arg);
+static void __pi_i2c_tx_handler(void *arg);
+#ifdef CONFIG_UDMA_I2C_EOT
+static void __pi_i2c_eot_handler(void *arg);
+#endif
 
 /* Clock divider. */
 static uint32_t __pi_i2c_clk_div_get(uint32_t baudrate);
@@ -286,7 +293,7 @@ static void __pi_i2c_copy_exec_read(struct i2c_itf_data_s *driver_data, struct p
 static void __pi_i2c_copy_exec_write(struct i2c_itf_data_s *driver_data, struct pi_task *task);
 
 /* Callback to execute when frequency changes. */
-static void __pi_i2c_freq_cb(void *args);
+__attribute__((unused)) static void __pi_i2c_freq_cb(void *args);
 
 static void __pi_i2c_handle_pending_transfer(struct i2c_itf_data_s *driver_data)
 {
@@ -484,7 +491,7 @@ static uint32_t __pi_i2c_clk_div_get(uint32_t i2c_freq)
 
 static void __pi_i2c_copy_exec_read(struct i2c_itf_data_s *driver_data, struct pi_task *task)
 {
-	uint32_t index = 0, start_bit = 0, stop_bit = 0;
+	uint32_t index = 0;
 	uint32_t buffer = task->data[0];
 	uint32_t size = task->data[1];
 	uint32_t flags = task->data[2];
@@ -538,7 +545,7 @@ static void __pi_i2c_copy_exec_read(struct i2c_itf_data_s *driver_data, struct p
 
 static void __pi_i2c_copy_exec_write(struct i2c_itf_data_s *driver_data, struct pi_task *task)
 {
-	uint32_t index = 0, start_bit = 0, stop_bit = 0;
+	uint32_t index = 0, start_bit = 0;
 	uint32_t buffer = task->data[0];
 	uint32_t size = task->data[1];
 	uint32_t flags = task->data[2];
@@ -701,16 +708,16 @@ int32_t __pi_i2c_open(struct pi_i2c_conf *conf, struct i2c_cs_data_s **device_da
 		/* Set handlers. */
 		/* Enable SOC events propagation to FC. */
 #ifdef CONFIG_UDMA_I2C_EOT
-		pi_fc_event_handler_set(SOC_EVENT_UDMA_I2C_EOT(conf->itf), __pi_i2c_eot_handler);
-		hal_soc_eu_set_fc_mask(SOC_EVENT_UDMA_I2C_EOT(conf->itf));
+		pi_fc_event_handler_set((uint32_t)SOC_EVENT_UDMA_I2C_EOT((int)conf->itf), __pi_i2c_eot_handler);
+		hal_soc_eu_set_fc_mask((int)SOC_EVENT_UDMA_I2C_EOT(conf->itf));
 #endif
-		pi_fc_event_handler_set(SOC_EVENT_UDMA_I2C_RX(conf->itf), __pi_i2c_rx_handler);
-		pi_fc_event_handler_set(SOC_EVENT_UDMA_I2C_TX(conf->itf), __pi_i2c_tx_handler);
+		pi_fc_event_handler_set((uint32_t)SOC_EVENT_UDMA_I2C_RX(conf->itf), __pi_i2c_rx_handler);
+		pi_fc_event_handler_set((uint32_t)SOC_EVENT_UDMA_I2C_TX(conf->itf), __pi_i2c_tx_handler);
 		hal_soc_eu_set_fc_mask(SOC_EVENT_UDMA_I2C_RX(conf->itf));
 		hal_soc_eu_set_fc_mask(SOC_EVENT_UDMA_I2C_TX(conf->itf));
 
 		/* Disable UDMA CG. */
-		udma_init_device(UDMA_I2C_ID(conf->itf));
+		udma_init_device((uint32_t)UDMA_I2C_ID(conf->itf));
 
 
 		I2C_TRACE("I2C(%d) : driver data init done.\n", driver_data->device_id);
@@ -761,17 +768,17 @@ void __pi_i2c_close(struct i2c_cs_data_s *device_data)
 		/* Clear handlers. */
 		/* Disable SOC events propagation to FC. */
 #ifdef CONFIG_UDMA_I2C_EOT
-		pi_fc_event_handler_clear(SOC_EVENT_UDMA_I2C_EOT(driver_data->device_id));
+		pi_fc_event_handler_clear((uint32_t)SOC_EVENT_UDMA_I2C_EOT(driver_data->device_id));
 		hal_soc_eu_clear_fc_mask(SOC_EVENT_UDMA_I2C_EOT(driver_data->device_id));
 #endif
-		pi_fc_event_handler_clear(SOC_EVENT_UDMA_I2C_RX(driver_data->device_id));
-		pi_fc_event_handler_clear(SOC_EVENT_UDMA_I2C_TX(driver_data->device_id));
+		pi_fc_event_handler_clear((uint32_t)SOC_EVENT_UDMA_I2C_RX(driver_data->device_id));
+		pi_fc_event_handler_clear((uint32_t)SOC_EVENT_UDMA_I2C_TX(driver_data->device_id));
 
 		hal_soc_eu_clear_fc_mask(SOC_EVENT_UDMA_I2C_RX(driver_data->device_id));
 		hal_soc_eu_clear_fc_mask(SOC_EVENT_UDMA_I2C_TX(driver_data->device_id));
 
 		/* Enable UDMA CG. */
-		udma_deinit_device(UDMA_I2C_ID(driver_data->device_id));
+		udma_deinit_device((uint32_t)UDMA_I2C_ID(driver_data->device_id));
 
 		/* Free allocated struct. */
 		pi_l2_free(driver_data, sizeof(struct i2c_itf_data_s));
@@ -857,7 +864,8 @@ int32_t __pi_i2c_detect(struct i2c_cs_data_s *cs_data, struct pi_i2c_conf *conf,
 	driver_data->i2c_cmd_seq[index++] = (clkdiv & 0xFF);
 	driver_data->i2c_cmd_seq[index++] = I2C_CMD_START;
 	driver_data->i2c_cmd_seq[index++] = I2C_CMD_WR;
-	driver_data->i2c_cmd_seq[index++] = (conf->cs | ADDRESS_READ);
+	driver_data->i2c_cmd_seq[index++] = ((conf->cs & 0xff) | ADDRESS_READ);
+	/* TODO: 10 bit slave address handling */
 
 	struct i2c_pending_transfer_s *pending = driver_data->pending;
 	pending->pending_repeat = 0;
