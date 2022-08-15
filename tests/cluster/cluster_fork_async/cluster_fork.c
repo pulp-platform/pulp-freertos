@@ -44,16 +44,16 @@
 
 /* system includes */
 #include "system.h"
-#include "io.h"
-#include "timer.h"
-#include "timer_hal.h"
 #include "timer_irq.h"
 #include "fll.h"
 #include "irq.h"
 #include "gpio.h"
+#include "events.h"
 
 /* pmsis */
+#include "pmsis_task.h"
 #include "cluster/fc_to_cl_delegate.h"
+#include "cluster/cl_to_fc_delegate.h"
 #include "cluster/event_unit.h"
 #include "device.h"
 #include "target.h"
@@ -64,24 +64,54 @@ void vApplicationIdleHook(void);
 void vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName);
 void vApplicationTickHook(void);
 
+static int nb_fork;
+static int nb_callback_exec;
 
-/*
- * This is the entry point executed by all processing elements when the cluster
- * controller is doing a fork 
- */
+#ifdef DEBUG
+#define PRINTF(fmt, ...)                                                       \
+	printf("%s:%d: " fmt, __func__, __LINE__, ##__VA_ARGS__);
+#else
+#define PRINTF(...) ((void)0)
+#endif
+
+#define NB_PE 8
+
 static void pe_entry(void *arg)
 {
-
-	hal_eu_mutex_lock(0);
-	printf("(%ld, %ld) Entering processing element\n", pi_cluster_id(),
-	       pi_core_id());
-	hal_eu_mutex_unlock(0);
-
-	// Just execute a barrier and leave
-	__pi_cl_team_barrier_sync_wait_clear();
-	pi_cl_team_barrier();
+	int *var = (int *)arg;
+	pi_cl_team_critical_enter();
+	// printf("(%ld, %ld) entering processing element\n\r\r",
+	// pi_cluster_id(), pi_core_id());
+	*var |= 1 << (pi_core_id());
+	pi_cl_team_critical_exit();
 }
 
+static int check_fork(int nb_cores)
+{
+	int var = 0;
+	nb_fork++;
+	pi_cl_team_fork(nb_cores, pe_entry, (void *)&var);
+	return (1 << pi_cl_team_nb_cores()) - 1 != var;
+}
+
+static int check_preset_fork(int nb_cores)
+{
+	int var;
+	int errors = 0;
+	nb_fork++;
+	pi_cl_team_prepare_fork(nb_cores);
+	var = 0;
+	pi_cl_team_preset_fork(pe_entry, (void *)&var);
+	errors += (1 << pi_cl_team_nb_cores()) - 1 != var;
+	var = 0;
+	pi_cl_team_preset_fork(pe_entry, (void *)&var);
+	errors += (1 << pi_cl_team_nb_cores()) - 1 != var;
+	var = 0;
+	pi_cl_team_preset_fork(pe_entry, (void *)&var);
+	errors += (1 << pi_cl_team_nb_cores()) - 1 != var;
+
+	return errors;
+}
 
 /* This is the entry point executed by the cluster controller */
 static void cluster_entry(void *arg)
@@ -89,39 +119,73 @@ static void cluster_entry(void *arg)
 	/* Currently, the printing is a bit messed up, because printf shares
 	 * some internal buffers among the cores which get clobbered. The
 	 * correct thing to do here is to a acquire a lock before printf(). */
-	printf("(%ld, %ld) Entering cluster controller\n", pi_cluster_id(),
+	printf("(%ld, %ld) Entering cluster controller\n\r\r", pi_cluster_id(),
 	       pi_core_id());
 
-	/* Just fork the execution on all cores */
-	pi_cl_team_fork(0, pe_entry, NULL);
+	int *errors = (int *)arg;
+
+	if (pi_cl_cluster_nb_pe_cores() != NB_PE)
+		*errors += 1;
+
+	for (unsigned int i = 0; i <= pi_cl_cluster_nb_pe_cores(); i++) {
+		*errors += check_fork(i);
+		if (i != 0)
+			*errors += check_fork(0);
+	}
+
+	for (unsigned int i = 1; i <= pi_cl_cluster_nb_pe_cores(); i++) {
+		*errors += check_preset_fork(i);
+	}
 }
 
+static void cluster_task_callback(void *arg)
+{
+	printf("Entering callback\n\r\r");
+	nb_callback_exec++;
+}
 
 int test_entry()
 {
-	printf("(%ld, %ld) Entering main controller\n", pi_cluster_id(),
+	printf("(%ld, %ld) Entering main controller\n\r", pi_cluster_id(),
 	       pi_core_id());
+
+	printf("Starting test asyncronous offload\n\r");
 
 	struct pi_device cluster_dev;
 	struct pi_cluster_conf conf;
 	struct pi_cluster_task cluster_task;
 	struct pi_task task;
+	int errors = 0;
 
-	/* First open the cluster */
+	nb_fork = 0;
+	nb_callback_exec = 0;
+
 	pi_cluster_conf_init(&conf);
+	conf.id = 0;
 
 	pi_open_from_conf(&cluster_dev, &conf);
 
 	if (pi_cluster_open(&cluster_dev))
 		return -1;
 
-	/* Then offload an entry point, this will get executed on the cluster
-	 * controller */
-	pi_cluster_send_task_to_cl(
-		&cluster_dev,
-		pi_cluster_task(&cluster_task, cluster_entry, NULL));
+	pi_cluster_task(&cluster_task, cluster_entry, (void *)&errors);
 
-	return 0;
+	pi_task_callback(&task, cluster_task_callback, (void *)&task);
+
+	pi_cluster_send_task_to_cl_async(&cluster_dev, &cluster_task, &task);
+
+	while (nb_callback_exec == 0)
+		pi_yield();
+
+	if (nb_fork == 0)
+		errors++;
+
+	if (nb_callback_exec != 1)
+		errors++;
+
+	pi_cluster_close(&cluster_dev);
+
+	return errors;
 }
 
 void test_kickoff(void *arg)
@@ -132,6 +196,7 @@ void test_kickoff(void *arg)
 
 int main()
 {
+
 	BaseType_t xTask;
 
 	system_init();
@@ -168,7 +233,7 @@ void vApplicationMallocFailedHook(void)
 	free heap space that remains (although it does not provide information
 	on how the remaining heap might be fragmented). */
 	taskDISABLE_INTERRUPTS();
-	printf("error: application malloc failed\n");
+	printf("error: application malloc failed\n\r");
 	__asm volatile("ebreak");
 	for (;;)
 		;
@@ -197,7 +262,7 @@ void vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName)
 	configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook
 	function is called if a stack overflow is detected. */
 	taskDISABLE_INTERRUPTS();
-	printf("error: stack overflow\n");
+	printf("error: stack overflow\n\r");
 	__asm volatile("ebreak");
 	for (;;)
 		;
