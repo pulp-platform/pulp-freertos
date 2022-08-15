@@ -36,11 +36,6 @@
 #include "pmsis_task.h"
 #include "pmsis_types.h"
 #include "events.h"
-#include "os.h"
-
-#if defined MEASURE_ACTIVE && defined PCF_ASYNC
-#include "tgt_dbg_measure.h"
-#endif
 
 #define NB_CLUSTER		  (1)
 #define CL_MASTER_CORE_STACK_SIZE (0x800) /*!< Stack size for Cluster Master core, 2kB. */
@@ -118,10 +113,6 @@ static const struct pi_cluster_conf __cluster_default_conf = {.device_type = PI_
 
 void cl_task_finish(void)
 {
-	#if defined PCF_ASYNC && defined MEASURE_ACTIVE
-    	timerBuffer[Timerindex++] = (Timer_Data_t) {'2',lMeasureReadCsr( MEASURE_ZEROING )};
-	#endif	
-
 	int id = __native_cluster_id();
 
 	// TODO: send callback if it exists
@@ -133,15 +124,13 @@ void cl_task_finish(void)
 
 	// clean up finished cluster task
 	cl_pop_cluster_task(data);
+	PRINTF("cl_pop_cluster_task done\n");
+
 	if (task->completion_callback) {
+	        PRINTF("send notification to fc\n");
 		pi_cl_send_task_to_fc(task->completion_callback);
 	}
 
-	#if defined PCF_ASYNC && defined MEASURE_ACTIVE
-    	timerBuffer[Timerindex++] = (Timer_Data_t) {'3',lMeasureReadCsr( MEASURE_ZEROING )};
-	#endif	
-	// -----
-	// PRINTF("cl_task_finish: data=%p\n",data);
 }
 
 /**
@@ -202,7 +191,10 @@ int pi_cluster_open(struct pi_device *device)
 	       _conf->heap_start);
 
 	__cluster_start(device);
+
+	PRINTF("enable interrupt to notify fc from cluster \n\r");
 	mc_fc_delegate_init(NULL);
+
 	return 0;
 }
 
@@ -539,17 +531,11 @@ int pi_cluster_send_task_to_cl(struct pi_device *device, struct pi_cluster_task 
 int pi_cluster_send_task_to_cl_async(struct pi_device *device, struct pi_cluster_task *task,
 				     pi_task_t *fc_task)
 {
-	#if defined PCF_ASYNC && defined MEASURE_ACTIVE
-    	timerBuffer[Timerindex++] = (Timer_Data_t) {'0',lMeasureReadCsr( MEASURE_ZEROING )};
-	#endif	
 	task->completion_callback = fc_task;
 	while (__pi_send_task_to_cl(device, task)) {
 		//__os_native_yield();
 		taskYIELD();
 	}
-	#if defined PCF_ASYNC && defined MEASURE_ACTIVE
-    	timerBuffer[Timerindex++] = (Timer_Data_t) {'1',lMeasureReadCsr( MEASURE_ZEROING )};
-	#endif
 	return 0;
 }
 
