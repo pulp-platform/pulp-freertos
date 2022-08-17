@@ -120,14 +120,14 @@ void cl_task_finish(void)
 	struct cluster_driver_data *data = __per_cluster_data[id];
 	struct pi_cluster_task *task = data->task_first;
 
-	PRINTF("cl_task_finish: task=%p\n", task);
+	PRINTF("cl_task_finish: task=%p\n\r", task);
 
 	// clean up finished cluster task
 	cl_pop_cluster_task(data);
-	PRINTF("cl_pop_cluster_task done\n");
+	PRINTF("cl_pop_cluster_task done\n\r");
 
 	if (task->completion_callback) {
-	        PRINTF("send notification to fc\n");
+	        PRINTF("send notification to fc\n\r");
 		pi_cl_send_task_to_fc(task->completion_callback);
 	}
 
@@ -139,26 +139,26 @@ void cl_task_finish(void)
 int pi_cluster_open(struct pi_device *device)
 {
 	void *conf = device->config;
-	PRINTF("device=%p\n", device);
+	PRINTF("device=%p\n\r", device);
 	device->api = (struct pi_device_api *)pi_malloc(sizeof(struct pi_device_api));
 
 	memcpy(device->api, &__cluster_api, sizeof(struct pi_device_api));
 	if (conf == NULL) {
 		// In this case, heap will be at the first address of L1 cluster
 		device->config = pi_malloc(sizeof(struct pi_cluster_conf));
-		PRINTF("device->config=%p\n", device->config);
+		PRINTF("device->config=%p\n\r", device->config);
 		memcpy(device->config, &__cluster_default_conf, sizeof(struct pi_cluster_conf));
 	}
 
 	struct pi_cluster_conf *_conf = (struct pi_cluster_conf *)device->config;
 	struct cluster_driver_data *cl_data = __per_cluster_data[_conf->id];
 	device->data = cl_data;
-	PRINTF("check device->data=%p\n", device->data);
+	PRINTF("check device->data=%p\n\r", device->data);
 	// if device data has not yet been populated
 	if (cl_data == NULL) {
 		cl_data = pi_malloc(sizeof(struct cluster_driver_data));
 		if (cl_data == NULL) {
-			PRINTF("error allocating cluster struct !\n");
+			PRINTF("error allocating cluster struct !\n\r");
 			return -11;
 		}
 		memset(cl_data, 0, sizeof(struct cluster_driver_data));
@@ -168,7 +168,7 @@ int pi_cluster_open(struct pi_device *device)
 		uint32_t printf_buffer_size = (uint32_t)PRINTF_BUFFER_SIZE;
 		uint32_t buffer_size = cl_nb_cores * printf_buffer_size * sizeof(uint8_t);
 		cl_data->printf_buffer = pi_l2_malloc(buffer_size);
-		PRINTF("Alloc buffer=%lx, size=%ld\n", cl_data->printf_buffer, buffer_size);
+		PRINTF("Alloc buffer=%lx, size=%ld\n\r", cl_data->printf_buffer, buffer_size);
 		for (uint8_t i = 0; i < cl_nb_cores; i++) {
 			cl_data->printf_buffer_index[i] = 0;
 			uint8_t *buffer = &(cl_data->printf_buffer[i * printf_buffer_size]);
@@ -176,18 +176,18 @@ int pi_cluster_open(struct pi_device *device)
 		}
 #endif /* __DISABLE_PRINTF__ && (PRINTF_UART || PRINTF_SEMIHOST) */
 		device->data = __per_cluster_data[_conf->id];
-		PRINTF("post-check: device->data=%p\n", device->data);
+		PRINTF("post-check: device->data=%p\n\r", device->data);
 		pmsis_mutex_init(&(cl_data->task_mutex));
 		pmsis_mutex_init(&(cl_data->powerstate_mutex));
 		cl_data->task_to_fc = NULL;
 		cl_data->hw_barrier_alloc = (uint8_t)CL_ALLOC_INIT_BARRIER;
-		PRINTF("per cluster data[%d]=%p\n", _conf->id, __per_cluster_data[_conf->id]);
+		PRINTF("per cluster data[%d]=%p\n\r", _conf->id, __per_cluster_data[_conf->id]);
 	}
 	_conf->heap_start = (void *)&__heapsram_start;
 	_conf->heap_size = (uint32_t)&__heapsram_size;
 
-	PRINTF("before start: device->config=%p\n", device->config);
-	PRINTF("before start: _conf:=%p, device->config->heap_start=%p\n", _conf,
+	PRINTF("before start: device->config=%p\n\r", device->config);
+	PRINTF("before start: _conf:=%p, device->config->heap_start=%p\n\r", _conf,
 	       _conf->heap_start);
 
 	__cluster_start(device);
@@ -227,7 +227,7 @@ int pi_cluster_close(struct pi_device *device)
 		struct cluster_driver_data *_data = (struct cluster_driver_data *)device->data;
 		// if no task has an active handle on device
 		// --> clean up data as everything in L1 is going to be lost
-		PRINTF("Cluster clean ups\n");
+		PRINTF("Cluster clean ups\n\r");
 		struct pi_cluster_conf *_conf = (struct pi_cluster_conf *)device->config;
 		/* Clean used mutexes. */
 		pmsis_mutex_deinit(&(_data->task_mutex));
@@ -325,16 +325,16 @@ static inline void __cluster_free_device_event_func(void *arg)
 
 static inline void __cluster_start(struct pi_device *device)
 {
-	PRINTF("device=%p\n", device);
+	PRINTF("device=%p\n\r", device);
 	struct cluster_driver_data *data = (struct cluster_driver_data *)device->data;
-	PRINTF("data=%p\n", data);
+	PRINTF("data=%p\n\r", data);
 	struct pi_cluster_conf *conf = (struct pi_cluster_conf *)device->config;
 	pmsis_mutex_take(&data->powerstate_mutex);
 	// --- critical zone start ---
 	if (!data->cluster_is_on) {
 		/* Turn cluster power on. */
 		//__pi_pmu_cluster_power_on(); hal_soc_ctrl_cl_isolate_set(0); /*TODO  ? */
-		PRINTF("poweron is done\n");
+		PRINTF("poweron is done\n\r");
 
 		uint32_t nb_cl_cores = pi_cl_cluster_nb_cores();
 		for (uint32_t core_id = 0; core_id < nb_cl_cores; core_id++) {
@@ -343,10 +343,10 @@ static inline void __cluster_start(struct pi_device *device)
 			// hal_cl_ctrl_boot_addr_set(ARCHI_CL_CID(0), core_id, (uint32_t)
 			// &__irq_vector_base);
 			hal_cl_ctrl_boot_addr_set(ARCHI_CL_CID(0), core_id, (uint32_t)&_start);
-			// PRINTF("set cluster fetch to %p\n", &_start);
+			// PRINTF("set cluster fetch to %p\n\r", &_start);
 		}
 		hal_cl_ctrl_fetch_enable(ARCHI_CL_CID(0), nb_cl_cores);
-		PRINTF("enabled cluster fetch\n");
+		PRINTF("enabled cluster fetch\n\r");
 		hal_cl_icache_enable(ARCHI_CL_CID(0));
 
 		/* In case the chip does not support L1 preloading, the initial L1 data are in L2,
@@ -362,7 +362,7 @@ static inline void __cluster_start(struct pi_device *device)
 		memcpy((char *)GAP_CLUSTER_TINY_DATA(0, (int)&__l1FcShared_start),
 		       &__l1FcShared_start, (size_t)&__l1FcShared_size);
 
-		PRINTF("conf:%p, heap_start:%p, heap_size:%lx\n", conf, conf->heap_start,
+		PRINTF("conf:%p, heap_start:%p, heap_size:%lx\n\r", conf, conf->heap_start,
 		       conf->heap_size);
 		pmsis_l1_malloc_init(conf->heap_start, conf->heap_size);
 
@@ -372,8 +372,8 @@ static inline void __cluster_start(struct pi_device *device)
 	}
 	data->cluster_is_on++;
 	pmsis_mutex_release(&data->powerstate_mutex);
-	PRINTF("started cluster\n");
-	PRINTF("data ptr: %p\n", data);
+	PRINTF("started cluster\n\r");
+	PRINTF("data ptr: %p\n\r", data);
 }
 
 static inline int __cluster_stop(struct pi_device *device)
@@ -413,14 +413,14 @@ static inline void pi_push_cluster_task(struct cluster_driver_data *data,
 	cl_sync_spinlock_take(&data->fifo_access);
 	task->next = NULL;
 
-	PRINTF("task=%p, data->task_first=%p\n", task, data->task_first);
+	PRINTF("task=%p, data->task_first=%p\n\r", task, data->task_first);
 	if (data->task_last == NULL) {
 		data->task_first = task;
 		data->task_last = task;
 	} else {
 		data->task_last->next = task;
 	}
-	PRINTF("task=%p, data->task_first=%p\n", task, data->task_first);
+	PRINTF("task=%p, data->task_first=%p\n\r", task, data->task_first);
 	cl_sync_spinlock_release(&data->fifo_access);
 }
 
@@ -440,7 +440,7 @@ static inline void cl_pop_cluster_task(struct cluster_driver_data *data)
 		uint32_t stack_size = task->slave_stack_size * ((uint32_t)ARCHI_CLUSTER_NB_PE - 1);
 		stack_size += task->stack_size;
 		pi_cl_l1_free(NULL, task->stacks, stack_size);
-		PRINTF("free %p %ld\n", task->stacks, stack_size);
+		PRINTF("free %p %ld\n\r", task->stacks, stack_size);
 		task->stacks = NULL;
 		task->stack_size = 0;
 		task->stack_allocated = 0;
@@ -476,7 +476,7 @@ static inline int __pi_send_task_to_cl(struct pi_device *device, struct pi_clust
 	task->cluster_team_mask = ((1 << task->nb_cores) - 1);
 	// task->nb_cores = task->nb_cores ? task->nb_cores : ARCHI_CLUSTER_NB_PE;
 
-	PRINTF("task->nb_cores:%d\n", task->nb_cores);
+	PRINTF("task->nb_cores:%d\n\r", task->nb_cores);
 
 	if (task->stacks == NULL) {
 		if (task->stack_size == 0) {
@@ -488,7 +488,7 @@ static inline int __pi_send_task_to_cl(struct pi_device *device, struct pi_clust
 		uint32_t stack_size = task->slave_stack_size * ((uint32_t)ARCHI_CLUSTER_NB_PE - 1);
 		stack_size += task->stack_size;
 		task->stacks = pi_cl_l1_malloc(NULL, stack_size);
-		PRINTF("malloc stack %p %ld\n", task->stacks, stack_size);
+		PRINTF("malloc stack %p %ld\n\r", task->stacks, stack_size);
 		if (task->stacks == NULL) {
 			pmsis_mutex_release(&(data->task_mutex));
 			return -1;
@@ -498,11 +498,11 @@ static inline int __pi_send_task_to_cl(struct pi_device *device, struct pi_clust
 		task->stack_allocated = 0;
 	}
 
-	PRINTF("pushing task to cluster\n");
+	PRINTF("pushing task to cluster\n\r");
 	pi_push_cluster_task(data, task);
 
 	// Wake cluster up
-	PRINTF("waking cluster up\n");
+	PRINTF("waking cluster up\n\r");
 	hal_eu_cluster_evt_trig_set(FC_NOTIFY_CLUSTER_EVENT, 0);
 	pmsis_mutex_release(&data->task_mutex);
 	return 0;
@@ -512,19 +512,19 @@ int pi_cluster_send_task_to_cl(struct pi_device *device, struct pi_cluster_task 
 {
 	int32_t ret_send_task = 0;
 	pi_task_t task_block;
-	PRINTF("creating task\n");
+	PRINTF("creating task\n\r");
 	pi_task_block(&task_block);
 	task->completion_callback = &task_block;
-	PRINTF("going to send\n");
+	PRINTF("going to send\n\r");
 	ret_send_task = __pi_send_task_to_cl(device, task);
 	if (ret_send_task) {
 		return ret_send_task;
 	}
-	PRINTF("going to block on %p\n", &task_block);
+	PRINTF("going to block on %p\n\r", &task_block);
 	pi_task_wait_on(&task_block);
-	PRINTF("block is done\n");
+	PRINTF("block is done\n\r");
 	pi_task_destroy(&task_block);
-	PRINTF("destroy is done\n");
+	PRINTF("destroy is done\n\r");
 	return ret_send_task;
 }
 
