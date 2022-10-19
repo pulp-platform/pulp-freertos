@@ -23,12 +23,17 @@
 # CONFIG_CC_STACKDBG  Enable stack debugging information and warnings.
 #           By default 1 KiB but can be changed with MAXSTACKSIZE=your_value
 
-RISCV		?= $(HOME)/.riscv
-RISCV_PREFIX	?= $(RISCV)/bin/riscv32-unknown-elf-
-CC		= $(RISCV_PREFIX)gcc
-OBJCOPY		= $(RISCV_PREFIX)objcopy
-OBJDUMP		= $(RISCV_PREFIX)objdump
-SIZE		= $(RISCV_PREFIX)size
+ifdef RISCV
+CC      = $(RISCV)/bin/riscv32-unknown-elf-gcc
+OBJCOPY = $(RISCV)/bin/riscv32-unknown-elf-objcopy
+OBJDUMP = $(RISCV)/bin/riscv32-unknown-elf-objdump
+SIZE    = $(RISCV)/bin/riscv32-unknown-elf-size
+else
+CC      = riscv32-unknown-elf-gcc
+OBJCOPY = riscv32-unknown-elf-objcopy
+OBJDUMP = riscv32-unknown-elf-objdump
+SIZE    = riscv32-unknown-elf-size
+endif
 
 # set some project specific path variables
 ifndef FREERTOS_PROJ_ROOT
