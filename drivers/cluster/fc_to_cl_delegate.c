@@ -529,7 +529,8 @@ int pi_cluster_send_task_to_cl_async(struct pi_device *device, struct pi_cluster
 {
 	task->completion_callback = fc_task;
 	while (__pi_send_task_to_cl(device, task)) {
-		__os_native_yield();
+		//__os_native_yield();
+		taskYIELD();
 	}
 	return 0;
 }
