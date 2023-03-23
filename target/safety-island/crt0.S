@@ -1,0 +1,112 @@
+/*
+ * Copyright 2020 ETH Zurich
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0 OR BSD-2-Clause
+ */
+
+/* Copyright (c) 2017  SiFive Inc. All rights reserved.
+ * Copyright (c) 2019  ETH Zürich and University of Bologna
+ * This copyrighted material is made available to anyone wishing to use,
+ * modify, copy, or redistribute it subject to the terms and conditions
+ * of the FreeBSD License.   This program is distributed in the hope that
+ * it will be useful, but WITHOUT ANY WARRANTY expressed or implied,
+ * including the implied warranties of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  A copy of this license is available at
+ * http://www.opensource.org/licenses.
+ */
+
+/* entry point */
+.section .text.start
+.global _start
+.type _start, @function
+
+_start:
+/* initialize global pointer */
+.option push
+.option norelax
+1:	auipc gp, %pcrel_hi(__global_pointer$)
+	addi  gp, gp, %pcrel_lo(1b)
+.option pop
+
+        csrr a0, 0xf14 /* Cluster ID */
+        andi a1, a0, 0x1f       /* Core ID */
+        srli a0, a0, 5
+
+#if defined(CONFIG_CLUSTER)
+        li a2, 31 /* FC_Cluster ID */
+        //bne a2, a0, cl_cluster_exec_loop
+        .extern cluster_exec_loop
+        bne a2, a0, cluster_exec_loop
+#endif
+/* initialize stack pointer */
+	la sp, __stack_top
+
+/* set vector table address */
+	la a0, __vector_start
+	or a0, a0, 1 /* enable vectored mode (hardcoded anyway for RI5CY) */
+	csrw mtvec, a0
+#ifdef CONFIG_CLIC
+	csrw 0x307, a0 /* mtvt=0x307 */ /* enable vectored mode TODO: should be clic mode */
+#endif
+
+/* clear the bss segment */
+	la t0, __bss_start
+        la t1, __bss_end
+1:
+	sw zero,0(t0)
+	addi t0, t0, 4
+	bltu t0, t1, 1b
+
+/* new-style constructors and destructors */
+#if defined(__PULP_USE_LIBC)
+	la a0, __libc_fini_array
+	call atexit
+	call __libc_init_array
+#endif
+
+/* call main */
+	lw a0, 0(sp)                    /* a0 = argc */
+	addi a1, sp, __SIZEOF_POINTER__ /* a1 = argv */
+	li a2, 0                        /* a2 = envp = NULL */
+	call main
+	tail exit
+
+.size  _start, .-_start
+
+.global _init
+.type   _init, @function
+.global _fini
+.type   _fini, @function
+_init:
+_fini:
+ /* These don't have to do anything since we use init_array/fini_array. Prevent
+    missing symbol error */
+	ret
+.size  _init, .-_init
+.size _fini, .-_fini
+
+/* indicate expected heap size to linker script, otherwise fall back to linker
+script default */
+#ifdef __HEAP_SIZE
+.global __heap_size
+	.equ __heap_size, __HEAP_SIZE
+#endif
+
+/* indicate (main) stack size to linker script, otherwise fall back to
+linker script default */
+#ifdef __STACK_SIZE
+.global __stack_size
+	.equ __stack_size, __STACK_SIZE
+#endif
