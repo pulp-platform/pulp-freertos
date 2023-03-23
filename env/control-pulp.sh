@@ -34,6 +34,8 @@ export CONFIG_CLUSTER=y
 export CONFIG_DRIVER_FLL=n
 export CONFIG_DRIVER_CLKDIV=y
 export CONFIG_DRIVER_INT=clic
+export CONFIG_UDMA_SPI=y
+export CONFIG_UDMA_I2C=y
 
 # control-pulp has an I2C acknowledge register/interrupt feature
 export CONFIG_UDMA_I2C_ACK=y

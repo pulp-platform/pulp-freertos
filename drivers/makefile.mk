@@ -16,13 +16,17 @@
 # Author: Robert Balas (balasr@iis.ee.ethz.ch)
 
 SRCS += $(dir)/uart.c
+ifeq ($(CONFIG_UDMA_SPI),y)
 SRCS += $(dir)/spi.c
+endif
+ifeq ($(CONFIG_UDMA_I2C),y)
 SRCS += $(dir)/i2c.c
 ifeq ($(CONFIG_UDMA_I2C_ACK),y)
 CV_CPPFLAGS += -DCONFIG_UDMA_I2C_ACK
 endif
 ifeq ($(CONFIG_UDMA_I2C_EOT),y)
 CV_CPPFLAGS += -DCONFIG_UDMA_I2C_EOT
+endif
 endif
 ifeq ($(CONFIG_DRIVER_FLL),y)
 SRCS += $(dir)/fll.c
