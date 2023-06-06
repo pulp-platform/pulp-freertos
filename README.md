@@ -1,4 +1,4 @@
-# PULP PROJECT FREERTOS [![pipeline status](https://iis-git.ee.ethz.ch/freertos/freertos/badges/master/pipeline.svg)](https://iis-git.ee.ethz.ch/freertos/freertos/commits/master)
+# PULP FREERTOS
 
 This project provides FreeRTOS and drivers for development of real-time
 applications on PULP based systems.
@@ -44,8 +44,15 @@ platform.
 ### Repository
 Run
 ```bash
-git clone git@iis-git.ee.ethz.ch:freertos/freertos.git --recurse-submodules
+git clone git@github.com:pulp-platform/pulp-freertos.git --recurse-submodules
 ```
+
+or if you don't have a ssh key set up
+
+```bash
+git clone https://github.com/pulp-platform/pulp-freertos.git --recurse-submodules
+```
+
 in your shell. The `--recurse-submodules` argument is mandatory.
 
 ### Compiler
