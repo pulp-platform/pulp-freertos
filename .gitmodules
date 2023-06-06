@@ -1,27 +1,27 @@
 [submodule "kernel"]
 	path = kernel
-	url = git@github.com:pulp-platform/pulp-freertos-kernel.git
+	url = https://github.com/pulp-platform/pulp-freertos-kernel.git
 [submodule "common/pmsis_api"]
 	path = common/pmsis_api
-	url = git@github.com:GreenWaves-Technologies/pmsis_api.git
+	url = https://github.com/GreenWaves-Technologies/pmsis_api.git
 [submodule "support/dpi-models"]
 	path = support/dpi-models
-	url = git@github.com:pulp-platform/dpi-models.git
+	url = https://github.com/pulp-platform/dpi-models.git
 [submodule "support/json-tools"]
 	path = support/json-tools
-	url = git@github.com:pulp-platform/json-tools.git
+	url = https://github.com/pulp-platform/json-tools.git
 [submodule "support/pulp-debug-bridge"]
 	path = support/pulp-debug-bridge
-	url = git@github.com:pulp-platform/pulp-debug-bridge.git
+	url = https://github.com/pulp-platform/pulp-debug-bridge.git
 [submodule "support/archi"]
 	path = support/archi
-	url = git@github.com:pulp-platform/archi.git
+	url = https://github.com/pulp-platform/archi.git
 [submodule "support/gvsoc"]
 	path = support/gvsoc
-	url = git@github.com:pulp-platform/gvsoc.git
+	url = https://github.com/pulp-platform/gvsoc.git
 [submodule "support/pulp-configs"]
 	path = support/pulp-configs
-	url = git@github.com:pulp-platform/pulp-configs.git
+	url = https://github.com/pulp-platform/pulp-configs.git
 [submodule "support/runner"]
 	path = support/runner
-	url = git@github.com:pulp-platform/runner.git
+	url = https://github.com/pulp-platform/runner.git
