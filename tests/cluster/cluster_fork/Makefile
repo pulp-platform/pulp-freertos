@@ -39,17 +39,8 @@ PROJ_ROOT = $(shell git rev-parse --show-toplevel)
 # good defaults for many environment variables
 include $(PROJ_ROOT)/default_flags.mk
 
-# manually set CFLAGS to disable some warnings (-Wconversion)
-CFLAGS = \
-	-march=rv32imac_xcorev -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore \
-	-fsigned-char -ffunction-sections -fdata-sections \
-	-std=gnu11 \
-	-Wall -Wextra -Wshadow -Wformat=2 -Wundef \
-	-Wno-unused-parameter -Wno-unused-variable \
-	-Og -g3 \
-	-DFEATURE_CLUSTER=1 -D__PULP__=1 -DDEBUG \
-        -fstack-usage -Wstack-usage=1024 -Wno-sign-conversion
-
+# TODO: somehow offloading breaks for -Os
+CFLAGS = -Og -g3 -march=rv32imac_xcorev -mabi=ilp32
 ASFLAGS = -Os -g3 -march=rv32imac_xcorev -mabi=ilp32
 
 # rtos, pulp and pmsis sources

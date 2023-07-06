@@ -39,20 +39,6 @@ PROJ_ROOT = $(shell git rev-parse --show-toplevel)
 # good defaults for many environment variables
 include $(PROJ_ROOT)/default_flags.mk
 
-# manually set CFLAGS to disable some warnings (-Wconversion)
-CFLAGS = \
-	-march=rv32imac -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore \
-	-fsigned-char -ffunction-sections -fdata-sections \
-	-std=gnu11 \
-	-Wall -Wextra -Wshadow -Wformat=2 -Wundef \
-	-Wno-unused-parameter -Wno-unused-variable \
-	-Os -g3 \
-	-DFEATURE_CLUSTER=0 -D__PULP__=1 -DASYNC=0 \
-	-DSPIM_ITF=0 -DSPIM_CS=1
-
-# CFLAGS += -fstack-usage -Wstack-usage=1024
-# CFLAGS += -DTRACE_SPI -DPI_LOG_LOCAL_LEVEL=5 -DDEBUG
-
 ifneq ($(DPI),yes)
 $(error spi_test requires DPI=yes to work properly)
 endif
@@ -75,6 +61,8 @@ USER_SRCS = spi_test.c
 CPPFLAGS += $(addprefix -I$(USER_DIR)/, ".")
 
 CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
+CPPFLAGS += -DASYNC=0
+CPPFLAGS += -DSPIM_ITF=0 -DSPIM_CS=1
 
 # Uncomment to disable Additional reigsters (HW Loops)
 #CPPFLAGS += -DportasmSKIP_ADDITIONAL_REGISTERS

@@ -39,17 +39,6 @@ PROJ_ROOT = $(shell git rev-parse --show-toplevel)
 # good defaults for many environment variables
 include $(PROJ_ROOT)/default_flags.mk
 
-# manually set CFLAGS to disable some warnings (-Wconversion)
-CFLAGS = \
-	-march=rv32imac -mabi=ilp32 -msmall-data-limit=8 -mno-save-restore \
-	-fsigned-char -ffunction-sections -fdata-sections \
-	-std=gnu11 \
-	-Wall -Wextra -Wshadow -Wformat=2 -Wundef \
-	-Wno-unused-parameter -Wno-unused-variable \
-	-Og -g3 \
-	-DASYNC=0
-
-
 # disable cluster
 CONFIG_CLUSTER=n
 
@@ -69,6 +58,7 @@ CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
 CPPFLAGS += -DUSE_STDIO
 ## number of error check polls before the tests is conclueded as being successful
 CPPFLAGS += -DSTREAM_CHECK_ITERATIONS=2
+CPPFLAGS += -DASYNC=0
 
 # Uncomment to disable Additional reigsters (HW Loops)
 #CPPFLAGS += -DportasmSKIP_ADDITIONAL_REGISTERS
