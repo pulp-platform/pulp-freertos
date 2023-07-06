@@ -113,7 +113,7 @@ CV_CFLAGS := \
 	-msmall-data-limit=8 -mno-save-restore \
 	-fsigned-char -ffunction-sections -fdata-sections \
 	-std=gnu11 \
-	-Wall -Wextra -Wshadow -Wformat=2 -Wundef -Wsign-conversion -Wno-unused-parameter
+	-Wall -Wextra -Wshadow -Wdouble-promotion -Wformat=2 -Wundef -Wconversion -Wno-unused-parameter
 
 CV_ASFLAGS := \
 	-msmall-data-limit=8 -mno-save-restore \
