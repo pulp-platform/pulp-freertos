@@ -150,9 +150,6 @@ void test_kickoff()
 
 int main(void)
 {
-	/* Init board hardware. */
-	system_init();
-
 	printf("i2c scan test\n");
 	return pmsis_kickoff((void *)test_kickoff);
 }

@@ -68,7 +68,7 @@ void (*isr_table[ISR_TABLE_SIZE])(void);
 /**
  * Board init code. Always call this before anything else.
  */
-void system_init(void)
+__attribute__((constructor)) void system_init(void)
 {
 	/* make sure irq (itc) is a good state */
 	pulp_irq_init();

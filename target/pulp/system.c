@@ -69,7 +69,7 @@ void (*isr_table[32])(void);
 /**
  * Board init code. Always call this before anything else.
  */
-void system_init(void)
+__attribute__((constructor)) void system_init(void)
 {
 	/* init flls */
 	for (int i = 0; i < ARCHI_NB_FLL; i++) {

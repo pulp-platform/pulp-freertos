@@ -117,9 +117,7 @@ int main( void )
 
 static void prvSetupHardware( void )
 {
-	/* Init board hardware. */
-	system_init();
-
+	/* system_init() is already called a constructor by c library */
 	/* configure led0 (spim_csn1) as gpio */
 	gpio_pin_configure(0x5, GPIO_OUTPUT_LOW);
 }

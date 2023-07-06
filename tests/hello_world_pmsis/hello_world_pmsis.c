@@ -64,9 +64,6 @@ void helloworld(void)
 /* Program Entry. */
 int main(void)
 {
-	/* Init board hardware. */
-	system_init();
-
 	printf("\n\n\t *** FreeRTOS HelloWorld *** \n\n");
 	return pmsis_kickoff((void *) helloworld);
 }

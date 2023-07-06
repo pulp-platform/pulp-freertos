@@ -70,7 +70,7 @@ _start:
 	bltu t0, t1, 1b
 
 /* new-style constructors and destructors */
-#if defined(__PULP_USE_LIBC)
+#if defined(__PULP_USE_LIBC) || defined(CONFIG_LIBC)
 	la a0, __libc_fini_array
 	call atexit
 	call __libc_init_array

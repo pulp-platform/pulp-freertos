@@ -231,8 +231,6 @@ int main()
 {
 	BaseType_t xTask;
 
-	system_init();
-
 	/* Disable printf output buffering to prevent cluster cores clobbering
 	 * shared buffer. */
 	if (setvbuf(stdout, NULL, _IONBF, 0))

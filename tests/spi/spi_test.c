@@ -270,9 +270,6 @@ static void test_kickoff(void *arg)
 /* Program Entry. */
 int main(void)
 {
-	/* Init board hardware. */
-	system_init();
-
 	printf("\n\n\t *** FreeRTOS Hello World *** \n\n");
 	return pmsis_kickoff((void *)test_kickoff);
 }

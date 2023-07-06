@@ -71,9 +71,6 @@ void some_busy_task(void)
 /* Program Entry. */
 int main(void)
 {
-	/* Init board hardware. */
-	system_init();
-
 	/* create a dummy task */
 	BaseType_t xTask;
 	xTask = xTaskCreate(some_busy_task, "dummy",

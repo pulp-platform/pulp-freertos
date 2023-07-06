@@ -153,8 +153,7 @@ int main(void)
 
 static void prvSetupHardware(void)
 {
-	/* Init board hardware. */
-	system_init();
+	/* system_init() is called by c library as constructor */
 }
 
 void vSendString(const char *const pcString)

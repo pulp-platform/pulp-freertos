@@ -92,9 +92,6 @@ void write_uart(void)
 /* Program Entry. */
 int main(void)
 {
-	/* Init board hardware. */
-	system_init();
-
 	return pmsis_kickoff((void *)write_uart);
 }
 
