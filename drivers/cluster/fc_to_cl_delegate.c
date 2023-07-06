@@ -536,9 +536,8 @@ int pi_cluster_send_task_to_cl_async(struct pi_device *device, struct pi_cluster
 void pi_cluster_wait_free(struct pi_device *device)
 {
 	/* If Cluster has not finished previous task, wait */
-	while (__cluster_has_task((struct cluster_driver_data *)device->data)) {
-		//__os_native_yield();
-	}
+	while (__cluster_has_task((struct cluster_driver_data *)device->data))
+		pi_yield();
 }
 
 void pi_cluster_wait_free_async(struct pi_device *device, pi_task_t *async_task)
