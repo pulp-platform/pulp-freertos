@@ -59,7 +59,6 @@ USER_SRCS = main.c blinky_demo/main_blinky.c
 CPPFLAGS += $(addprefix -I$(USER_DIR)/, ".")
 
 # point to irq handler
-CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
 CPPFLAGS += -DmainCREATE_SIMPLE_BLINKY_DEMO_ONLY=1
 
 # compile, simulation and analysis targets

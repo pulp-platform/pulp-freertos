@@ -67,7 +67,6 @@ USER_SRCS = idma_basic_8cores.c
 # FreeRTOS.h
 CPPFLAGS += $(addprefix -I$(USER_DIR)/, ".")
 
-CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
 CPPFLAGS += -DUSE_STDIO
 
 # Uncomment to disable Additional reigsters (HW Loops)

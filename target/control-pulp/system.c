@@ -161,7 +161,7 @@ void vPortSetupTimerInterrupt(void)
 	irq_enable(IRQ_FC_EVT_TIMER0_LO);
 }
 
-void vSystemIrqHandler(uint32_t mcause)
+void freertos_risc_v_application_interrupt_handler(uint32_t mcause)
 {
 	extern void (*isr_table[ISR_TABLE_SIZE])(void);
 	isr_table[mcause & (ISR_TABLE_SIZE-1)]();

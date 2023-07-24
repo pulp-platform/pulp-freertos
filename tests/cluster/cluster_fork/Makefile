@@ -55,7 +55,6 @@ USER_SRCS = cluster_fork.c
 # FreeRTOS.h
 CPPFLAGS += $(addprefix -I$(USER_DIR)/, ".")
 
-CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
 CPPFLAGS += -DUSE_STDIO
 
 # Uncomment to disable Additional reigsters (HW Loops)

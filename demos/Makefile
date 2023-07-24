@@ -67,7 +67,6 @@ CONFIG_CLUSTER=n
 CPPFLAGS += $(addprefix -I$(USER_DIR)/, "shared/include" ".")
 
 # point to irq handler
-CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
 CPPFLAGS += -DmainCREATE_SIMPLE_BLINKY_DEMO_ONLY=0
 
 # compile, simulation and analysis targets

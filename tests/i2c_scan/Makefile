@@ -52,8 +52,6 @@ USER_SRCS = i2c_scan.c
 # FreeRTOS.h
 CPPFLAGS += $(addprefix -I$(USER_DIR)/, ".")
 
-CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
-
 # Uncomment to disable Additional reigsters (HW Loops)
 #CPPFLAGS += -DportasmSKIP_ADDITIONAL_REGISTERS
 

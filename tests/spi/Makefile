@@ -60,7 +60,6 @@ USER_SRCS = spi_test.c
 # FreeRTOS.h
 CPPFLAGS += $(addprefix -I$(USER_DIR)/, ".")
 
-CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
 CPPFLAGS += -DASYNC=0
 CPPFLAGS += -DSPIM_ITF=0 -DSPIM_CS=1
 

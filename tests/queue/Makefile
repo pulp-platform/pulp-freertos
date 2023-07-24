@@ -54,7 +54,6 @@ USER_SRCS = queue.c
 # FreeRTOS.h
 CPPFLAGS += $(addprefix -I$(USER_DIR)/, ".")
 
-CPPFLAGS += -DportasmHANDLE_INTERRUPT=vSystemIrqHandler
 CPPFLAGS += -DUSE_STDIO
 # number of error check polls before the tests is conclueded as being successful
 CPPFLAGS += -DQUEUE_CHECK_ITERATIONS=2
